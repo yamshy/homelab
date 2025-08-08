@@ -1,0 +1,21 @@
+# Example variables for the Proxmox homelab
+# Copy this file to terraform.tfvars and update the values
+
+# Proxmox API endpoint
+proxmox_api_url    = "https://your-proxmox-ip:8006/api2/json"
+
+# Proxmox API token (format: user@realm!tokenid=tokensecret)
+# Example: terraform@pve!mytoken=88504651-03f3-4082-a0de-c28aa6a93ac5
+proxmox_api_token  = "terraform@pve!mytoken=replace-with-your-secret"
+
+# Skip TLS verification (use true for self-signed certs in a homelab)
+proxmox_tls_insecure = true
+
+# The Proxmox node name to target (e.g., "pve" or your node's hostname)
+proxmox_node       = "your-node-name"
+
+# Your SSH public key to inject into containers/VMs
+# Generate a key with: ssh-keygen -t ed25519
+ssh_public_key     = "ssh-ed25519 AAAAC3NzaC1... your_email@example.com"
+
+

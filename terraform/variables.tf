@@ -3,13 +3,8 @@ variable "proxmox_api_url" {
   type        = string
 }
 
-variable "proxmox_user" {
-  description = "Proxmox user"
-  type        = string
-}
-
-variable "proxmox_password" {
-  description = "Proxmox password or API token"
+variable "proxmox_api_token" {
+  description = "Concatenated API token: user@realm!tokenid=tokensecret"
   type        = string
   sensitive   = true
 }

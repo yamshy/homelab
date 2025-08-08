@@ -1,6 +1,6 @@
 terraform {
   required_version = ">= 1.10"
-  
+
   required_providers {
     proxmox = {
       source  = "bpg/proxmox"
@@ -11,12 +11,11 @@ terraform {
 
 provider "proxmox" {
   endpoint = var.proxmox_api_url
-  username = var.proxmox_user
-  password = var.proxmox_password
+  api_token = var.proxmox_api_token
   insecure = var.proxmox_tls_insecure
-  
+
   ssh {
     agent    = true
-    username = "root"
+    username = "terraform"
   }
 }
