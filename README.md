@@ -5,6 +5,7 @@ Infrastructure as Code for my Proxmox homelab using OpenTofu and Ansible.
 ## Overview
 
 This repository manages my homelab infrastructure using:
+
 - **OpenTofu** - Infrastructure provisioning (LXC containers, VMs, networking)
 - **Ansible** - Configuration management and application deployment
 - **Proxmox VE** - Virtualization platform
@@ -20,6 +21,7 @@ This repository manages my homelab infrastructure using:
 ### Initial Setup
 
 1. **Clone and configure:**
+
    ```bash
    git clone <repo-url> homelab
    cd homelab/terraform
@@ -27,6 +29,7 @@ This repository manages my homelab infrastructure using:
    ```
 
 2. **Edit `terraform.tfvars` with your Proxmox details:**
+
    ```hcl
    proxmox_api_url = "https://your-proxmox-ip:8006/api2/json"
    proxmox_user    = "terraform@pve"
@@ -36,6 +39,7 @@ This repository manages my homelab infrastructure using:
    ```
 
 3. **Deploy infrastructure:**
+
    ```bash
    tofu init
    tofu plan
@@ -43,6 +47,7 @@ This repository manages my homelab infrastructure using:
    ```
 
 4. **Access your containers:**
+
    ```bash
    tofu output test_container_ip
    ssh root@<container-ip>
@@ -50,7 +55,7 @@ This repository manages my homelab infrastructure using:
 
 ## Project Structure
 
-```
+```text
 homelab/
 ├── terraform/          # Infrastructure definitions
 │   ├── main.tf         # Container resources
@@ -96,6 +101,7 @@ tofu state show <resource>  # Show resource details
 ## Contributing
 
 This is a personal homelab, but feel free to:
+
 - Open issues for questions or suggestions
 - Submit PRs for improvements
 - Use this as inspiration for your own setup
