@@ -4,7 +4,6 @@ apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: nginx-test
-  namespace: default
 spec:
   interval: 1h
   chartRef:
@@ -17,44 +16,37 @@ spec:
     cleanupOnFail: true
     remediation:
       retries: 3
+  dependsOn:
+    - name: cloudflare-tunnel
+      namespace: network
   values:
     controllers:
       nginx-test:
         strategy: RollingUpdate
-        annotations:
-          reloader.stakater.com/auto: "true"
         containers:
           app:
             image:
               repository: docker.io/nginx
               tag: alpine
+            env:
+              HTTP_PORT: &port 80
             ports:
               - name: http
                 containerPort: 80
                 protocol: TCP
             probes:
-              liveness:
+              liveness: &probes
                 enabled: true
                 custom: true
                 spec:
                   httpGet:
-                    path: /
-                    port: 80
+                    path: /health
+                    port: *port
                   initialDelaySeconds: 10
                   periodSeconds: 10
                   timeoutSeconds: 5
                   failureThreshold: 3
-              readiness:
-                enabled: true
-                custom: true
-                spec:
-                  httpGet:
-                    path: /
-                    port: 80
-                  initialDelaySeconds: 5
-                  periodSeconds: 5
-                  timeoutSeconds: 3
-                  failureThreshold: 3
+              readiness: *probes
             resources:
               requests:
                 cpu: 10m
@@ -77,9 +69,22 @@ spec:
       app:
         ports:
           http:
-            port: 80
-            targetPort: 80
-            protocol: TCP
+            port: *port
+    serviceMonitor:
+      app:
+        endpoints:
+          - port: http
+    route:
+      app:
+        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
+        parentRefs:
+          - name: external
+            namespace: kube-system
+            sectionName: https
+        rules:
+          - backendRefs:
+              - identifier: app
+                port: *port
     persistence:
       config-file:
         type: configMap
