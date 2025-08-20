@@ -68,18 +68,7 @@ spec:
       app:
         endpoints:
           - port: http
-    domain: "${SECRET_DOMAIN}"
-    route:
-      app:
-        hostnames: ["nginx-test.${SECRET_DOMAIN}"]
-        parentRefs:
-          - name: external
-            namespace: kube-system
-            sectionName: https
-        rules:
-          - backendRefs:
-              - identifier: app
-                port: *port
+
     persistence:
       config-file:
         type: configMap
