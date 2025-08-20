@@ -1,0 +1,79 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-test-config
+  namespace: default
+data:
+  default.conf: |
+    server {
+        listen 80;
+        server_name _;
+
+        location / {
+            root /usr/share/nginx/html;
+            index index.html index.htm;
+            try_files $uri $uri/ =404;
+        }
+
+        # Health check endpoint
+        location /health {
+            access_log off;
+            return 200 "healthy\n";
+            add_header Content-Type text/plain;
+        }
+
+        # Custom test page
+        location /test {
+            return 200 '
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Nginx Test App - Homelab</title>
+                <style>
+                    body { font-family: Arial, sans-serif; margin: 40px; background: #f5f5f5; }
+                    .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+                    h1 { color: #333; text-align: center; }
+                    .info { background: #e8f4fd; padding: 20px; border-radius: 5px; margin: 20px 0; }
+                    .status { background: #d4edda; padding: 15px; border-radius: 5px; margin: 15px 0; }
+                    code { background: #f8f9fa; padding: 2px 6px; border-radius: 3px; font-family: monospace; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <h1>🚀 Nginx Test App</h1>
+                    <div class="info">
+                        <h3>✅ Successfully deployed!</h3>
+                        <p>This is a minimal nginx test application running in your homelab Kubernetes cluster.</p>
+                    </div>
+                    <div class="status">
+                        <h4>📊 Status Information:</h4>
+                        <ul>
+                            <li><strong>App:</strong> Nginx Alpine</li>
+                            <li><strong>Namespace:</strong> default</li>
+                            <li><strong>Exposed via:</strong> Cloudflare Tunnel</li>
+                            <li><strong>Gateway:</strong> Cilium Gateway</li>
+                            <li><strong>Timestamp:</strong> <span id="timestamp"></span></li>
+                        </ul>
+                    </div>
+                    <div class="info">
+                        <h4>🔗 Available Endpoints:</h4>
+                        <ul>
+                            <li><code>/</code> - Default nginx page</li>
+                            <li><code>/test</code> - This test page</li>
+                            <li><code>/health</code> - Health check</li>
+                        </ul>
+                    </div>
+                    <div style="text-align: center; margin-top: 30px; color: #666;">
+                        <p>Built with ❤️ for your homelab infrastructure</p>
+                    </div>
+                </div>
+                <script>
+                    document.getElementById("timestamp").textContent = new Date().toLocaleString();
+                </script>
+            </body>
+            </html>
+            ';
+            add_header Content-Type text/html;
+        }
+    }

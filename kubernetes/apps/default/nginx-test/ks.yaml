@@ -1,0 +1,15 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: KustomizationSet
+metadata:
+  name: nginx-test
+  namespace: flux-system
+spec:
+  interval: 1h
+  targetNamespace: default
+  kustomizations:
+    - name: nginx-test
+      path: ./kubernetes/apps/default/nginx-test/app
+      postBuild:
+        substitute: {}
+        substituteFrom: []
