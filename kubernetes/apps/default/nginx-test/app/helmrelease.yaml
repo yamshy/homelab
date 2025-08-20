@@ -59,12 +59,6 @@ spec:
               readOnlyRootFilesystem: true
               capabilities:
                 drop: ["ALL"]
-        defaultPodOptions:
-          securityContext:
-            runAsNonRoot: true
-            runAsUser: 101
-            runAsGroup: 101
-            fsGroup: 101
     service:
       app:
         ports:
