@@ -11,9 +11,14 @@ spec:
       app.kubernetes.io/name: *app
   interval: 1h
   path: ./kubernetes/apps/default/nginx-test/app
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-age
   postBuild:
-    substitute: {}
-    substituteFrom: []
+    substituteFrom:
+      - name: cluster-secrets
+        kind: Secret
   prune: true
   retryInterval: 2m
   sourceRef:
