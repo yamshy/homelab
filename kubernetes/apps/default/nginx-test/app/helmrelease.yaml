@@ -68,9 +68,10 @@ spec:
       app:
         endpoints:
           - port: http
+    domain: "${SECRET_DOMAIN}"
     route:
       app:
-        hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
+        hostnames: ["nginx-test.${SECRET_DOMAIN}"]
         parentRefs:
           - name: external
             namespace: kube-system
