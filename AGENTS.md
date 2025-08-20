@@ -17,7 +17,7 @@ This is a **homelab Kubernetes infrastructure** repository that uses GitOps prin
 
 ### Directory Structure
 
-```
+```bash
 homelab/
 ├── bootstrap/           # Initial cluster bootstrap configuration
 ├── kubernetes/          # Main cluster configuration (Flux-managed)
