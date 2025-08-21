@@ -18,15 +18,20 @@ spec:
         app.kubernetes.io/name: protonmail-bridge
     spec:
       securityContext:
-        runAsNonRoot: false
-        runAsUser: 0
-        runAsGroup: 0
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
       containers:
         - name: protonmail-bridge
           image: shenxn/protonmail-bridge:latest
           env:
             - name: BRIDGE_MODE
               value: "combined"
+            - name: BRIDGE_DEBUG
+              value: "1"
+            - name: BRIDGE_HEADLESS
+              value: "false"
           ports:
             - name: smtp
               containerPort: 1025
@@ -34,27 +39,34 @@ spec:
             - name: imap
               containerPort: 1143
               protocol: TCP
+          startupProbe:
+            tcpSocket:
+              port: 1025
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 10
           livenessProbe:
             tcpSocket:
               port: 1025
-            initialDelaySeconds: 30
-            periodSeconds: 10
-            timeoutSeconds: 5
-            failureThreshold: 3
+            initialDelaySeconds: 180
+            periodSeconds: 60
+            timeoutSeconds: 15
+            failureThreshold: 5
           readinessProbe:
             tcpSocket:
               port: 1025
-            initialDelaySeconds: 10
-            periodSeconds: 5
-            timeoutSeconds: 3
-            failureThreshold: 3
+            initialDelaySeconds: 150
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 5
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: false
             capabilities:
               drop: ["ALL"]
-            runAsUser: 0
-            runAsGroup: 0
+            runAsUser: 1000
+            runAsGroup: 1000
           resources:
             requests:
               cpu: 100m
