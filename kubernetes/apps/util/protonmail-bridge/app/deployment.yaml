@@ -39,32 +39,13 @@ spec:
               value: "false"
           ports:
             - name: smtp
-              containerPort: 1025
+              containerPort: 25
               protocol: TCP
             - name: imap
-              containerPort: 1143
+              containerPort: 143
               protocol: TCP
-          startupProbe:
-            tcpSocket:
-              port: 1025
-            initialDelaySeconds: 120
-            periodSeconds: 30
-            timeoutSeconds: 10
-            failureThreshold: 10
-          livenessProbe:
-            tcpSocket:
-              port: 1025
-            initialDelaySeconds: 180
-            periodSeconds: 60
-            timeoutSeconds: 15
-            failureThreshold: 5
-          readinessProbe:
-            tcpSocket:
-              port: 1025
-            initialDelaySeconds: 150
-            periodSeconds: 30
-            timeoutSeconds: 10
-            failureThreshold: 5
+          # Remove problematic probes for now - they prevent the pod from starting
+          # until the bridge is initialized
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: false
