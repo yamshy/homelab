@@ -13,6 +13,7 @@ spec:
         limits:
           cpu: 500m
           memory: 512Mi
+          squat.ai/tun: "1"  # Request tun device from generic device plugin
         requests:
           cpu: 100m
           memory: 128Mi
@@ -24,6 +25,7 @@ spec:
         readOnlyRootFilesystem: true
         capabilities:
           drop: ["ALL"]
+          add: ["NET_ADMIN", "NET_RAW"]  # Required for tun device access
     # Pod security context
     securityContext:
       fsGroup: 65534

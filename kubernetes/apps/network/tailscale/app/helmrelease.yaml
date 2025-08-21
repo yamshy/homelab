@@ -16,6 +16,7 @@ metadata:
   name: &app tailscale-operator
 spec:
   interval: 1h
+  timeout: 10m
   chart:
     spec:
       chart: *app
@@ -26,10 +27,12 @@ spec:
   install:
     remediation:
       retries: -1
+    timeout: 10m
   upgrade:
     cleanupOnFail: true
     remediation:
       retries: 3
+    timeout: 10m
   values:
     oauthSecretVolume:
       secret:
