@@ -1,0 +1,104 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app protonmail-bridge
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  dependsOn:
+    - name: tailscale-operator
+      namespace: network
+  values:
+    controllers:
+      protonmail-bridge:
+        strategy: RollingUpdate
+        containers:
+          app:
+            image:
+              repository: shenxn/protonmail-bridge
+              tag: latest
+            env:
+              - name: BRIDGE_MODE
+                value: "combined"
+            ports:
+              - name: smtp
+                containerPort: 1025
+                protocol: TCP
+              - name: imap
+                containerPort: 1143
+                protocol: TCP
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: 1025
+                  initialDelaySeconds: 30
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 3
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  tcpSocket:
+                    port: 1025
+                  initialDelaySeconds: 10
+                  periodSeconds: 5
+                  timeoutSeconds: 3
+                  failureThreshold: 3
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: false
+              capabilities:
+                drop: ["ALL"]
+            resources:
+              requests:
+                cpu: 100m
+                memory: 128Mi
+              limits:
+                cpu: 500m
+                memory: 512Mi
+            volumeMounts:
+              - name: protonmail-data
+                mountPath: /root
+        volumes:
+          - name: protonmail-data
+            persistentVolumeClaim:
+              claimName: protonmail-bridge-data
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+    service:
+      protonmail-bridge:
+        ports:
+          smtp:
+            port: 1025
+            targetPort: smtp
+          imap:
+            port: 1143
+            targetPort: imap
+        type: LoadBalancer
+        loadBalancerClass: tailscale
+    persistentVolumeClaim:
+      protonmail-bridge-data:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+        # Uses default Longhorn storage class
