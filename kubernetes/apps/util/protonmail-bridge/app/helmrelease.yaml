@@ -7,7 +7,7 @@ metadata:
   namespace: util
 spec:
   interval: 1h
-  url: oci://tccr.io/truecharts
+  url: oci://tccr.io/truecharts/protonmail-bridge
   type: oci
 ---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
