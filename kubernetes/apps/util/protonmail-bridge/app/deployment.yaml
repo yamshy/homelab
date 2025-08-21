@@ -7,6 +7,8 @@ metadata:
   labels:
     app.kubernetes.io/name: protonmail-bridge
     app.kubernetes.io/part-of: homelab
+  annotations:
+    flux.2d0.dev/restart: "2025-08-21T21:50:00Z"
 spec:
   replicas: 1
   strategy:
