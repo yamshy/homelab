@@ -10,6 +10,9 @@ persistence:
 # Enable metrics for monitoring
 metrics:
   enabled: true
+  serviceMonitor:
+    enabled: true
+    interval: 30s
 
 # Default settings for Longhorn
 defaultSettings:
@@ -19,10 +22,14 @@ defaultSettings:
   defaultReplicaCount: 2
   # Default data path for volumes
   defaultDataPath: /var/lib/longhorn
-  # Backup target (can be configured later)
-  backupTarget: ""
-  # Backup target credential secret (can be configured later)
-  backupTargetCredentialSecret: ""
+  # Enable offline replica rebuilding
+  offlineReplicaRebuilding: true
+  # Storage over-provisioning percentage
+  storageOverProvisioningPercentage: 100
+  # Concurrent backup restore per node limit
+  concurrentBackupRestorePerNodeLimit: 5
+  # Snapshot max count
+  snapshotMaxCount: 250
 
 # Priority class for Longhorn pods
 priorityClass:
@@ -32,6 +39,31 @@ priorityClass:
 # UI settings
 ui:
   enabled: true
+  replicas: 2
   # Service type for the UI
   service:
     type: ClusterIP
+
+# CSI settings for high availability
+csi:
+  attacherReplicaCount: 3
+  provisionerReplicaCount: 3
+  resizerReplicaCount: 3
+  snapshotterReplicaCount: 3
+
+# Manager settings
+longhornManager:
+  log:
+    format: plain
+  priorityClass: "longhorn-critical"
+
+# Driver settings
+longhornDriver:
+  log:
+    format: plain
+  priorityClass: "longhorn-critical"
+
+# Pre-upgrade checker (disable for GitOps)
+preUpgradeChecker:
+  jobEnabled: false
+  upgradeVersionCheck: false
