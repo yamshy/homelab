@@ -1,0 +1,172 @@
+---
+alwaysApply: false
+description: "Overview and context for homelab Kubernetes infrastructure repository using GitOps with Flux and Talos Linux"
+globs:
+  - "kubernetes/**/*.yaml"
+  - "kubernetes/**/*.yml"
+  - "talos/**/*.yaml"
+  - "talos/**/*.yml"
+  - "bootstrap/**/*.yaml"
+  - "bootstrap/**/*.yml"
+  - "scripts/**/*.sh"
+  - "Taskfile.yaml"
+  - ".taskfiles/**/*.yaml"
+  - ".taskfiles/**/*.yml"
+
+---
+
+# Homelab Kubernetes Infrastructure Overview
+
+## Repository Purpose
+
+This is a **homelab Kubernetes infrastructure** repository that uses GitOps principles with Flux to manage a Talos Linux-based Kubernetes cluster. The repository follows a declarative infrastructure approach where all cluster configuration is stored as code and automatically applied through Flux.
+
+## 🏗️ Core Architecture
+
+### Technology Stack
+
+- **Talos Linux**: Minimal, immutable Linux distribution for Kubernetes nodes
+- **Flux**: GitOps operator for continuous deployment and cluster management
+- **Cilium**: CNI and network policy enforcement
+- **cert-manager**: Certificate management for TLS termination
+- **Longhorn**: Distributed block storage for persistent volumes
+- **External-DNS**: DNS record management with Cloudflare
+- **Cloudflare Tunnel**: Secure external access to cluster services
+
+### Directory Structure
+
+```
+homelab/
+├── bootstrap/           # Initial cluster bootstrap configuration
+├── kubernetes/          # Main cluster configuration (Flux-managed)
+│   ├── apps/           # Application deployments by category
+│   │   ├── cert-manager/    # Certificate management
+│   │   ├── default/         # User applications
+│   │   ├── flux-system/     # Flux operator and instance
+│   │   ├── kube-system/     # Core system components
+│   │   ├── network/         # Networking components
+│   │   └── storage/         # Storage solutions
+│   ├── components/      # Shared components and secrets
+│   └── flux/            # Flux cluster configuration
+├── talos/               # Talos Linux configuration
+├── scripts/             # Bootstrap and utility scripts
+└── .taskfiles/          # Task definitions for common operations
+```
+
+## 🚀 Key Workflows
+
+### Development Environment
+
+- **Mise**: Tool version management (`mise install`)
+- **Task**: Common operations via [Taskfile.yaml](mdc:Taskfile.yaml)
+- **SOPS**: Secret encryption/decryption with age keys
+
+### Common Tasks
+
+```bash
+# Install development tools
+mise trust
+mise install
+
+# Generate Talos configuration
+task talos:generate-config
+
+# Bootstrap cluster
+task bootstrap:talos
+task bootstrap:apps
+
+# Force Flux reconciliation
+task reconcile
+```
+
+## 📚 Documentation
+
+- [README.md](mdc:README.md) - Complete setup and usage guide
+- [AGENTS.md](mdc:AGENTS.md) - Detailed architecture and contribution guidelines
+- [Taskfile.yaml](mdc:Taskfile.yaml) - Available automation tasks
+
+## 🔧 Key Patterns
+
+- **GitOps**: All configuration managed through Git with Flux
+- **Helm-based**: Applications deployed via HelmReleases
+- **Kustomize**: Resource customization and composition
+- **SOPS encryption**: Secrets encrypted with age keys
+- **Modular structure**: Apps organized by functional category
+
+# Homelab Kubernetes Infrastructure Overview
+
+## Repository Purpose
+
+This is a **homelab Kubernetes infrastructure** repository that uses GitOps principles with Flux to manage a Talos Linux-based Kubernetes cluster. The repository follows a declarative infrastructure approach where all cluster configuration is stored as code and automatically applied through Flux.
+
+## 🏗️ Core Architecture
+
+### Technology Stack
+
+- **Talos Linux**: Minimal, immutable Linux distribution for Kubernetes nodes
+- **Flux**: GitOps operator for continuous deployment and cluster management
+- **Cilium**: CNI and network policy enforcement
+- **cert-manager**: Certificate management for TLS termination
+- **Longhorn**: Distributed block storage for persistent volumes
+- **External-DNS**: DNS record management with Cloudflare
+- **Cloudflare Tunnel**: Secure external access to cluster services
+
+### Directory Structure
+
+```
+homelab/
+├── bootstrap/           # Initial cluster bootstrap configuration
+├── kubernetes/          # Main cluster configuration (Flux-managed)
+│   ├── apps/           # Application deployments by category
+│   │   ├── cert-manager/    # Certificate management
+│   │   ├── default/         # User applications
+│   │   ├── flux-system/     # Flux operator and instance
+│   │   ├── kube-system/     # Core system components
+│   │   ├── network/         # Networking components
+│   │   └── storage/         # Storage solutions
+│   ├── components/      # Shared components and secrets
+│   └── flux/            # Flux cluster configuration
+├── talos/               # Talos Linux configuration
+├── scripts/             # Bootstrap and utility scripts
+└── .taskfiles/          # Task definitions for common operations
+```
+
+## 🚀 Key Workflows
+
+### Development Environment
+
+- **Mise**: Tool version management (`mise install`)
+- **Task**: Common operations via [Taskfile.yaml](mdc:Taskfile.yaml)
+- **SOPS**: Secret encryption/decryption with age keys
+
+### Common Tasks
+
+```bash
+# Install development tools
+mise trust
+mise install
+
+# Generate Talos configuration
+task talos:generate-config
+
+# Bootstrap cluster
+task bootstrap:talos
+task bootstrap:apps
+
+# Force Flux reconciliation
+task reconcile
+```
+
+## 📚 Documentation
+
+- [README.md](mdc:README.md) - Complete setup and usage guide
+- [AGENTS.md](mdc:AGENTS.md) - Detailed architecture and contribution guidelines
+- [Taskfile.yaml](mdc:Taskfile.yaml) - Available automation tasks
+
+## 🔧 Key Patterns
+
+- **GitOps**: All configuration managed through Git with Flux
+- **Helm-based**: Applications deployed via HelmReleases
+- **Kustomize**: Resource customization and composition
+- **SOPS encryption**: Secrets encrypted with age keys
+- **Modular structure**: Apps organized by functional category

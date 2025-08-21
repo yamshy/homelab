@@ -1,0 +1,501 @@
+---
+alwaysApply: false
+description: Development workflow patterns, tooling setup, and automation guidelines for the homelab Kubernetes environment
+globs:
+  - "Taskfile.yaml"
+  - "scripts/**"
+  - ".mise.toml"
+  - "bootstrap/**"
+  - "docs/development/**"
+
+---
+
+# Development Workflow & Tools
+
+## Development Environment Setup
+
+### Prerequisites
+
+- **Mise**: Tool version management for consistent development environment
+- **Task**: Task runner for common operations (see [Taskfile.yaml](mdc:Taskfile.yaml))
+- **SOPS**: Secret encryption/decryption with age keys
+- **kubectl**: Kubernetes CLI for cluster interaction
+- **flux**: Flux CLI for GitOps operations
+
+### Initial Setup
+
+```bash
+# Install and trust Mise
+mise trust
+
+# Install development tools
+mise install
+
+# Verify installation
+which kubectl flux talosctl
+```
+
+## Task Automation
+
+### Available Tasks
+
+The repository uses [Task](https://taskfile.dev/) for common operations. See [Taskfile.yaml](mdc:Taskfile.yaml) for complete task definitions.
+
+#### Bootstrap Tasks
+
+```bash
+# Bootstrap Talos cluster
+task bootstrap:talos
+
+# Bootstrap applications with Flux
+task bootstrap:apps
+
+# Full bootstrap workflow
+task bootstrap:all
+```
+
+#### Talos Tasks
+
+```bash
+# Generate Talos configuration
+task talos:generate-config
+
+# Validate Talos configuration
+task talos:validate-config
+
+# Apply Talos configuration
+task talos:apply-config
+```
+
+#### Utility Tasks
+
+```bash
+# Force Flux reconciliation
+task reconcile
+
+# List all available tasks
+task --list
+```
+
+## Common Development Workflows
+
+### 1. Adding New Applications
+
+```bash
+# 1. Create application directory structure
+mkdir -p kubernetes/apps/<category>/<app-name>/app/helm
+
+# 2. Add HelmRelease and values
+# 3. Create Flux Kustomization (ks.yaml)
+# 4. Update parent kustomization.yaml
+# 5. Test with dry-run
+kubectl apply --dry-run=client -f kubernetes/apps/<category>/<app-name>/
+
+# 6. Commit and push changes
+git add .
+git commit -m "Add <app-name> application"
+git push
+```
+
+### 2. Updating Application Versions
+
+```bash
+# 1. Update version in HelmRelease
+# 2. Update values.yaml if needed
+# 3. Test configuration
+kubectl apply --dry-run=client -f kubernetes/
+
+# 4. Commit and push
+git add .
+git commit -m "Update <app-name> to v<version>"
+git push
+
+# 5. Monitor deployment
+flux get hr -A
+kubectl get pods -n <namespace>
+```
+
+### 3. Secret Management
+
+```bash
+# 1. Create or update secrets
+# 2. Encrypt with SOPS
+sops -e -i kubernetes/components/common/sops/<secret>.sops.yaml
+
+# 3. Verify encryption
+sops -d kubernetes/components/common/sops/<secret>.sops.yaml
+
+# 4. Commit encrypted secrets
+git add .
+git commit -m "Update secrets"
+git push
+```
+
+## Validation & Testing
+
+### Pre-commit Validation
+
+```bash
+# Validate Kubernetes manifests
+kubectl apply --dry-run=client -f kubernetes/
+
+# Check YAML syntax
+yamllint kubernetes/
+
+# Validate SOPS encryption
+find kubernetes -name "*.sops.yaml" -exec sops -d {} \;
+```
+
+### Flux Status Checks
+
+```bash
+# Check overall Flux status
+flux check
+
+# Check sources
+flux get sources git -A
+flux get sources oci -A
+
+# Check Kustomizations
+flux get ks -A
+
+# Check HelmReleases
+flux get hr -A
+
+# Check reconciliation status
+flux get ks -A --status
+```
+
+### Cluster Health Monitoring
+
+```bash
+# Check node status
+kubectl get nodes -o wide
+
+# Check pod status
+kubectl get pods -A
+
+# Check services
+kubectl get svc -A
+
+# Check persistent volumes
+kubectl get pv,pvc -A
+```
+
+## Debugging & Troubleshooting
+
+### Common Issues
+
+#### Flux Reconciliation Failures
+
+```bash
+# Check Kustomization status
+flux describe ks <name> -n <namespace>
+
+# Check HelmRelease status
+flux describe hr <name> -n <namespace>
+
+# Force reconciliation
+flux reconcile kustomization <name> -n <namespace>
+```
+
+#### Application Deployment Issues
+
+```bash
+# Check application logs
+kubectl logs -f deployment/<name> -n <namespace>
+
+# Check events
+kubectl get events -n <namespace> --sort-by='.lastTimestamp'
+
+# Check resource status
+kubectl describe <resource> <name> -n <namespace>
+```
+
+#### Network Issues
+
+```bash
+# Check Cilium status
+kubectl get pods -n kube-system -l k8s-app=cilium
+
+# Check network policies
+kubectl get networkpolicies -A
+
+# Test connectivity
+kubectl run test-pod --image=busybox --rm -it --restart=Never -- nslookup kubernetes.default
+```
+
+## Best Practices
+
+### Code Organization
+
+- **Consistent Structure**: Follow established app directory patterns
+- **Clear Naming**: Use descriptive names for resources and files
+- **Documentation**: Update README.md and relevant docs
+- **Version Control**: Commit changes frequently with clear messages
+
+### Security
+
+- **Secret Encryption**: Always encrypt secrets with SOPS
+- **Access Control**: Use appropriate RBAC and network policies
+- **Image Security**: Pin container image versions
+- **Network Security**: Implement proper network policies
+
+### Monitoring
+
+- **Health Checks**: Include health checks in Flux Kustomizations
+- **Resource Limits**: Set appropriate resource requests and limits
+- **Logging**: Configure proper logging for applications
+- **Metrics**: Enable metrics collection where possible
+
+## Integration with CI/CD
+
+- **GitHub Actions**: Automated testing and validation
+- **Renovate**: Dependency updates and security patches
+- **Flux**: Continuous deployment from Git
+- **SOPS**: Secure secret management in Git
+
+# Development Workflow & Tools
+
+## Development Environment Setup
+
+### Prerequisites
+
+- **Mise**: Tool version management for consistent development environment
+- **Task**: Task runner for common operations (see [Taskfile.yaml](mdc:Taskfile.yaml))
+- **SOPS**: Secret encryption/decryption with age keys
+- **kubectl**: Kubernetes CLI for cluster interaction
+- **flux**: Flux CLI for GitOps operations
+
+### Initial Setup
+
+```bash
+# Install and trust Mise
+mise trust
+
+# Install development tools
+mise install
+
+# Verify installation
+which kubectl flux talosctl
+```
+
+## Task Automation
+
+### Available Tasks
+
+The repository uses [Task](https://taskfile.dev/) for common operations. See [Taskfile.yaml](mdc:Taskfile.yaml) for complete task definitions.
+
+#### Bootstrap Tasks
+
+```bash
+# Bootstrap Talos cluster
+task bootstrap:talos
+
+# Bootstrap applications with Flux
+task bootstrap:apps
+
+# Full bootstrap workflow
+task bootstrap:all
+```
+
+#### Talos Tasks
+
+```bash
+# Generate Talos configuration
+task talos:generate-config
+
+# Validate Talos configuration
+task talos:validate-config
+
+# Apply Talos configuration
+task talos:apply-config
+```
+
+#### Utility Tasks
+
+```bash
+# Force Flux reconciliation
+task reconcile
+
+# List all available tasks
+task --list
+```
+
+## Common Development Workflows
+
+### 1. Adding New Applications
+
+```bash
+# 1. Create application directory structure
+mkdir -p kubernetes/apps/<category>/<app-name>/app/helm
+
+# 2. Add HelmRelease and values
+# 3. Create Flux Kustomization (ks.yaml)
+# 4. Update parent kustomization.yaml
+# 5. Test with dry-run
+kubectl apply --dry-run=client -f kubernetes/apps/<category>/<app-name>/
+
+# 6. Commit and push changes
+git add .
+git commit -m "Add <app-name> application"
+git push
+```
+
+### 2. Updating Application Versions
+
+```bash
+# 1. Update version in HelmRelease
+# 2. Update values.yaml if needed
+# 3. Test configuration
+kubectl apply --dry-run=client -f kubernetes/
+
+# 4. Commit and push
+git add .
+git commit -m "Update <app-name> to v<version>"
+git push
+
+# 5. Monitor deployment
+flux get hr -A
+kubectl get pods -n <namespace>
+```
+
+### 3. Secret Management
+
+```bash
+# 1. Create or update secrets
+# 2. Encrypt with SOPS
+sops -e -i kubernetes/components/common/sops/<secret>.sops.yaml
+
+# 3. Verify encryption
+sops -d kubernetes/components/common/sops/<secret>.sops.yaml
+
+# 4. Commit encrypted secrets
+git add .
+git commit -m "Update secrets"
+git push
+```
+
+## Validation & Testing
+
+### Pre-commit Validation
+
+```bash
+# Validate Kubernetes manifests
+kubectl apply --dry-run=client -f kubernetes/
+
+# Check YAML syntax
+yamllint kubernetes/
+
+# Validate SOPS encryption
+find kubernetes -name "*.sops.yaml" -exec sops -d {} \;
+```
+
+### Flux Status Checks
+
+```bash
+# Check overall Flux status
+flux check
+
+# Check sources
+flux get sources git -A
+flux get sources oci -A
+
+# Check Kustomizations
+flux get ks -A
+
+# Check HelmReleases
+flux get hr -A
+
+# Check reconciliation status
+flux get ks -A --status
+```
+
+### Cluster Health Monitoring
+
+```bash
+# Check node status
+kubectl get nodes -o wide
+
+# Check pod status
+kubectl get pods -A
+
+# Check services
+kubectl get svc -A
+
+# Check persistent volumes
+kubectl get pv,pvc -A
+```
+
+## Debugging & Troubleshooting
+
+### Common Issues
+
+#### Flux Reconciliation Failures
+
+```bash
+# Check Kustomization status
+flux describe ks <name> -n <namespace>
+
+# Check HelmRelease status
+flux describe hr <name> -n <namespace>
+
+# Force reconciliation
+flux reconcile kustomization <name> -n <namespace>
+```
+
+#### Application Deployment Issues
+
+```bash
+# Check application logs
+kubectl logs -f deployment/<name> -n <namespace>
+
+# Check events
+kubectl get events -n <namespace> --sort-by='.lastTimestamp'
+
+# Check resource status
+kubectl describe <resource> <name> -n <namespace>
+```
+
+#### Network Issues
+
+```bash
+# Check Cilium status
+kubectl get pods -n kube-system -l k8s-app=cilium
+
+# Check network policies
+kubectl get networkpolicies -A
+
+# Test connectivity
+kubectl run test-pod --image=busybox --rm -it --restart=Never -- nslookup kubernetes.default
+```
+
+## Best Practices
+
+### Code Organization
+
+- **Consistent Structure**: Follow established app directory patterns
+- **Clear Naming**: Use descriptive names for resources and files
+- **Documentation**: Update README.md and relevant docs
+- **Version Control**: Commit changes frequently with clear messages
+
+### Security
+
+- **Secret Encryption**: Always encrypt secrets with SOPS
+- **Access Control**: Use appropriate RBAC and network policies
+- **Image Security**: Pin container image versions
+- **Network Security**: Implement proper network policies
+
+### Monitoring
+
+- **Health Checks**: Include health checks in Flux Kustomizations
+- **Resource Limits**: Set appropriate resource requests and limits
+- **Logging**: Configure proper logging for applications
+- **Metrics**: Enable metrics collection where possible
+
+## Integration with CI/CD
+
+- **GitHub Actions**: Automated testing and validation
+- **Renovate**: Dependency updates and security patches
+- **Flux**: Continuous deployment from Git
+- **SOPS**: Secure secret management in Git

@@ -1,5 +1,16 @@
 ---
 description: YAML conventions and best practices for this homelab repository
+globs:
+  - "**/*.yaml"
+  - "**/*.yml"
+  - "kubernetes/**/*.yaml"
+  - "kubernetes/**/*.yml"
+  - "talos/**/*.yaml"
+  - "talos/**/*.yml"
+  - ".github/**/*.yaml"
+  - ".github/**/*.yml"
+alwaysApply: true
+
 ---
 # YAML Conventions for Homelab Repository
 

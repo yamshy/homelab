@@ -1,5 +1,14 @@
 ---
 description: Longhorn storage implementation patterns and best practices for homelab
+alwaysApply: false
+globs:
+  - "kubernetes/apps/storage/longhorn/**/*.yaml"
+  - "kubernetes/apps/storage/longhorn/**/*.yml"
+  - "kubernetes/components/storage/**/*.yaml"
+  - "kubernetes/components/storage/**/*.yml"
+  - "kubernetes/apps/storage/**/*.yaml"
+  - "kubernetes/apps/storage/**/*.yml"
+
 ---
 
 # Longhorn Storage Implementation Guide

@@ -1,0 +1,123 @@
+---
+alwaysApply: false
+description: "Networking and security patterns for Cilium CNI, network policies, and service configurations in the homelab cluster"
+globs:
+  - "kubernetes/apps/network/**/*.yaml"
+  - "kubernetes/apps/network/**/*.yml"
+  - "kubernetes/apps/kube-system/cilium/**/*.yaml"
+  - "kubernetes/apps/kube-system/cilium/**/*.yml"
+  - "kubernetes/apps/cert-manager/**/*.yaml"
+  - "kubernetes/apps/cert-manager/**/*.yml"
+  - "kubernetes/components/network/**/*.yaml"
+  - "kubernetes/components/network/**/*.yml"
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: app-rolebinding
+  namespace: default
+subjects:
+
+- kind: ServiceAccount
+    name: app-sa
+    namespace: default
+roleRef:
+  kind: Role
+  name: app-role
+  apiGroup: rbac.authorization.k8s.io
+
+```
+
+## Monitoring & Observability
+
+### Network Metrics
+
+```yaml
+# ServiceMonitor for Cilium
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: cilium
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      k8s-app: cilium
+  endpoints:
+    - port: metrics
+      interval: 30s
+```
+
+### Network Policies
+
+```yaml
+# Default deny policy
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-deny
+  namespace: default
+spec:
+  endpointSelector: {}
+  ingress:
+    - {}
+  egress:
+    - {}
+```
+
+## Best Practices
+
+### Security
+
+- **Network Policies**: Implement default-deny policies
+- **Pod Security**: Use restricted security contexts
+- **RBAC**: Follow principle of least privilege
+- **TLS**: Enable TLS for all external traffic
+- **Secrets**: Encrypt sensitive data with SOPS
+
+### Networking
+
+- **Service Mesh**: Leverage Cilium's service mesh capabilities
+- **Load Balancing**: Use appropriate service types
+- **DNS**: Configure proper DNS resolution
+- **Monitoring**: Monitor network performance and security
+
+### Ingress
+
+- **Gateway API**: Use modern Gateway API over Ingress
+- **TLS Termination**: Handle TLS at the gateway level
+- **Rate Limiting**: Implement rate limiting for external traffic
+- **Access Control**: Use network policies for ingress traffic
+
+## Troubleshooting
+
+### Common Network Issues
+
+```bash
+# Check Cilium status
+kubectl get pods -n kube-system -l k8s-app=cilium
+
+# Verify network policies
+kubectl get ciliumnetworkpolicies -A
+
+# Check gateway status
+kubectl get gateway -A
+
+# Test connectivity
+kubectl run test-pod --image=busybox --rm -it --restart=Never -- nslookup kubernetes.default
+```
+
+### Security Validation
+
+```bash
+# Check pod security
+kubectl get pods -A -o json | jq '.items[] | select(.spec.securityContext.runAsRoot == true)'
+
+# Verify RBAC
+kubectl auth can-i --as=system:serviceaccount:default:app-sa get pods
+
+# Check network policies
+kubectl get networkpolicies -A
+```
