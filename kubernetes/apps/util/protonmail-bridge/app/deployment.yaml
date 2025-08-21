@@ -7,8 +7,6 @@ metadata:
   labels:
     app.kubernetes.io/name: protonmail-bridge
     app.kubernetes.io/part-of: homelab
-  annotations:
-    flux.2d0.dev/restart: "2025-08-21T21:50:00Z"
 spec:
   replicas: 1
   strategy:
@@ -28,7 +26,6 @@ spec:
         fsGroup: 0
       labels:
         app.kubernetes.io/name: protonmail-bridge
-        restart-timestamp: "2025-08-21T21:50:00Z"
       containers:
         - name: protonmail-bridge
           image: shenxn/protonmail-bridge:latest
@@ -39,6 +36,8 @@ spec:
               value: "1"
             - name: BRIDGE_HEADLESS
               value: "false"
+            - name: RESTART_TIMESTAMP
+              value: "2025-08-21T21:50:00Z"
           ports:
             - name: smtp
               containerPort: 25
