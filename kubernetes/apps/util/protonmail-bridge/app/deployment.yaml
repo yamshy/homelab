@@ -7,6 +7,8 @@ metadata:
   labels:
     app.kubernetes.io/name: protonmail-bridge
     app.kubernetes.io/part-of: homelab
+  annotations:
+    fluxcd.io/reconcile-at: "2025-08-21T20:15:00Z"
 spec:
   replicas: 1
   strategy:
