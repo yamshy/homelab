@@ -4,7 +4,7 @@ apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
   name: bitnami
-  namespace: flux-system
+  namespace: default # Required for Renovate lookups
 spec:
   interval: 1h
   url: https://charts.bitnami.com/bitnami
@@ -23,7 +23,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: bitnami
-        namespace: flux-system
+        namespace: default
       interval: 1h
   install:
     remediation:
