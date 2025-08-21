@@ -5,8 +5,10 @@ kind: HelmRepository
 metadata:
   name: truecharts
   namespace: util
+  annotations:
+    fluxcd.io/reconcile: "true"
 spec:
-  interval: 1h
+  interval: 1m
   url: oci://tccr.io/truecharts/protonmail-bridge
   type: oci
 ---
