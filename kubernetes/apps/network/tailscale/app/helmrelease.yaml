@@ -31,17 +31,14 @@ spec:
     remediation:
       retries: 3
   values:
-    env:
-      - name: TAILSCALE_OAUTH_CLIENT_ID
-        valueFrom:
-          secretKeyRef:
-            name: tailscale-oauth-secret
-            key: TAILSCALE_OAUTH_CLIENT_ID
-      - name: TAILSCALE_OAUTH_CLIENT_SECRET
-        valueFrom:
-          secretKeyRef:
-            name: tailscale-oauth-secret
-            key: TAILSCALE_OAUTH_CLIENT_SECRET
+    oauthSecretVolume:
+      secret:
+        secretName: tailscale-oauth-secret
+        items:
+          - key: TAILSCALE_OAUTH_CLIENT_ID
+            path: client_id
+          - key: TAILSCALE_OAUTH_CLIENT_SECRET
+            path: client_secret
     resources:
       limits:
         cpu: 500m
