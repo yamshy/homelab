@@ -30,11 +30,18 @@ spec:
     cleanupOnFail: true
     remediation:
       retries: 3
-  valuesFrom:
-    - kind: Secret
-      name: tailscale-oauth-secret
-      valuesKey: oauth
   values:
+    env:
+      - name: TAILSCALE_OAUTH_CLIENT_ID
+        valueFrom:
+          secretKeyRef:
+            name: tailscale-oauth-secret
+            key: TAILSCALE_OAUTH_CLIENT_ID
+      - name: TAILSCALE_OAUTH_CLIENT_SECRET
+        valueFrom:
+          secretKeyRef:
+            name: tailscale-oauth-secret
+            key: TAILSCALE_OAUTH_CLIENT_SECRET
     resources:
       limits:
         cpu: 500m
