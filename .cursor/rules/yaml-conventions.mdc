@@ -21,6 +21,7 @@ alwaysApply: true
 - **Use anchors (`&name`) when a value is repeated multiple times within the same YAML document**
 - **Don't use anchors across document boundaries** (separated by `---`)
 - **Don't use anchors for single-use values** - it adds unnecessary complexity
+- **Only use anchors when you actually reference the value multiple times**
 
 ### Anchor Naming Conventions
 
@@ -33,7 +34,7 @@ alwaysApply: true
 #### ✅ Correct - Anchors within same document
 
 ```yaml
-# First document - no anchors needed
+# First document - no anchors needed since values used only once
 ---
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
@@ -46,13 +47,38 @@ metadata:
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app longhorn
+  name: &app longhorn  # Define anchor here since it's used below
 spec:
   chart:
     spec:
-      chart: *app  # References the name above
+      chart: *app  # References the name above - same document
 ```
 
+#### ✅ Correct - Mixed approach (anchors + direct values)
+
+```yaml
+# First document - no anchors needed
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: tailscale
+  namespace: network
+
+# Second document - use anchors only where needed
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app tailscale-operator  # Anchor for repeated use
+spec:
+  chart:
+    spec:
+      chart: *app  # References &app from same document
+      sourceRef:
+        kind: HelmRepository
+        name: tailscale      # Direct value (not anchor)
+        namespace: network   # Direct value (not anchor)
 ```
 
 #### ❌ Incorrect - Anchors across documents
@@ -67,7 +93,19 @@ metadata:
 ---
 spec:
   sourceRef:
-    name: *repo  # This will fail!
+    name: *repo  # This will fail! Anchors can't cross --- boundaries
+```
+
+#### ❌ Incorrect - Unnecessary anchors
+
+```yaml
+# Don't use anchors for single-use values
+metadata:
+  name: &app myapp  # Unnecessary - only used once
+  namespace: &ns default  # Unnecessary - only used once
+spec:
+  name: *app      # This works but adds complexity
+  namespace: *ns  # This works but adds complexity
 ```
 
 ## File Structure Conventions
@@ -78,6 +116,7 @@ spec:
 - Include proper yaml-language-server schemas
 - Use consistent remediation settings (retries, cleanupOnFail)
 - Reference ConfigMaps for values via `valuesFrom`
+- **Use anchors only when values are repeated within the same document**
 
 ### Flux Kustomization Files
 
@@ -102,7 +141,18 @@ Always include yaml-language-server schemas for proper validation:
 
 ## Common Patterns
 
-- Use `&app` for application names
-- Use `&namespace` for namespace references
-- Reference anchors with `*app` and `*namespace`
+- Use `&app` for application names when referenced multiple times
+- Use `&namespace` for namespace references when referenced multiple times
+- **Use direct values when referencing resources defined in other documents**
 - Keep documents focused and avoid unnecessary repetition
+- **Remember: YAML anchors cannot cross document boundaries (---)**
+
+## Key Rules Summary
+
+1. **Anchors within same document**: ✅ Use when values are repeated
+2. **Anchors across documents**: ❌ Never works - use direct values
+3. **Single-use values**: ❌ Don't use anchors - use direct values
+4. **Clean code**: Remove empty/unused fields and unnecessary anchors
+
+
+Always include yaml-language-server schemas for proper validation:1410 NE Campus Pkwy

@@ -3,8 +3,8 @@
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
-  name: &repo tailscale
-  namespace: &namespace network
+  name: tailscale
+  namespace: network
 spec:
   interval: 1h
   url: https://pkgs.tailscale.com/helmcharts
@@ -18,12 +18,11 @@ spec:
   interval: 1h
   chart:
     spec:
-      chart: tailscale-operator
-      # Remove version pinning to use latest stable version
+      chart: *app
       sourceRef:
         kind: HelmRepository
-        name: *repo
-        namespace: *namespace
+        name: tailscale
+        namespace: network
   install:
     remediation:
       retries: -1
@@ -36,7 +35,6 @@ spec:
       name: tailscale-oauth-secret
       valuesKey: oauth
   values:
-    # Resource configuration for the operator
     resources:
       limits:
         cpu: 500m
@@ -44,47 +42,16 @@ spec:
       requests:
         cpu: 100m
         memory: 128Mi
-    # Security context for the operator
     securityContext:
       runAsNonRoot: true
       runAsUser: 65534
       runAsGroup: 65534
-    # Pod security context
     podSecurityContext:
       fsGroup: 65534
       runAsNonRoot: true
       runAsUser: 65534
       runAsGroup: 65534
-    # Service account configuration
     serviceAccount:
       create: true
-      annotations: {}
-    # RBAC configuration
     rbac:
       create: true
-    # Namespace configuration
-    namespaceOverride: ""
-    # Image pull secrets
-    imagePullSecrets: []
-    # Node selector
-    nodeSelector: {}
-    # Tolerations
-    tolerations: []
-    # Affinity
-    affinity: {}
-    # Pod annotations
-    podAnnotations: {}
-    # Pod labels
-    podLabels: {}
-    # Service annotations
-    serviceAnnotations: {}
-    # Service labels
-    serviceLabels: {}
-    # Ingress configuration
-    ingress:
-      enabled: false
-    # Metrics configuration
-    metrics:
-      enabled: false
-    # Logging configuration
-    logLevel: "info"
