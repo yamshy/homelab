@@ -1,15 +1,11 @@
 ---
 alwaysApply: false
-description: "Flux GitOps patterns and conventions for homelab Kubernetes applications"
-globs:
-  - "kubernetes/apps/**/ks.yaml"
-  - "kubernetes/apps/**/helmrelease.yaml"
-  - "kubernetes/apps/**/kustomization.yaml"
-  - "kubernetes/apps/**/values.yaml"
-  - "kubernetes/bootstrap/**/*.yaml"
-  - "kubernetes/flux/**/*.yaml"
+description: "Flux GitOps patterns, application structure, and deployment conventions for the homelab Kubernetes environment"
 
 ---
+
+
+
 
 # Flux GitOps Patterns
 
@@ -116,6 +112,35 @@ Applications are organized by functional category:
 - **kube-system**: Core Kubernetes system components
 - **network**: Networking, DNS, and ingress
 - **storage**: Storage solutions and volume management
+
+## Kube-System Component Structure
+
+Kube-system components follow a specific pattern for system-level infrastructure:
+
+### File Structure
+```
+kubernetes/apps/kube-system/<component>/
+├── app/                    # Main application resources (if applicable)
+├── gateway/                # Gateway-specific resources (if applicable)
+├── ks.yaml                 # Flux Kustomization
+└── (other resources)       # Component-specific resources
+```
+
+### Flux Kustomization Pattern
+Kube-system components use Flux Kustomizations that:
+- Target the `kube-system` namespace
+- Include proper system-level tolerations
+- Use appropriate priority classes
+- Follow system component naming conventions
+
+### Examples
+- **Cilium**: CNI and network policy enforcement
+- **CoreDNS**: Cluster DNS resolution
+- **Metrics Server**: Kubernetes metrics aggregation
+- **Generic Device Plugins**: Hardware device exposure (TUN, GPU, etc.)
+
+### Integration
+Kube-system components are automatically included in the cluster-apps reconciliation through the main kube-system kustomization file.
 
 ## Best Practices
 
@@ -139,6 +164,18 @@ flux get hr -A
 kubectl apply --dry-run=client -f kubernetes/
 ```
 
+# Check Flux status
+flux check
+flux get sources git -A
+flux get ks -A
+flux get hr -A
+
+# Validate manifests
+kubectl apply --dry-run=client -f kubernetes/
+```
+
+
+
 # Flux GitOps Patterns
 
 ## Application Structure
@@ -245,6 +282,35 @@ Applications are organized by functional category:
 - **network**: Networking, DNS, and ingress
 - **storage**: Storage solutions and volume management
 
+## Kube-System Component Structure
+
+Kube-system components follow a specific pattern for system-level infrastructure:
+
+### File Structure
+```
+kubernetes/apps/kube-system/<component>/
+├── app/                    # Main application resources (if applicable)
+├── gateway/                # Gateway-specific resources (if applicable)
+├── ks.yaml                 # Flux Kustomization
+└── (other resources)       # Component-specific resources
+```
+
+### Flux Kustomization Pattern
+Kube-system components use Flux Kustomizations that:
+- Target the `kube-system` namespace
+- Include proper system-level tolerations
+- Use appropriate priority classes
+- Follow system component naming conventions
+
+### Examples
+- **Cilium**: CNI and network policy enforcement
+- **CoreDNS**: Cluster DNS resolution
+- **Metrics Server**: Kubernetes metrics aggregation
+- **Generic Device Plugins**: Hardware device exposure (TUN, GPU, etc.)
+
+### Integration
+Kube-system components are automatically included in the cluster-apps reconciliation through the main kube-system kustomization file.
+
 ## Best Practices
 
 1. **Version Pinning**: Always pin chart versions for stability
@@ -257,6 +323,16 @@ Applications are organized by functional category:
 ## Validation Commands
 
 ```bash
+# Check Flux status
+flux check
+flux get sources git -A
+flux get ks -A
+flux get hr -A
+
+# Validate manifests
+kubectl apply --dry-run=client -f kubernetes/
+```
+
 # Check Flux status
 flux check
 flux get sources git -A
