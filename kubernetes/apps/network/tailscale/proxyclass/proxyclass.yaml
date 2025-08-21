@@ -3,45 +3,34 @@ apiVersion: tailscale.com/v1alpha1
 kind: ProxyClass
 metadata:
   name: default
-  # ProxyClass is cluster-scoped, no namespace
 spec:
-  # Pod configuration for proxies
-  pod:
-    # Container configuration for the proxy
-    tailscaleContainer:
-      resources:
-        limits:
-          cpu: 500m
-          memory: 512Mi
-          squat.ai/tun: "1"  # Request tun device from generic device plugin
-        requests:
-          cpu: 100m
-          memory: 128Mi
+  statefulSet:
+    pod:
+      # Talos Linux requires privileged containers for TUN device access
       securityContext:
-        runAsNonRoot: true
-        runAsUser: 65534
-        runAsGroup: 65534
-        allowPrivilegeEscalation: false
-        readOnlyRootFilesystem: true
-        capabilities:
-          drop: ["ALL"]
-          add: ["NET_ADMIN", "NET_RAW"]  # Required for tun device access
-    # Pod security context
-    securityContext:
-      fsGroup: 65534
-      runAsNonRoot: true
-      runAsUser: 65534
-      runAsGroup: 65534
-    # Labels for proxy pods
-    labels:
-      app.kubernetes.io/component: "tailscale-proxy"
-      app.kubernetes.io/part-of: "tailscale-operator"
-    # Annotations for proxy pods
-    annotations:
-      tailscale.com/proxy-type: "loadbalancer"
-    # Node selector (optional)
-    nodeSelector: {}
-    # Tolerations (optional)
-    tolerations: []
-    # Affinity (optional)
-    affinity: {}
+        runAsNonRoot: false
+        runAsUser: 0
+        fsGroup: 0
+      tailscaleContainer:
+        resources:
+          limits:
+            squat.ai/tun: "1"
+        securityContext:
+          privileged: true
+          allowPrivilegeEscalation: true
+          capabilities:
+            drop: ["ALL"]
+            add: ["NET_ADMIN", "NET_RAW", "SYS_ADMIN"]
+          runAsNonRoot: false
+          runAsUser: 0
+      # Talos Linux tolerations for privileged workloads
+      tolerations:
+      - key: "node-role.kubernetes.io/control-plane"
+        operator: "Exists"
+        effect: "NoSchedule"
+      - key: "node-role.kubernetes.io/master"
+        operator: "Exists"
+        effect: "NoSchedule"
+      # Talos Linux node selector for control plane nodes
+      nodeSelector:
+        node-role.kubernetes.io/control-plane: ""
