@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: protonmail-bridge-v2
+  name: protonmail-bridge
   namespace: util
   labels:
     app.kubernetes.io/name: protonmail-bridge
@@ -85,7 +85,7 @@ spec:
               memory: 512Mi
           volumeMounts:
             - name: protonmail-data
-              mountPath: /root
+              mountPath: /protonmail-data
       volumes:
         - name: protonmail-data
           persistentVolumeClaim:
