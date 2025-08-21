@@ -65,6 +65,8 @@ spec:
         ports:
           http:
             port: *port
+        type: LoadBalancer
+        loadBalancerClass: tailscale
     serviceMonitor:
       app:
         endpoints:
