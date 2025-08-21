@@ -33,7 +33,7 @@ spec:
         - name: protonmail-bridge
           image: shenxn/protonmail-bridge:latest
           command: ["/bin/bash"]
-          args: ["/protonmail/entrypoint.sh", "init"]
+          args: ["-c", "bash /protonmail/entrypoint.sh init && tail -f /dev/null"]
           env:
             - name: BRIDGE_MODE
               value: "combined"
