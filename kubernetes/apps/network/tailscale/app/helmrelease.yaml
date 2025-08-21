@@ -1,0 +1,90 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrepository-source-v1.json
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: &repo tailscale
+  namespace: &namespace network
+spec:
+  interval: 1h
+  url: https://pkgs.tailscale.com/helmcharts
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app tailscale-operator
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: tailscale-operator
+      # Remove version pinning to use latest stable version
+      sourceRef:
+        kind: HelmRepository
+        name: *repo
+        namespace: *namespace
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  valuesFrom:
+    - kind: Secret
+      name: tailscale-oauth-secret
+      valuesKey: oauth
+  values:
+    # Resource configuration for the operator
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+    # Security context for the operator
+    securityContext:
+      runAsNonRoot: true
+      runAsUser: 65534
+      runAsGroup: 65534
+    # Pod security context
+    podSecurityContext:
+      fsGroup: 65534
+      runAsNonRoot: true
+      runAsUser: 65534
+      runAsGroup: 65534
+    # Service account configuration
+    serviceAccount:
+      create: true
+      annotations: {}
+    # RBAC configuration
+    rbac:
+      create: true
+    # Namespace configuration
+    namespaceOverride: ""
+    # Image pull secrets
+    imagePullSecrets: []
+    # Node selector
+    nodeSelector: {}
+    # Tolerations
+    tolerations: []
+    # Affinity
+    affinity: {}
+    # Pod annotations
+    podAnnotations: {}
+    # Pod labels
+    podLabels: {}
+    # Service annotations
+    serviceAnnotations: {}
+    # Service labels
+    serviceLabels: {}
+    # Ingress configuration
+    ingress:
+      enabled: false
+    # Metrics configuration
+    metrics:
+      enabled: false
+    # Logging configuration
+    logLevel: "info"
