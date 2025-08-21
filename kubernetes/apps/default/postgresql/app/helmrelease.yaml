@@ -34,7 +34,10 @@ spec:
       retries: 3
   values:
     auth:
-      postgresPassword: "testpassword123"
+      existingSecret: "postgresql-credentials"
+      secretKeys:
+        adminPasswordKey: "postgres-password"
+        userPasswordKey: "postgres-password"
       database: "testdb"
     primary:
       persistence:
