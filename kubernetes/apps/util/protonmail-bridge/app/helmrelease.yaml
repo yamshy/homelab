@@ -71,13 +71,6 @@ spec:
               limits:
                 cpu: 500m
                 memory: 512Mi
-            volumeMounts:
-              - name: protonmail-data
-                mountPath: /root
-        volumes:
-          - name: protonmail-data
-            persistentVolumeClaim:
-              claimName: protonmail-bridge-data
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
@@ -94,11 +87,12 @@ spec:
             targetPort: imap
         type: LoadBalancer
         loadBalancerClass: tailscale
-    persistentVolumeClaim:
-      protonmail-bridge-data:
-        accessModes:
-          - ReadWriteOnce
-        resources:
-          requests:
-            storage: 1Gi
+    persistence:
+      data:
+        enabled: true
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        size: 1Gi
         # Uses default Longhorn storage class
+        globalMounts:
+          - path: /root
