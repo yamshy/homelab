@@ -7,7 +7,7 @@ metadata:
   namespace: util
 spec:
   interval: 1h
-  url: https://charts.truecharts.org
+  url: oci://tccr.io/truecharts
   type: oci
 ---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
