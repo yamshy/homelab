@@ -5,5 +5,4 @@ kind: Kustomization
 namespace: util
 components:
   - ../../components/common
-resources:
-  - ./protonmail-bridge/ks.yaml
+resources: []
