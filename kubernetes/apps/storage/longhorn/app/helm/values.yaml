@@ -1,0 +1,37 @@
+---
+# Longhorn Helm chart values
+# See https://github.com/longhorn/longhorn/blob/master/chart/values.yaml for all available options
+
+# Enable persistence for Longhorn UI
+persistence:
+  defaultClass: true
+  defaultClassReplicaCount: 2
+
+# Enable metrics for monitoring
+metrics:
+  enabled: true
+
+# Default settings for Longhorn
+defaultSettings:
+  # Create default disk on labeled nodes
+  createDefaultDiskLabeledNodes: true
+  # Default replica count for volumes
+  defaultReplicaCount: 2
+  # Default data path for volumes
+  defaultDataPath: /var/lib/longhorn
+  # Backup target (can be configured later)
+  backupTarget: ""
+  # Backup target credential secret (can be configured later)
+  backupTargetCredentialSecret: ""
+
+# Priority class for Longhorn pods
+priorityClass:
+  enabled: true
+  value: 1000000000
+
+# UI settings
+ui:
+  enabled: true
+  # Service type for the UI
+  service:
+    type: ClusterIP
