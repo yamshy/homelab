@@ -79,7 +79,7 @@ spec:
         storageClass: longhorn
         size: 1Gi
         accessMode: ReadWriteOnce
-        mountPath: "/root"  # Correct mount path for TrueCharts
+        mountPath: "/config"  # Configuration directory for ProtonMail Bridge
 
     # Environment variables for bridge configuration
     env:
