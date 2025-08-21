@@ -1,0 +1,21 @@
+---
+apiVersion: v1
+kind: Node
+metadata:
+  name: homelab-01
+  labels:
+    node.longhorn.io/create-default-disk: "config"
+---
+apiVersion: v1
+kind: Node
+metadata:
+  name: homelab-02
+  labels:
+    node.longhorn.io/create-default-disk: "config"
+---
+apiVersion: v1
+kind: Node
+metadata:
+  name: homelab-03
+  labels:
+    node.longhorn.io/create-default-disk: "config"
