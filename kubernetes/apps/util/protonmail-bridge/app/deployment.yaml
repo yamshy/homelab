@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: protonmail-bridge
+  name: protonmail-bridge-setup
   namespace: util
   labels:
     app.kubernetes.io/name: protonmail-bridge
