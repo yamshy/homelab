@@ -32,6 +32,8 @@ spec:
       containers:
         - name: protonmail-bridge
           image: shenxn/protonmail-bridge:latest
+          command: ["/bin/bash"]
+          args: ["/protonmail/entrypoint.sh", "init"]
           env:
             - name: BRIDGE_MODE
               value: "combined"
@@ -71,7 +73,6 @@ spec:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: false
             capabilities:
-              add: ["NET_BIND_SERVICE"]
               drop: ["ALL"]
             runAsUser: 1000
             runAsGroup: 1000
