@@ -26,6 +26,9 @@ spec:
         runAsUser: 0
         runAsGroup: 0
         fsGroup: 0
+      labels:
+        app.kubernetes.io/name: protonmail-bridge
+        restart-timestamp: "2025-08-21T21:50:00Z"
       containers:
         - name: protonmail-bridge
           image: shenxn/protonmail-bridge:latest
