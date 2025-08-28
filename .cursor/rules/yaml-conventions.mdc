@@ -1,0 +1,158 @@
+---
+description: YAML conventions and best practices for this homelab repository
+globs:
+  - "**/*.yaml"
+  - "**/*.yml"
+  - "kubernetes/**/*.yaml"
+  - "kubernetes/**/*.yml"
+  - "talos/**/*.yaml"
+  - "talos/**/*.yml"
+  - ".github/**/*.yaml"
+  - ".github/**/*.yml"
+alwaysApply: true
+
+---
+# YAML Conventions for Homelab Repository
+
+## YAML Anchors and Aliases
+
+### When to Use Anchors
+
+- **Use anchors (`&name`) when a value is repeated multiple times within the same YAML document**
+- **Don't use anchors across document boundaries** (separated by `---`)
+- **Don't use anchors for single-use values** - it adds unnecessary complexity
+- **Only use anchors when you actually reference the value multiple times**
+
+### Anchor Naming Conventions
+
+- Use descriptive names like `&app`, `&namespace`, `&repo`
+- Keep anchor names short but meaningful
+- Use lowercase with hyphens for multi-word anchors
+
+### Examples
+
+#### ✅ Correct - Anchors within same document
+
+```yaml
+# First document - no anchors needed since values used only once
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: longhorn
+  namespace: longhorn-system
+
+# Second document - use anchors for repeated values
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app longhorn  # Define anchor here since it's used below
+spec:
+  chart:
+    spec:
+      chart: *app  # References the name above - same document
+```
+
+#### ✅ Correct - Mixed approach (anchors + direct values)
+
+```yaml
+# First document - no anchors needed
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: tailscale
+  namespace: network
+
+# Second document - use anchors only where needed
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app tailscale-operator  # Anchor for repeated use
+spec:
+  chart:
+    spec:
+      chart: *app  # References &app from same document
+      sourceRef:
+        kind: HelmRepository
+        name: tailscale      # Direct value (not anchor)
+        namespace: network   # Direct value (not anchor)
+```
+
+#### ❌ Incorrect - Anchors across documents
+
+```yaml
+# First document
+---
+metadata:
+  name: &repo longhorn  # Don't define anchor here
+
+# Second document - can't reference &repo from above
+---
+spec:
+  sourceRef:
+    name: *repo  # This will fail! Anchors can't cross --- boundaries
+```
+
+#### ❌ Incorrect - Unnecessary anchors
+
+```yaml
+# Don't use anchors for single-use values
+metadata:
+  name: &app myapp  # Unnecessary - only used once
+  namespace: &ns default  # Unnecessary - only used once
+spec:
+  name: *app      # This works but adds complexity
+  namespace: *ns  # This works but adds complexity
+```
+
+## File Structure Conventions
+
+### HelmRelease Files
+
+- Use `HelmRepository` for chart sources
+- Include proper yaml-language-server schemas
+- Use consistent remediation settings (retries, cleanupOnFail)
+- Reference ConfigMaps for values via `valuesFrom`
+- **Use anchors only when values are repeated within the same document**
+
+### Flux Kustomization Files
+
+- Always include `prune: true`
+- Use YAML anchors for repeated values like `&app` and `&namespace`
+- Include proper health checks and decryption settings
+- Set appropriate intervals and timeouts
+
+### Values Files
+
+- Store Helm values in `./helm/values.yaml`
+- Use ConfigMap generation in app-level kustomization
+- Include `kustomizeconfig.yaml` for proper name references
+
+## Schema Validation
+
+Always include yaml-language-server schemas for proper validation:
+
+```yaml
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+```
+
+## Common Patterns
+
+- Use `&app` for application names when referenced multiple times
+- Use `&namespace` for namespace references when referenced multiple times
+- **Use direct values when referencing resources defined in other documents**
+- Keep documents focused and avoid unnecessary repetition
+- **Remember: YAML anchors cannot cross document boundaries (---)**
+
+## Key Rules Summary
+
+1. **Anchors within same document**: ✅ Use when values are repeated
+2. **Anchors across documents**: ❌ Never works - use direct values
+3. **Single-use values**: ❌ Don't use anchors - use direct values
+4. **Clean code**: Remove empty/unused fields and unnecessary anchors
+
+
+Always include yaml-language-server schemas for proper validation:1410 NE Campus Pkwy

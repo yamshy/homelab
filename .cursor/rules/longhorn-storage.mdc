@@ -1,0 +1,148 @@
+---
+description: Longhorn storage implementation patterns and best practices for homelab
+alwaysApply: false
+globs:
+  - "kubernetes/apps/storage/longhorn/**/*.yaml"
+  - "kubernetes/apps/storage/longhorn/**/*.yml"
+  - "kubernetes/components/storage/**/*.yaml"
+  - "kubernetes/components/storage/**/*.yml"
+  - "kubernetes/apps/storage/**/*.yaml"
+  - "kubernetes/apps/storage/**/*.yml"
+
+---
+
+# Longhorn Storage Implementation Guide
+
+## Overview
+
+Longhorn is implemented as the default distributed block storage solution for this homelab cluster, providing persistent volumes with replication, snapshots, and backup capabilities.
+
+## File Structure Pattern
+
+Longhorn follows the standard app structure:
+
+```
+kubernetes/apps/storage/longhorn/
+├── app/
+│   ├── helm/
+│   │   ├── values.yaml           # Helm configuration
+│   │   └── kustomizeconfig.yaml  # ConfigMap name references
+│   ├── helmrelease.yaml          # HelmRepository + HelmRelease
+│   └── kustomization.yaml        # App-level kustomization
+├── ks.yaml                       # Flux Kustomization
+└── (parent) kustomization.yaml   # Storage directory kustomization
+```
+
+## Key Configuration Files
+
+### HelmRelease Structure
+
+- Uses [helmrelease.yaml](mdc:kubernetes/apps/storage/longhorn/app/helmrelease.yaml)
+- HelmRepository for chart source
+- YAML anchors within documents (not across documents)
+- Version pinning for stability
+
+### Production Values
+
+Reference [values.yaml](mdc:kubernetes/apps/storage/longhorn/app/helm/values.yaml) for:
+
+- **High Availability**: 3 replicas for CSI components
+- **Priority Classes**: `longhorn-critical` for all components
+- **Metrics**: ServiceMonitor enabled for Prometheus
+- **GitOps Compatibility**: Pre-upgrade checks disabled
+- **Storage Settings**: Replica count, over-provisioning, snapshots
+
+### Flux Integration
+
+- Uses [ks.yaml](mdc:kubernetes/apps/storage/longhorn/ks.yaml) for GitOps
+- Health checks for HelmRelease
+- Proper decryption and post-build substitution
+- Always includes `prune: true`
+
+## Usage Patterns
+
+### Storage Classes Available
+
+- `longhorn` (default) - Standard distributed storage
+- `longhorn-static` - Static provisioning
+
+### PVC Examples
+
+```yaml
+# Uses default Longhorn storage class
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: app-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+```
+
+```yaml
+# Explicit Longhorn storage class
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: app-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 10Gi
+```
+
+## Best Practices
+
+### When to Use Longhorn
+
+- ✅ Persistent application data
+- ✅ Database storage requiring replication
+- ✅ Applications needing snapshots/backups
+- ✅ Multi-node applications requiring RWO volumes
+
+### Configuration Recommendations
+
+- **Replica Count**: 2-3 replicas for production workloads
+- **Node Labeling**: Use `node.longhorn.io/create-default-disk: "config"`
+- **Backup Configuration**: Configure S3/NFS backup targets
+- **Monitoring**: Ensure ServiceMonitor is enabled
+
+### Storage Management
+
+- Access Longhorn UI via service: `longhorn-frontend.longhorn-system.svc.cluster.local`
+- Monitor volume health and replica distribution
+- Configure backup schedules for critical data
+- Use volume snapshots for point-in-time recovery
+
+## Common Issues & Solutions
+
+### Volume Attachment Issues
+
+- Check node disk space and scheduling
+- Verify instance managers are running
+- Review Longhorn manager logs
+
+### Performance Optimization
+
+- Adjust `numberOfReplicas` based on needs
+- Configure node affinity for replica placement
+- Monitor disk I/O and network bandwidth
+
+### Backup Configuration
+
+- Set `defaultSettings.backupTarget` for automated backups
+- Create backup credential secrets
+- Test restore procedures regularly
+
+## Integration with Other Apps
+
+- All apps can use Longhorn by default (no storageClassName needed)
+- Database StatefulSets benefit from Longhorn's replication
+- Use volume snapshots for application-consistent backups
+- Configure backup policies based on data criticality

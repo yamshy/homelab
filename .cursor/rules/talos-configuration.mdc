@@ -1,0 +1,387 @@
+---
+alwaysApply: false
+description: "Talos Linux configuration patterns, machine setup, and cluster management for homelab Kubernetes infrastructure"
+globs:
+  - "talos/**/*.yaml"
+  - "talos/**/*.yml"
+  - "talos/**/*.sops.yaml"
+  - "talos/talconfig.yaml"
+  - "talos/talenv.yaml"
+  - "talos/clusterconfig/**/*.yaml"
+  - "talos/clusterconfig/**/*.yml"
+  - "talos/clusterconfig/patches/**/*.yaml"
+  - "talos/clusterconfig/patches/**/*.yml"
+
+---
+
+# Talos Linux Configuration
+
+## Overview
+
+This homelab uses [Talos Linux](https://github.com/siderolabs/talos), a minimal, immutable Linux distribution designed specifically for Kubernetes. Talos provides secure, automated cluster deployment with no SSH access and automated updates.
+
+## Directory Structure
+
+```
+talos/
+├── clusterconfig/           # Cluster configuration files
+│   ├── patches/            # Machine-specific patches
+│   │   ├── controller/     # Control plane node patches
+│   │   ├── global/         # Global machine configuration
+│   │   └── README.md       # Patch documentation
+│   └── cluster.yaml        # Main cluster configuration
+├── talconfig.yaml          # Talhelper configuration
+├── talenv.yaml             # Environment-specific variables
+└── talsecret.sops.yaml     # Encrypted cluster secrets
+```
+
+## Key Configuration Files
+
+### 1. Talhelper Configuration ([talconfig.yaml](mdc:talos/talconfig.yaml))
+
+- Defines cluster topology and node roles
+- Specifies machine configurations and patches
+- Configures network settings and endpoints
+- Sets up cluster discovery and bootstrap
+
+### 2. Environment Variables ([talenv.yaml](mdc:talos/talenv.yaml))
+
+- Cluster name and domain configuration
+- Network CIDR ranges and gateway settings
+- Kubernetes version and feature flags
+- Machine-specific parameters
+
+### 3. Cluster Configuration ([cluster.yaml](mdc:talos/clusterconfig/cluster.yaml))
+
+- Control plane and worker node definitions
+- Network configuration and CNI settings
+- Kubernetes API server configuration
+- Cluster security and RBAC settings
+
+## Machine Configuration Patches
+
+### Global Patches ([global/](mdc:talos/talos/clusterconfig/patches/global/))
+
+- **machine-files.yaml**: Custom files and configurations
+- **machine-network.yaml**: Network interface and routing
+- **machine-sysctls.yaml**: Kernel parameter tuning
+- **machine-time.yaml**: NTP and time synchronization
+
+### Controller Patches ([controller/](mdc:talos/clusterconfig/patches/controller/))
+
+- **admission-controller-patch.yaml**: API server admission control
+- **cluster.yaml**: Control plane specific settings
+
+## Common Configuration Patterns
+
+### Network Configuration
+
+```yaml
+machine:
+  network:
+    interfaces:
+      - interface: eth0
+        dhcp: true
+        vip:
+          ip: 192.168.1.10  # Control plane VIP
+    nameservers:
+      - 1.1.1.1
+      - 8.8.8.8
+```
+
+### Kubernetes Configuration
+
+```yaml
+cluster:
+  network:
+    cni:
+      name: none  # Cilium will be installed via Flux
+  apiServer:
+    certSANs:
+      - "kubernetes.local"
+      - "cluster.local"
+```
+
+### Machine Security
+
+```yaml
+machine:
+  type: controlplane
+  security:
+    mode: enforcing
+  install:
+    wipe: false
+    image: ghcr.io/siderolabs/installer:v1.5.0
+```
+
+## Deployment Workflow
+
+### 1. Generate Configuration
+
+```bash
+# Generate Talos configuration files
+task talos:generate-config
+
+# This creates machine-specific configs for each node
+```
+
+### 2. Bootstrap Cluster
+
+```bash
+# Bootstrap the first control plane node
+task bootstrap:talos
+
+# Verify cluster is running
+kubectl get nodes
+```
+
+### 3. Install Flux
+
+```bash
+# Install Flux for GitOps
+task bootstrap:apps
+
+# Verify Flux installation
+flux check
+```
+
+## Best Practices
+
+### Security
+
+- **No SSH Access**: Talos is designed without SSH for security
+- **Immutable OS**: System cannot be modified after boot
+- **Automated Updates**: Use Talos update operator for OS updates
+- **Secret Management**: Store sensitive data in SOPS-encrypted files
+
+### Networking
+
+- **Control Plane VIP**: Use a virtual IP for high availability
+- **CNI Installation**: Install Cilium via Flux, not Talos
+- **DNS Configuration**: Configure proper nameservers
+- **Network Policies**: Use Cilium for network policy enforcement
+
+### Monitoring
+
+- **Health Checks**: Monitor Talos machine health
+- **Logs**: Access logs via `talosctl logs`
+- **Metrics**: Use Talos metrics for monitoring
+- **Updates**: Monitor update status and rollbacks
+
+## Troubleshooting
+
+### Common Commands
+
+```bash
+# Check machine status
+talosctl --nodes <node-ip> health
+
+# View machine configuration
+talosctl --nodes <node-ip> config
+
+# Access machine logs
+talosctl --nodes <node-ip> logs
+
+# Reset machine (if needed)
+talosctl --nodes <node-ip> reset
+```
+
+### Debugging
+
+- Use `talosctl` for machine access
+- Check machine health and status
+- Review configuration validation
+- Monitor bootstrap process logs
+
+## Integration with Flux
+
+- Talos provides the base Kubernetes cluster
+- Flux manages all applications and configurations
+- Cilium CNI installed via Flux, not Talos
+- Cluster updates managed through GitOps workflow
+
+# Talos Linux Configuration
+
+## Overview
+
+This homelab uses [Talos Linux](https://github.com/siderolabs/talos), a minimal, immutable Linux distribution designed specifically for Kubernetes. Talos provides secure, automated cluster deployment with no SSH access and automated updates.
+
+## Directory Structure
+
+```
+talos/
+├── clusterconfig/           # Cluster configuration files
+│   ├── patches/            # Machine-specific patches
+│   │   ├── controller/     # Control plane node patches
+│   │   ├── global/         # Global machine configuration
+│   │   └── README.md       # Patch documentation
+│   └── cluster.yaml        # Main cluster configuration
+├── talconfig.yaml          # Talhelper configuration
+├── talenv.yaml             # Environment-specific variables
+└── talsecret.sops.yaml     # Encrypted cluster secrets
+```
+
+## Key Configuration Files
+
+### 1. Talhelper Configuration ([talconfig.yaml](mdc:talos/talconfig.yaml))
+
+- Defines cluster topology and node roles
+- Specifies machine configurations and patches
+- Configures network settings and endpoints
+- Sets up cluster discovery and bootstrap
+
+### 2. Environment Variables ([talenv.yaml](mdc:talos/talenv.yaml))
+
+- Cluster name and domain configuration
+- Network CIDR ranges and gateway settings
+- Kubernetes version and feature flags
+- Machine-specific parameters
+
+### 3. Cluster Configuration ([cluster.yaml](mdc:talos/clusterconfig/cluster.yaml))
+
+- Control plane and worker node definitions
+- Network configuration and CNI settings
+- Kubernetes API server configuration
+- Cluster security and RBAC settings
+
+## Machine Configuration Patches
+
+### Global Patches ([global/](mdc:talos/talos/clusterconfig/patches/global/))
+
+- **machine-files.yaml**: Custom files and configurations
+- **machine-network.yaml**: Network interface and routing
+- **machine-sysctls.yaml**: Kernel parameter tuning
+- **machine-time.yaml**: NTP and time synchronization
+
+### Controller Patches ([controller/](mdc:talos/clusterconfig/patches/controller/))
+
+- **admission-controller-patch.yaml**: API server admission control
+- **cluster.yaml**: Control plane specific settings
+
+## Common Configuration Patterns
+
+### Network Configuration
+
+```yaml
+machine:
+  network:
+    interfaces:
+      - interface: eth0
+        dhcp: true
+        vip:
+          ip: 192.168.1.10  # Control plane VIP
+    nameservers:
+      - 1.1.1.1
+      - 8.8.8.8
+```
+
+### Kubernetes Configuration
+
+```yaml
+cluster:
+  network:
+    cni:
+      name: none  # Cilium will be installed via Flux
+  apiServer:
+    certSANs:
+      - "kubernetes.local"
+      - "cluster.local"
+```
+
+### Machine Security
+
+```yaml
+machine:
+  type: controlplane
+  security:
+    mode: enforcing
+  install:
+    wipe: false
+    image: ghcr.io/siderolabs/installer:v1.5.0
+```
+
+## Deployment Workflow
+
+### 1. Generate Configuration
+
+```bash
+# Generate Talos configuration files
+task talos:generate-config
+
+# This creates machine-specific configs for each node
+```
+
+### 2. Bootstrap Cluster
+
+```bash
+# Bootstrap the first control plane node
+task bootstrap:talos
+
+# Verify cluster is running
+kubectl get nodes
+```
+
+### 3. Install Flux
+
+```bash
+# Install Flux for GitOps
+task bootstrap:apps
+
+# Verify Flux installation
+flux check
+```
+
+## Best Practices
+
+### Security
+
+- **No SSH Access**: Talos is designed without SSH for security
+- **Immutable OS**: System cannot be modified after boot
+- **Automated Updates**: Use Talos update operator for OS updates
+- **Secret Management**: Store sensitive data in SOPS-encrypted files
+
+### Networking
+
+- **Control Plane VIP**: Use a virtual IP for high availability
+- **CNI Installation**: Install Cilium via Flux, not Talos
+- **DNS Configuration**: Configure proper nameservers
+- **Network Policies**: Use Cilium for network policy enforcement
+
+### Monitoring
+
+- **Health Checks**: Monitor Talos machine health
+- **Logs**: Access logs via `talosctl logs`
+- **Metrics**: Use Talos metrics for monitoring
+- **Updates**: Monitor update status and rollbacks
+
+## Troubleshooting
+
+### Common Commands
+
+```bash
+# Check machine status
+talosctl --nodes <node-ip> health
+
+# View machine configuration
+talosctl --nodes <node-ip> config
+
+# Access machine logs
+talosctl --nodes <node-ip> logs
+
+# Reset machine (if needed)
+talosctl --nodes <node-ip> reset
+```
+
+### Debugging
+
+- Use `talosctl` for machine access
+- Check machine health and status
+- Review configuration validation
+- Monitor bootstrap process logs
+
+## Integration with Flux
+
+- Talos provides the base Kubernetes cluster
+- Flux manages all applications and configurations
+- Cilium CNI installed via Flux, not Talos
+- Cluster updates managed through GitOps workflow
