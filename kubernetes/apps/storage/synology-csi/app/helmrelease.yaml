@@ -4,7 +4,7 @@ apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
   name: synology-csi-chart
-  namespace: flux-system
+  namespace: synology-csi-system # Required for Renovate lookups
 spec:
   interval: 10m
   url: https://christian-schlichtherle.github.io/synology-csi-chart
@@ -14,6 +14,7 @@ apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: synology-csi
+  namespace: synology-csi-system
 spec:
   interval: 10m
   chart:
@@ -23,7 +24,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: synology-csi-chart
-        namespace: flux-system
+        namespace: synology-csi-system
   install:
     remediation:
       retries: -1
