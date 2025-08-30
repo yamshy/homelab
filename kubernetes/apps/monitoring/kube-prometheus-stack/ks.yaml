@@ -20,11 +20,11 @@ spec:
       namespace: *namespace
     - apiVersion: monitoring.coreos.com/v1
       kind: Prometheus
-      name: prometheus
+      name: kube-prometheus-stack-prometheus
       namespace: *namespace
     - apiVersion: monitoring.coreos.com/v1
       kind: Alertmanager
-      name: alertmanager
+      name: kube-prometheus-stack-alertmanager
       namespace: *namespace
   healthCheckExprs:
     - apiVersion: monitoring.coreos.com/v1
