@@ -12,6 +12,7 @@ spec:
   ref:
     tag: v55.5.0
   url: oci://ghcr.io/prometheus-community/charts/kube-prometheus-stack
+
 ---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
 apiVersion: helm.toolkit.fluxcd.io/v2
@@ -63,6 +64,16 @@ spec:
         scrapeInterval: 30s
         evaluationInterval: 30s
 
+        # Configure Tailscale LoadBalancer for external access
+        service:
+          type: LoadBalancer
+          loadBalancerClass: tailscale
+          ports:
+            - name: http
+              port: 80
+              targetPort: 9090
+              protocol: TCP
+
         # Enable service monitors for kube-system components
         serviceMonitorSelectorNilUsesHelmValues: false
         serviceMonitorSelector: {}
@@ -92,6 +103,11 @@ spec:
       serviceMonitor:
         enabled: true
 
+      # Configure Tailscale LoadBalancer for external access
+      service:
+        type: LoadBalancer
+        loadBalancerClass: tailscale
+
       # Dashboard providers
       dashboardProviders:
         dashboardproviders.yaml:
@@ -118,6 +134,16 @@ spec:
               resources:
                 requests:
                   storage: 10Gi
+
+        # Configure Tailscale LoadBalancer for external access
+        service:
+          type: LoadBalancer
+          loadBalancerClass: tailscale
+          ports:
+            - name: http
+              port: 80
+              targetPort: 9093
+              protocol: TCP
 
         # Resource limits
         resources:
