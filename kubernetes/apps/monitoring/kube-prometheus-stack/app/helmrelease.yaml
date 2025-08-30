@@ -37,6 +37,8 @@ spec:
       # Use Longhorn storage class
       storageClass: "longhorn"
 
+
+
     # Prometheus configuration
     prometheus:
       prometheusSpec:
@@ -69,10 +71,10 @@ spec:
         serviceMonitorSelector: {}
         serviceMonitorNamespaceSelector: {}
 
-    # Configure Tailscale LoadBalancer for external access
-    service:
-      type: LoadBalancer
-      loadBalancerClass: tailscale
+      # Configure Tailscale LoadBalancer for external access
+      service:
+        type: LoadBalancer
+        loadBalancerClass: tailscale
 
     # Grafana configuration
     grafana:
