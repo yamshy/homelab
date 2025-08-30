@@ -90,9 +90,6 @@ spec:
           memory: 512Mi
           cpu: 300m
 
-      # Admin user configuration
-      adminPassword: "admin"  # Change this in production
-
       # Enable service monitors
       serviceMonitor:
         enabled: true
