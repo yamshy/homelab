@@ -68,11 +68,7 @@ spec:
         service:
           type: LoadBalancer
           loadBalancerClass: tailscale
-          ports:
-            - name: http
-              port: 80
-              targetPort: 9090
-              protocol: TCP
+
 
         # Enable service monitors for kube-system components
         serviceMonitorSelectorNilUsesHelmValues: false
@@ -139,11 +135,6 @@ spec:
         service:
           type: LoadBalancer
           loadBalancerClass: tailscale
-          ports:
-            - name: http
-              port: 80
-              targetPort: 9093
-              protocol: TCP
 
         # Resource limits
         resources:
@@ -153,6 +144,12 @@ spec:
           limits:
             memory: 256Mi
             cpu: 200m
+
+      # Expose Alertmanager via Tailscale LoadBalancer
+      service:
+        type: LoadBalancer
+        loadBalancerClass: tailscale
+        port: 80
 
     # Kube-state-metrics configuration
     kubeStateMetrics:
