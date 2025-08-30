@@ -1,0 +1,65 @@
+---
+grafana:
+  admin:
+    existingSecret: grafana-admin
+    userKey: admin-user
+    passwordKey: admin-password
+  service:
+    type: LoadBalancer
+    loadBalancerClass: tailscale
+    annotations:
+      tailscale.com/hostname: grafana
+    port: 80
+  ingress:
+    enabled: false
+
+prometheus:
+  service:
+    type: LoadBalancer
+    loadBalancerClass: tailscale
+    annotations:
+      tailscale.com/hostname: prometheus
+    port: 9090
+  ingress:
+    enabled: false
+  prometheusSpec:
+    retention: 7d
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: longhorn
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 20Gi
+    # remoteWrite:
+    #   - url: https://example.com/prom/push
+    #     # TODO: configure remote write (Grafana Cloud/Thanos/Mimir)
+
+alertmanager:
+  service:
+    type: LoadBalancer
+    loadBalancerClass: tailscale
+    annotations:
+      tailscale.com/hostname: alertmanager
+    port: 9093
+  ingress:
+    enabled: false
+  alertmanagerSpec:
+    storage:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: longhorn
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 20Gi
+    configSecret: alertmanager-config
+
+kubeStateMetrics:
+  enabled: true
+
+nodeExporter:
+  enabled: true
+
+# TODO: add Gatekeeper ServiceMonitor when Gatekeeper is deployed

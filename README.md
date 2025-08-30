@@ -39,6 +39,9 @@ Welcome to my personal homelab Kubernetes infrastructure repository! This is a p
 - **Longhorn**: Distributed block storage with replication
 - **Storage Classes**: Automated volume provisioning
 
+### Monitoring (`monitoring`)
+- **kube-prometheus-stack**: Prometheus Operator with Prometheus, Alertmanager, Grafana, and exporters
+
 ### Applications (`default`)
 - **Echo**: HTTP echo service for testing and health checks
 - **PostgreSQL**: Database with persistent storage
@@ -155,6 +158,22 @@ kubectl get events -n <namespace> --sort-by='.metadata.creationTimestamp'
 ```
 
 ## 📊 Monitoring & Observability
+
+kube-prometheus-stack aggregates Prometheus, Alertmanager, Grafana, kube-state-metrics, and node-exporter for full-cluster metrics and dashboards. The stack is deployed via Flux from the `prometheus-community/kube-prometheus-stack` chart pinned at version 77.1.0.
+
+### Access via Tailscale
+- **Grafana**: `http://grafana` (tailnet)
+- **Prometheus**: `http://prometheus`
+- **Alertmanager**: `http://alertmanager`
+Access is restricted via Tailscale ACLs.
+
+### Validation
+1. Verify Prometheus targets include `kubernetes-apiservers`, `kubelet`, `node-exporter`, and `kube-state-metrics`.
+2. Confirm Grafana and Alertmanager UIs load at their hostnames.
+3. _TODO_: add sanitized Grafana dashboard screenshots.
+
+### Next Steps
+- Integrate Gatekeeper and Falco dashboards and ServiceMonitors.
 
 ### Metrics Collection
 - **Metrics Server**: Kubernetes resource metrics
