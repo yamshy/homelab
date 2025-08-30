@@ -7,3 +7,6 @@ components:
   - ../../components/common
 resources:
   - ./kube-prometheus-stack/ks.yaml
+patchesStrategicMerge:
+  - ./kube-prometheus-stack/patches/prometheus-service-patch.yaml
+  - ./kube-prometheus-stack/patches/alertmanager-service-patch.yaml
