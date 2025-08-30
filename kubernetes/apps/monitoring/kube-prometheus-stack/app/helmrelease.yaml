@@ -38,6 +38,8 @@ spec:
     global:
       # Use Longhorn storage class
       storageClass: "longhorn"
+      # Force upgrade timestamp
+      upgradeTimestamp: "2025-08-30T08:00:00Z"
 
 
 
