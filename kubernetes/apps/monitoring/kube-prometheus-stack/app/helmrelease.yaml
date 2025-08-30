@@ -64,16 +64,15 @@ spec:
         scrapeInterval: 30s
         evaluationInterval: 30s
 
-        # Configure Tailscale LoadBalancer for external access
-        service:
-          type: LoadBalancer
-          loadBalancerClass: tailscale
-
-
         # Enable service monitors for kube-system components
         serviceMonitorSelectorNilUsesHelmValues: false
         serviceMonitorSelector: {}
         serviceMonitorNamespaceSelector: {}
+
+      # Configure Tailscale LoadBalancer for external access
+      service:
+        type: LoadBalancer
+        loadBalancerClass: tailscale
 
     # Grafana configuration
     grafana:
@@ -130,11 +129,6 @@ spec:
               resources:
                 requests:
                   storage: 10Gi
-
-        # Configure Tailscale LoadBalancer for external access
-        service:
-          type: LoadBalancer
-          loadBalancerClass: tailscale
 
         # Resource limits
         resources:
