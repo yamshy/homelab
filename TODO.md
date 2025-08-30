@@ -25,3 +25,30 @@ kubernetes/apps/<category>/<app-name>/
 - Easier to maintain and review
 - Consistent with repository conventions
 - No need for ConfigMap generation
+
+## Kube-Prometheus-Stack Tailscale Configuration
+
+### Problem
+- The kube-prometheus-stack Helm chart service configurations were incorrectly structured
+- Original configuration had Prometheus service nested under `prometheus.prometheusSpec.service`
+- Chart requires service configurations at component level (e.g., `prometheus.service`, `alertmanager.service`)
+- This prevented Tailscale LoadBalancer assignment for Prometheus and Alertmanager services
+
+### What Was Done
+- Moved Prometheus service configuration to `prometheus.service` with `type: LoadBalancer` and `loadBalancerClass: tailscale`
+- Moved Alertmanager service configuration to `alertmanager.service` with `type: LoadBalancer` and `loadBalancerClass: tailscale`
+- Grafana was already correctly configured and working
+- Committed changes and Flux reconciled successfully
+- Services are now LoadBalancers, waiting for Tailscale operator to assign IPs
+
+### What to Check Later
+- Verify all services (Grafana, Prometheus, Alertmanager) have Tailscale IPs assigned
+- Test accessibility via Tailscale hostnames
+- Ensure services are functioning properly with Tailscale LoadBalancers
+- Check Tailscale operator logs if IPs are not assigned within expected timeframe
+
+### Login Setup Notes
+- [ ] Set up login credentials for Grafana
+- [ ] Set up login credentials for Prometheus (if needed)
+- [ ] Set up login credentials for Alertmanager (if needed)
+- [ ] Document access URLs and credentials securely
