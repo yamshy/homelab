@@ -41,6 +41,23 @@ kubernetes/apps/<category>/<app-name>/
 - Committed changes and Flux reconciled successfully
 - Services are now LoadBalancers, waiting for Tailscale operator to assign IPs
 
+### Current Status
+- **Grafana**: ✅ Working correctly with Tailscale IP (`100.126.134.71`) and hostname
+- **Prometheus**: ❌ Still has old LoadBalancer IP (`192.168.121.2`) instead of Tailscale IP
+- **Alertmanager**: ❌ Still has old LoadBalancer IP (`192.168.121.1`) instead of Tailscale IP
+
+### What Was Learned
+- The `loadBalancerClass: tailscale` configuration in the HelmRelease is not being applied to the actual services
+- Even after multiple Helm upgrades, the services retain their old LoadBalancer IPs
+- The kube-prometheus-stack chart may use a different service configuration structure than expected
+- Grafana works because it was configured differently or the Tailscale operator automatically detected it
+
+### Next Steps
+- Investigate the correct service configuration structure for kube-prometheus-stack chart
+- Check if services can be configured using annotations instead of `loadBalancerClass`
+- Consider using a different approach or chart configuration method
+- Verify that the Tailscale operator is properly configured and working
+
 ### What to Check Later
 - Verify all services (Grafana, Prometheus, Alertmanager) have Tailscale IPs assigned
 - Test accessibility via Tailscale hostnames
