@@ -69,10 +69,9 @@ spec:
         serviceMonitorSelector: {}
         serviceMonitorNamespaceSelector: {}
 
-      # Configure Tailscale LoadBalancer for external access
+      # Prometheus is internal - no external access needed
       service:
-        type: LoadBalancer
-        loadBalancerClass: tailscale
+        type: ClusterIP
 
     # Grafana configuration
     grafana:
@@ -139,11 +138,9 @@ spec:
             memory: 256Mi
             cpu: 200m
 
-      # Expose Alertmanager via Tailscale LoadBalancer
+      # Alertmanager is internal - no external access needed
       service:
-        type: LoadBalancer
-        loadBalancerClass: tailscale
-        port: 80
+        type: ClusterIP
 
     # Kube-state-metrics configuration
     kubeStateMetrics:
@@ -230,23 +227,3 @@ spec:
           - source_labels: [__meta_kubernetes_pod_name]
             action: replace
             target_label: kubernetes_pod_name
-
-  postRenderers:
-    - kustomize:
-        patches:
-          - target:
-              kind: Service
-              name: kube-prometheus-stack-prometheus
-              namespace: monitoring
-            patch: |
-              - op: add
-                path: /spec/loadBalancerClass
-                value: tailscale
-          - target:
-              kind: Service
-              name: kube-prometheus-stack-alertmanager
-              namespace: monitoring
-            patch: |
-              - op: add
-                path: /spec/loadBalancerClass
-                value: tailscale
