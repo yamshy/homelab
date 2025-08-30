@@ -230,3 +230,23 @@ spec:
           - source_labels: [__meta_kubernetes_pod_name]
             action: replace
             target_label: kubernetes_pod_name
+
+  postRenderers:
+    - kustomize:
+        patches:
+          - target:
+              kind: Service
+              name: kube-prometheus-stack-prometheus
+              namespace: monitoring
+            patch: |
+              - op: add
+                path: /spec/loadBalancerClass
+                value: tailscale
+          - target:
+              kind: Service
+              name: kube-prometheus-stack-alertmanager
+              namespace: monitoring
+            patch: |
+              - op: add
+                path: /spec/loadBalancerClass
+                value: tailscale
