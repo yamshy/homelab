@@ -1,0 +1,215 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/ocirepository-source-v1.json
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: kube-prometheus-stack
+spec:
+  interval: 5m
+  layerSelector:
+    mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
+    operation: copy
+  ref:
+    tag: v55.5.0
+  url: oci://registry-1.docker.io/prometheuscommunity
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: kube-prometheus-stack
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: kube-prometheus-stack
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  values:
+    # Global configuration
+    global:
+      # Use Longhorn storage class
+      storageClass: "longhorn"
+
+    # Prometheus configuration
+    prometheus:
+      prometheusSpec:
+        # Use Longhorn for persistent storage
+        storageSpec:
+          volumeClaimTemplate:
+            spec:
+              storageClassName: longhorn
+              accessModes: ["ReadWriteOnce"]
+              resources:
+                requests:
+                  storage: 50Gi
+
+        # Resource limits for homelab
+        resources:
+          requests:
+            memory: 256Mi
+            cpu: 100m
+          limits:
+            memory: 1Gi
+            cpu: 500m
+
+        # Retention and scrape intervals
+        retention: 7d
+        scrapeInterval: 30s
+        evaluationInterval: 30s
+
+        # Enable service monitors for kube-system components
+        serviceMonitorSelectorNilUsesHelmValues: false
+        serviceMonitorSelector: {}
+        serviceMonitorNamespaceSelector: {}
+
+    # Grafana configuration
+    grafana:
+      # Enable persistent storage
+      persistence:
+        enabled: true
+        storageClassName: longhorn
+        size: 10Gi
+
+      # Resource limits
+      resources:
+        requests:
+          memory: 128Mi
+          cpu: 100m
+        limits:
+          memory: 512Mi
+          cpu: 300m
+
+      # Admin user configuration
+      adminPassword: "admin"  # Change this in production
+
+      # Enable service monitors
+      serviceMonitor:
+        enabled: true
+
+      # Dashboard providers
+      dashboardProviders:
+        dashboardproviders.yaml:
+          apiVersion: 1
+          providers:
+            - name: 'default'
+              orgId: 1
+              folder: ''
+              type: file
+              disableDeletion: false
+              editable: true
+              options:
+                path: /var/lib/grafana/dashboards/default
+
+    # Alertmanager configuration
+    alertmanager:
+      alertmanagerSpec:
+        # Use Longhorn for persistent storage
+        storage:
+          volumeClaimTemplate:
+            spec:
+              storageClassName: longhorn
+              accessModes: ["ReadWriteOnce"]
+              resources:
+                requests:
+                  storage: 10Gi
+
+        # Resource limits
+        resources:
+          requests:
+            memory: 64Mi
+            cpu: 50m
+          limits:
+            memory: 256Mi
+            cpu: 200m
+
+    # Kube-state-metrics configuration
+    kubeStateMetrics:
+      # Resource limits
+      resources:
+        requests:
+          memory: 64Mi
+          cpu: 50m
+        limits:
+          memory: 128Mi
+          cpu: 100m
+
+      # Enable service monitor
+      serviceMonitor:
+        enabled: true
+
+    # Node-exporter configuration
+    nodeExporter:
+      # Resource limits
+      resources:
+        requests:
+          memory: 32Mi
+          cpu: 25m
+        limits:
+          memory: 64Mi
+          cpu: 100m
+
+      # Enable service monitor
+      serviceMonitor:
+        enabled: true
+
+    # Kubelet configuration
+    kubelet:
+      # Enable service monitor
+      serviceMonitor:
+        enabled: true
+
+    # Prometheus Operator configuration
+    prometheusOperator:
+      # Resource limits
+      resources:
+        requests:
+          memory: 128Mi
+          cpu: 100m
+        limits:
+          memory: 256Mi
+          cpu: 200m
+
+      # Enable admission webhooks
+      admissionWebhooks:
+        enabled: true
+        failurePolicy: Ignore
+
+      # Enable service monitor
+      serviceMonitor:
+        enabled: true
+
+    # Additional scrape configs for homelab services
+    additionalScrapeConfigs:
+      - job_name: 'kubernetes-service-endpoints'
+        kubernetes_sd_configs:
+          - role: endpoints
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scrape]
+            action: keep
+            regex: true
+          - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_path]
+            action: replace
+            target_label: __metrics_path__
+            regex: (.+)
+          - source_labels: [__address__, __meta_kubernetes_service_annotation_prometheus_io_port]
+            action: replace
+            regex: ([^:]+)(?::\d+)?;(\d+)
+            replacement: $1:$2
+            target_label: __address__
+          - action: labelmap
+            regex: __meta_kubernetes_service_label_(.+)
+          - source_labels: [__meta_kubernetes_namespace]
+            action: replace
+            target_label: kubernetes_namespace
+          - source_labels: [__meta_kubernetes_service_name]
+            action: replace
+            target_label: kubernetes_service_name
+          - source_labels: [__meta_kubernetes_pod_name]
+            action: replace
+            target_label: kubernetes_pod_name
