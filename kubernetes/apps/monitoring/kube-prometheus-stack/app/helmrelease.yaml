@@ -19,6 +19,8 @@ apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: kube-prometheus-stack
+  annotations:
+    fluxcd.io/force-reconcile: "2025-08-30T08:00:00Z"
 spec:
   interval: 1h
   chartRef:
