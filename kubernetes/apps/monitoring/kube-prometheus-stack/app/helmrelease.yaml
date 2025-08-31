@@ -35,7 +35,7 @@ spec:
     # Global configuration
     global:
       # Use synology-csi storage class
-      storageClass: "synology-csi-iscsi-delete"
+      storageClass: "synology-iscsi-delete"
 
     # Prometheus configuration
     prometheus:
@@ -44,7 +44,7 @@ spec:
         storageSpec:
           volumeClaimTemplate:
             spec:
-              storageClassName: synology-csi-iscsi-delete
+              storageClassName: synology-iscsi-delete
               accessModes: ["ReadWriteOnce"]
               resources:
                 requests:
@@ -84,7 +84,7 @@ spec:
       # Enable persistent storage
       persistence:
         enabled: true
-        storageClassName: synology-csi-iscsi-delete
+        storageClassName: synology-iscsi-delete
         size: 10Gi
 
       # Resource limits
@@ -128,7 +128,7 @@ spec:
         storage:
           volumeClaimTemplate:
             spec:
-              storageClassName: synology-csi-iscsi-delete
+              storageClassName: synology-iscsi-delete
               accessModes: ["ReadWriteOnce"]
               resources:
                 requests:

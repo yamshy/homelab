@@ -1,27 +1,9 @@
 ---
-# StorageClass definitions for Synology CSI driver
-apiVersion: storage.k8s.io/v1
-kind: StorageClass
-metadata:
-  name: synology-iscsi-retain
-  namespace: storage
-  annotations:
-    storageclass.kubernetes.io/is-default-class: "false"
-provisioner: csi.san.synology.com
-parameters:
-  protocol: "iscsi"
-  dsm: "192.168.121.240"
-  location: "/volume1"
-  fsType: "ext4"
-  formatOptions: "--nodiscard"
-reclaimPolicy: Retain
-allowVolumeExpansion: true
----
+# StorageClass definitions for Synology CSI driver following official documentation
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
   name: synology-iscsi-delete
-  namespace: storage
   annotations:
     storageclass.kubernetes.io/is-default-class: "false"
 provisioner: csi.san.synology.com
@@ -33,3 +15,21 @@ parameters:
   formatOptions: "--nodiscard"
 reclaimPolicy: Delete
 allowVolumeExpansion: true
+volumeBindingMode: Immediate
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: synology-iscsi-retain
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "false"
+provisioner: csi.san.synology.com
+parameters:
+  protocol: "iscsi"
+  dsm: "192.168.121.240"
+  location: "/volume1"
+  fsType: "ext4"
+  formatOptions: "--nodiscard"
+reclaimPolicy: Retain
+allowVolumeExpansion: true
+volumeBindingMode: Immediate

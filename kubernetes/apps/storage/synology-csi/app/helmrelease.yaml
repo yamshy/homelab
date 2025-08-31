@@ -37,5 +37,9 @@ spec:
     clientInfoSecret:
       name: client-info-secret
 
-    # StorageClasses will be created explicitly in separate manifests
-    # This prevents template errors by not providing the storageClasses section
+    # Disable iSCSI storage class creation - we use manually created ones following official docs
+    storageClasses:
+      iscsi-delete:
+        disabled: true
+      iscsi-retain:
+        disabled: true
