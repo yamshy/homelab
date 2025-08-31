@@ -4,7 +4,7 @@ apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
   name: longhorn
-  namespace: longhorn-system # Required for Renovate lookups
+  namespace: storage
 spec:
   interval: 1h
   url: https://charts.longhorn.io
@@ -14,6 +14,7 @@ apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: &app longhorn
+  namespace: storage
 spec:
   interval: 1h
   chart:
@@ -23,7 +24,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: longhorn
-        namespace: longhorn-system
+        namespace: storage
   install:
     remediation:
       retries: -1

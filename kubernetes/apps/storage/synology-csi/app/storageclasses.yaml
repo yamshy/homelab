@@ -4,7 +4,7 @@ apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
   name: synology-iscsi-retain
-  namespace: synology-csi-system
+  namespace: storage
   annotations:
     storageclass.kubernetes.io/is-default-class: "false"
 provisioner: csi.san.synology.com
@@ -21,7 +21,7 @@ apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
   name: synology-iscsi-delete
-  namespace: synology-csi-system
+  namespace: storage
   annotations:
     storageclass.kubernetes.io/is-default-class: "false"
 provisioner: csi.san.synology.com
