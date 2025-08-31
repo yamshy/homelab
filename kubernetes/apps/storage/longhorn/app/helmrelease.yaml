@@ -31,6 +31,69 @@ spec:
     cleanupOnFail: true
     remediation:
       retries: 3
-  valuesFrom:
-    - kind: ConfigMap
-      name: longhorn-values
+  values:
+    # Enable persistence for Longhorn UI
+    persistence:
+      defaultClass: true
+      defaultClassReplicaCount: 2
+
+    # Enable metrics for monitoring
+    metrics:
+      enabled: true
+      serviceMonitor:
+        enabled: true
+        interval: 30s
+
+    # Default settings for Longhorn
+    defaultSettings:
+      # Create default disk on labeled nodes
+      createDefaultDiskLabeledNodes: true
+      # Default replica count for volumes
+      defaultReplicaCount: 2
+      # Default data path for volumes
+      defaultDataPath: /var/lib/longhorn
+      # Enable offline replica rebuilding
+      offlineReplicaRebuilding: true
+      # Storage over-provisioning percentage
+      storageOverProvisioningPercentage: 100
+      # Concurrent backup restore per node limit
+      concurrentBackupRestorePerNodeLimit: 5
+      # Snapshot max count
+      snapshotMaxCount: 250
+
+    # Priority class for Longhorn pods
+    priorityClass:
+      enabled: true
+      value: 1000000000
+
+    # UI settings
+    ui:
+      enabled: true
+      replicas: 2
+      # Service type for the UI
+      service:
+        type: ClusterIP
+
+    # CSI settings for high availability
+    csi:
+      attacherReplicaCount: 3
+      provisionerReplicaCount: 3
+      resizerReplicaCount: 3
+      snapshotterReplicaCount: 3
+
+    # Manager settings
+    longhornManager:
+      log:
+        format: plain
+      priorityClass: "longhorn-critical"
+
+    # Driver settings
+    longhornDriver:
+      log:
+        format: plain
+      priorityClass: "longhorn-critical"
+
+    # Pre-upgrade checker (disable for GitOps)
+    preUpgradeChecker:
+      jobEnabled: false
+      upgradeVersionCheck: false
