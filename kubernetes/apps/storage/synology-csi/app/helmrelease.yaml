@@ -37,6 +37,5 @@ spec:
     clientInfoSecret:
       name: client-info-secret
 
-    # Disable chart-managed StorageClasses since we'll create them explicitly
-    storageClasses:
-      enabled: false
+    # StorageClasses will be created explicitly in separate manifests
+    # This prevents template errors by not providing the storageClasses section
