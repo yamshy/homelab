@@ -34,17 +34,17 @@ spec:
   values:
     # Global configuration
     global:
-      # Use Longhorn storage class
-      storageClass: "longhorn"
+      # Use synology-csi storage class
+      storageClass: "synology-csi-iscsi-delete"
 
     # Prometheus configuration
     prometheus:
       prometheusSpec:
-        # Use Longhorn for persistent storage
+        # Use synology-csi for persistent storage
         storageSpec:
           volumeClaimTemplate:
             spec:
-              storageClassName: longhorn
+              storageClassName: synology-csi-iscsi-delete
               accessModes: ["ReadWriteOnce"]
               resources:
                 requests:
@@ -84,7 +84,7 @@ spec:
       # Enable persistent storage
       persistence:
         enabled: true
-        storageClassName: longhorn
+        storageClassName: synology-csi-iscsi-delete
         size: 10Gi
 
       # Resource limits
@@ -124,11 +124,11 @@ spec:
     # Alertmanager configuration
     alertmanager:
       alertmanagerSpec:
-        # Use Longhorn for persistent storage
+        # Use synology-csi for persistent storage
         storage:
           volumeClaimTemplate:
             spec:
-              storageClassName: longhorn
+              storageClassName: synology-csi-iscsi-delete
               accessModes: ["ReadWriteOnce"]
               resources:
                 requests:
