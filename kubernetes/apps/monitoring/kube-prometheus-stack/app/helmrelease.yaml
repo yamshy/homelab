@@ -85,7 +85,7 @@ spec:
       # Enable persistent storage
       persistence:
         enabled: true
-        storageClassName: synology-iscsi-delete
+        storageClassName: longhorn
         size: 10Gi
 
       # Resource limits
@@ -113,9 +113,9 @@ spec:
         dashboardproviders.yaml:
           apiVersion: 1
           providers:
-            - name: 'default'
+            - name: "default"
               orgId: 1
-              folder: ''
+              folder: ""
               type: file
               disableDeletion: false
               editable: true
@@ -129,7 +129,7 @@ spec:
         storage:
           volumeClaimTemplate:
             spec:
-              storageClassName: synology-iscsi-delete
+              storageClassName: longhorn
               accessModes: ["ReadWriteOnce"]
               resources:
                 requests:
@@ -206,18 +206,24 @@ spec:
 
     # Additional scrape configs for homelab services
     additionalScrapeConfigs:
-      - job_name: 'kubernetes-service-endpoints'
+      - job_name: "kubernetes-service-endpoints"
         kubernetes_sd_configs:
           - role: endpoints
         relabel_configs:
-          - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scrape]
+          - source_labels:
+              [__meta_kubernetes_service_annotation_prometheus_io_scrape]
             action: keep
             regex: true
-          - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_path]
+          - source_labels:
+              [__meta_kubernetes_service_annotation_prometheus_io_path]
             action: replace
             target_label: __metrics_path__
             regex: (.+)
-          - source_labels: [__address__, __meta_kubernetes_service_annotation_prometheus_io_port]
+          - source_labels:
+              [
+                __address__,
+                __meta_kubernetes_service_annotation_prometheus_io_port,
+              ]
             action: replace
             regex: ([^:]+)(?::\d+)?;(\d+)
             replacement: $1:$2
