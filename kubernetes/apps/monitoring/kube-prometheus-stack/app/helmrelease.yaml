@@ -34,21 +34,21 @@ spec:
   values:
     # Global configuration
     global:
-      # Use synology-csi storage class
-      storageClass: "synology-iscsi-delete"
+      # Use longhorn storage class
+      storageClass: "longhorn"
 
     # Prometheus configuration
     prometheus:
       prometheusSpec:
-        # Use synology-csi for persistent storage
+        # Use longhorn for persistent storage
         storageSpec:
           volumeClaimTemplate:
             spec:
-              storageClassName: synology-iscsi-delete
+              storageClassName: longhorn
               accessModes: ["ReadWriteOnce"]
               resources:
                 requests:
-                  storage: 50Gi
+                  storage: 20Gi
 
         # Resource limits for homelab
         resources:
@@ -60,8 +60,9 @@ spec:
             cpu: 500m
 
         # Retention and scrape intervals
-        retention: 7d
-        scrapeInterval: 30s
+        retention: 15d
+        retentionSize: 20GiB
+        scrapeInterval: "30s"
         evaluationInterval: 30s
 
         # Enable service monitors for kube-system components
