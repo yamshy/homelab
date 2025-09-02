@@ -28,10 +28,9 @@ spec:
     remediation:
       retries: -1
   upgrade:
-    force: true
     cleanupOnFail: true
     remediation:
-      retries: -1
+      retries: 3
   values:
     # Global configuration
     global:
