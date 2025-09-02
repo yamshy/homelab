@@ -27,11 +27,6 @@ spec:
               tag: latest
             env:
               PORT: &port 8080
-              CADDY_LOG_LEVEL: "INFO"
-              CADDY_LOG_OUTPUT: "stdout"
-              XDG_DATA_HOME: "/home/app/.local/share"
-              XDG_CONFIG_HOME: "/home/app/.config"
-              CADDY_LOG_FILE: "/home/app/logs/caddy.log"
             probes:
               liveness: &probes
                 enabled: true
@@ -49,7 +44,6 @@ spec:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
               capabilities: { drop: ["ALL"] }
-
             resources:
               requests:
                 cpu: 50m
@@ -61,7 +55,6 @@ spec:
         runAsNonRoot: true
         runAsUser: 1001
         runAsGroup: 1001
-
     service:
       app:
         ports:
@@ -73,25 +66,6 @@ spec:
         enabled: false
         endpoints:
           - port: http
-    persistence:
-      caddy-data:
-        enabled: true
-        type: emptyDir
-        globalMounts:
-          - path: /home/app/.local/share/caddy
-            readOnly: false
-      caddy-config:
-        enabled: true
-        type: emptyDir
-        globalMounts:
-          - path: /home/app/.config/caddy
-            readOnly: false
-      caddy-logs:
-        enabled: true
-        type: emptyDir
-        globalMounts:
-          - path: /home/app/logs
-            readOnly: false
     route:
       app:
         hostnames: ["${SECRET_DOMAIN}"]
