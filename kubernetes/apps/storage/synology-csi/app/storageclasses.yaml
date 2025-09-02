@@ -12,7 +12,6 @@ parameters:
   dsm: "192.168.121.240"
   location: "/volume1"
   fsType: "ext4"
-  formatOptions: "--nodiscard"
 reclaimPolicy: Delete
 allowVolumeExpansion: true
 volumeBindingMode: Immediate
@@ -29,7 +28,6 @@ parameters:
   dsm: "192.168.121.240"
   location: "/volume1"
   fsType: "ext4"
-  formatOptions: "--nodiscard"
 reclaimPolicy: Retain
 allowVolumeExpansion: true
 volumeBindingMode: Immediate
