@@ -90,7 +90,6 @@
       automergeType: "branch",
       matchUpdateTypes: ["minor", "patch", "digest"],
       minimumReleaseAge: "1 day",
-      ignoreTests: true,
     },
     {
       matchUpdateTypes: ["major"],
