@@ -27,6 +27,8 @@ spec:
               tag: latest
             env:
               PORT: &port 8080
+              CADDY_LOG_LEVEL: "INFO"
+              CADDY_LOG_OUTPUT: "stdout"
             probes:
               liveness: &probes
                 enabled: true
@@ -44,6 +46,13 @@ spec:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
               capabilities: { drop: ["ALL"] }
+            volumeMounts:
+              - name: caddy-data
+                mountPath: /root/.local/share/caddy
+              - name: caddy-config
+                mountPath: /root/.config/caddy
+              - name: caddy-logs
+                mountPath: /var/log/caddy
             resources:
               requests:
                 cpu: 50m
@@ -55,6 +64,13 @@ spec:
         runAsNonRoot: true
         runAsUser: 65534
         runAsGroup: 65534
+      volumes:
+        - name: caddy-data
+          emptyDir: {}
+        - name: caddy-config
+          emptyDir: {}
+        - name: caddy-logs
+          emptyDir: {}
     service:
       app:
         ports:
