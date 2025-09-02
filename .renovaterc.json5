@@ -89,7 +89,7 @@
       automerge: true,
       automergeType: "branch",
       matchUpdateTypes: ["minor", "patch", "digest"],
-      schedule: ["before 6am on weekdays", "every weekend"],
+      schedule: ["before 6am", "before 6pm"],
     },
     {
       matchUpdateTypes: ["major"],
