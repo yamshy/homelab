@@ -46,13 +46,7 @@ spec:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
               capabilities: { drop: ["ALL"] }
-            volumeMounts:
-              - name: caddy-data
-                mountPath: /root/.local/share/caddy
-              - name: caddy-config
-                mountPath: /root/.config/caddy
-              - name: caddy-logs
-                mountPath: /var/log/caddy
+
             resources:
               requests:
                 cpu: 50m
@@ -64,13 +58,7 @@ spec:
         runAsNonRoot: true
         runAsUser: 65534
         runAsGroup: 65534
-      volumes:
-        - name: caddy-data
-          emptyDir: {}
-        - name: caddy-config
-          emptyDir: {}
-        - name: caddy-logs
-          emptyDir: {}
+
     service:
       app:
         ports:
@@ -82,6 +70,25 @@ spec:
         enabled: false
         endpoints:
           - port: http
+    persistence:
+      caddy-data:
+        enabled: true
+        type: emptyDir
+        globalMounts:
+          - path: /root/.local/share/caddy
+            readOnly: false
+      caddy-config:
+        enabled: true
+        type: emptyDir
+        globalMounts:
+          - path: /root/.config/caddy
+            readOnly: false
+      caddy-logs:
+        enabled: true
+        type: emptyDir
+        globalMounts:
+          - path: /var/log/caddy
+            readOnly: false
     route:
       app:
         hostnames: ["${SECRET_DOMAIN}"]
