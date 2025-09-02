@@ -19,4 +19,4 @@ spec:
       namespace: default
   dependsOn:
     - name: synology-csi
-      namespace: flux-system
+      namespace: storage
