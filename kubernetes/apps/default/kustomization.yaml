@@ -7,4 +7,3 @@ components:
   - ../../components/common
 resources:
   - ./echo/ks.yaml
-  - ./storage-test/ks.yaml
