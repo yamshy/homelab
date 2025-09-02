@@ -89,7 +89,7 @@
       automerge: true,
       automergeType: "branch",
       matchUpdateTypes: ["minor", "patch", "digest"],
-      minimumReleaseAge: "1 day",
+      schedule: ["before 6am on weekdays", "every weekend"],
     },
     {
       matchUpdateTypes: ["major"],
