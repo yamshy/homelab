@@ -83,6 +83,16 @@
       ignoreTests: true,
     },
     {
+      description: "Auto-merge Portfolio Image Updates",
+      matchDatasources: ["docker"],
+      matchPackageNames: ["ghcr.io/yamshy/portfolio"],
+      automerge: true,
+      automergeType: "branch",
+      matchUpdateTypes: ["minor", "patch", "digest"],
+      minimumReleaseAge: "1 day",
+      ignoreTests: true,
+    },
+    {
       matchUpdateTypes: ["major"],
       semanticCommitType: "feat",
       commitMessagePrefix: "{{semanticCommitType}}({{semanticCommitScope}})!:",
