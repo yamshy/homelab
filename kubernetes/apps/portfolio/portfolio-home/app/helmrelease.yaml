@@ -24,7 +24,7 @@ spec:
           app:
             image:
               repository: ghcr.io/yamshy/portfolio
-              tag: 1.2.0
+              tag: 2.0.0
             env:
               PORT: &port 8080
             probes:
