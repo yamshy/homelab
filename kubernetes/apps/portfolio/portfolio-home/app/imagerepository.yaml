@@ -3,7 +3,7 @@
 apiVersion: image.toolkit.fluxcd.io/v1beta2
 kind: ImageRepository
 metadata:
-  name: portfolio
+  name: portfolio-image
 spec:
   image: ghcr.io/yamshy/portfolio
   interval: 5m
