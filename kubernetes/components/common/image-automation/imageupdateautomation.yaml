@@ -1,0 +1,29 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/imageupdateautomation-image-v1beta2.json
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageUpdateAutomation
+metadata:
+  name: homelab-image-automation
+  namespace: flux-system
+spec:
+  interval: 5m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  git:
+    checkout:
+      ref:
+        branch: main
+    commit:
+      author:
+        name: fluxcdbot
+        email: fluxcdbot@users.noreply.github.com
+      messageTemplate: "chore: update images {{range .Changed.Changes}}{{.NewValue}}{{end}}"
+    push:
+      branch: main
+  secretRef:
+    name: github-app-secret
+  update:
+    path: ./kubernetes/apps
+    strategy: Setters
