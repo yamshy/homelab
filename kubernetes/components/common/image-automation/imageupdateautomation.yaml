@@ -25,3 +25,5 @@ spec:
   update:
     path: ./kubernetes/apps
     strategy: Setters
+  secretRef:
+    name: github-app-secret
