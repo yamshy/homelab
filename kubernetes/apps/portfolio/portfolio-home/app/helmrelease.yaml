@@ -27,7 +27,7 @@ spec:
           app:
             image:
               repository: ghcr.io/yamshy/portfolio
-              tag: 2.0.0
+              tag: latest  # {"$imagepolicy": "portfolio:portfolio:tag"}
             env:
               PORT: &port 8080
             probes:
