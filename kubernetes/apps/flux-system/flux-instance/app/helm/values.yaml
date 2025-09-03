@@ -17,9 +17,6 @@ instance:
     url: "https://github.com/yamshy/homelab.git"
     ref: "refs/heads/main"
     path: kubernetes/flux/cluster
-    provider: github
-    secretRef:
-      name: github-app-secret
   commonMetadata:
     labels:
       app.kubernetes.io/name: flux
