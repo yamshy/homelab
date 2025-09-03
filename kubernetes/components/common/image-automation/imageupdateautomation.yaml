@@ -22,8 +22,6 @@ spec:
       messageTemplate: "chore: update images {{range .Changed.Changes}}{{.NewValue}}{{end}}"
     push:
       branch: main
-  secretRef:
-    name: github-app-secret
   update:
     path: ./kubernetes/apps
     strategy: Setters
