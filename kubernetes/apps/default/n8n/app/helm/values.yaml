@@ -21,7 +21,6 @@ main:
     annotations:
       tailscale.com/expose: "true"
       tailscale.com/hostname: "n8n"
-      tailscale.com/tags: "tag:automation,tag:internal"
 
   # Persistence configuration
   persistence:
