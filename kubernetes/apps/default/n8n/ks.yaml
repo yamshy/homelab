@@ -13,11 +13,11 @@ spec:
     name: flux-system
     namespace: flux-system
   targetNamespace: default
-  # healthChecks:
-  #   - apiVersion: apps/v1
-  #     kind: Deployment
-  #     name: n8n
-  #     namespace: default
+  healthChecks:
+    - apiVersion: apps/v1
+      kind: Deployment
+      name: n8n
+      namespace: default
   decryption:
     provider: sops
     secretRef:
