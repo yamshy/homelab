@@ -97,7 +97,9 @@ ingress:
   className: tailscale
   hosts:
     - host: n8n
-      paths: []
+      paths:
+        - path: /
+          pathType: Prefix
   tls:
     - hosts:
         - n8n
