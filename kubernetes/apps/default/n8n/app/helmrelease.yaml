@@ -35,5 +35,3 @@ spec:
   valuesFrom:
     - kind: ConfigMap
       name: n8n-values
-    - kind: Secret
-      name: n8n-secrets
