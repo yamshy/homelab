@@ -95,16 +95,9 @@ valkey:
 ingress:
   enabled: true
   className: tailscale
-  rules:
-    - http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: n8n
-                port:
-                  number: 80
+  hosts:
+    - host: n8n
+      paths: []
   tls:
     - hosts:
         - n8n
