@@ -8,9 +8,9 @@ resources:
 configMapGenerator:
   - name: n8n-values
     files:
-      - values.yaml
+      - helm/values.yaml
     options:
       disableNameSuffixHash: true
 
 configurations:
-  - kustomizeconfig.yaml
+  - helm/kustomizeconfig.yaml
