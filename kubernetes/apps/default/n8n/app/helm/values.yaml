@@ -1,0 +1,105 @@
+# n8n Helm chart values
+# This file is used to generate a ConfigMap for the HelmRelease
+
+# Main n8n application configuration
+main:
+  # n8n specific configuration
+  config:
+    n8n:
+      # Basic n8n settings
+      hide_usage_page: true
+      # Use SQLite as default (no external database required)
+      # Database configuration can be added later if needed
+      generic:
+        timezone: "UTC"
+
+  # Service configuration for Tailscale exposure
+  service:
+    type: LoadBalancer
+    loadBalancerClass: tailscale
+    port: 80
+    annotations:
+      tailscale.com/expose: "true"
+      tailscale.com/hostname: "n8n"
+      tailscale.com/tags: "tag:automation,tag:internal"
+
+  # Persistence configuration
+  persistence:
+    enabled: true
+    type: dynamic
+    storageClass: synology-iscsi-delete
+    accessModes:
+      - ReadWriteOnce
+    size: 10Gi
+
+  # Resource limits
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+    requests:
+      cpu: 100m
+      memory: 512Mi
+
+  # Security context
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: false
+    capabilities:
+      drop:
+        - ALL
+
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+
+  # Health checks
+  livenessProbe:
+    httpGet:
+      path: /healthz
+      port: http
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+    successThreshold: 1
+
+  readinessProbe:
+    httpGet:
+      path: /healthz
+      port: http
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+    successThreshold: 1
+
+# Enable scaling features for production-like deployment
+scaling:
+  enabled: true
+  webhook:
+    enabled: true
+  worker:
+    replicaCount: 2
+
+# Enable internal Redis (Valkey) for queue mode
+valkey:
+  enabled: true
+  architecture: standalone
+  primary:
+    persistence:
+      enabled: true
+      size: 2Gi
+
+# Disable ingress (using Tailscale LoadBalancer instead)
+ingress:
+  enabled: false
+
+# Disable autoscaling
+autoscaling:
+  enabled: false
