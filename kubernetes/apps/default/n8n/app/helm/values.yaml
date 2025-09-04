@@ -13,14 +13,10 @@ main:
       generic:
         timezone: "UTC"
 
-  # Service configuration for Tailscale exposure
+  # Service configuration - ClusterIP for Ingress
   service:
-    type: LoadBalancer
-    loadBalancerClass: tailscale
+    type: ClusterIP
     port: 80
-    annotations:
-      tailscale.com/expose: "true"
-      tailscale.com/hostname: "n8n"
 
   # Persistence configuration
   persistence:
@@ -95,9 +91,18 @@ valkey:
       enabled: true
       size: 2Gi
 
-# Disable ingress (using Tailscale LoadBalancer instead)
+# Enable ingress with Tailscale for HTTPS
 ingress:
-  enabled: false
+  enabled: true
+  className: tailscale
+  hosts:
+    - host: n8n
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - n8n
 
 # Disable autoscaling
 autoscaling:
