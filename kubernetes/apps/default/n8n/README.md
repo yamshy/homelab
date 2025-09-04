@@ -6,12 +6,12 @@ This directory contains the n8n workflow automation tool deployment using the 8g
 
 n8n is a powerful workflow automation tool that allows you to connect and automate tasks between various applications and services. This deployment uses:
 
-- **8gears n8n Helm chart** (version 1.107.4)
+- **8gears n8n Helm chart** (version 1.0.14)
 - **SQLite database** for data persistence (no external database required)
 - **Queue mode with scaling** - 2 worker instances + dedicated webhook instance
 - **Internal Redis (Valkey)** for task queuing and coordination
 - **Synology CSI storage** for persistent volumes
-- **Tailscale LoadBalancer** for secure access within your tailnet
+- **Tailscale Ingress** for secure HTTPS access within your tailnet
 
 ## Configuration
 
@@ -60,20 +60,22 @@ If you want to use PostgreSQL instead:
 
 ## Accessing n8n
 
-### Via Tailscale
+### Via Tailscale Ingress
 
-The n8n web UI is exposed through the Tailscale Kubernetes Operator:
+The n8n web UI is exposed through the Tailscale Kubernetes Operator using Ingress:
 
 1. **Ensure Tailscale is connected** to your tailnet
-2. **Access the service** at: `http://n8n.your-tailnet.ts.net`
+2. **Access the service** at: `https://n8n.tail*.ts.net` (HTTPS enabled)
 3. **MagicDNS** will automatically resolve the hostname
+4. **TLS certificates** are automatically managed by Tailscale
 
 ### Service Details
 
-- **Service Type**: LoadBalancer with Tailscale
-- **Hostname**: `n8n` (customizable via annotations)
-- **Port**: 80
-- **Tags**: `tag:automation,tag:internal`
+- **Service Type**: ClusterIP (accessed via Ingress)
+- **Ingress Class**: tailscale
+- **Hostname**: `n8n` (customizable in values.yaml)
+- **Ports**: 80 (HTTP), 443 (HTTPS)
+- **TLS**: Automatically managed by Tailscale
 
 ## Storage
 
@@ -120,37 +122,99 @@ kubectl describe pod -n default -l app.kubernetes.io/name=n8n
 kubectl logs -n default -l app.kubernetes.io/name=n8n
 ```
 
-### Check Service
+### Check Service and Ingress
 
 ```bash
 kubectl get svc -n default n8n
-kubectl describe svc -n default n8n
+kubectl get ingress -n default n8n
+kubectl describe ingress -n default n8n
 ```
 
-### Verify Tailscale Exposure
+### Verify Tailscale Ingress
 
 ```bash
-kubectl get svc -n default n8n -o yaml | grep -A 5 annotations
+kubectl get ingress -n default n8n -o yaml
 ```
+
+### Check Flux Kustomization
+
+```bash
+kubectl get kustomization n8n -n flux-system
+kubectl describe kustomization n8n -n flux-system
+```
+
+### Common Issues
+
+#### Ingress Configuration Errors
+
+If you see errors like "spec.rules[0].http.paths: Required value", ensure the ingress configuration in `helm/values.yaml` uses the correct format for the 8gears chart:
+
+```yaml
+ingress:
+  enabled: true
+  className: tailscale
+  hosts:
+    - host: n8n
+      paths: ["/"]  # String array, not object array
+  tls:
+    - hosts:
+        - n8n
+```
+
+#### Kustomization Stuck on Old Revision
+
+If the kustomization is stuck on an old Git revision:
+
+1. **Suspend the kustomization**:
+
+   ```bash
+   flux suspend kustomization n8n -n flux-system
+   ```
+
+2. **Clean up resources**:
+
+   ```bash
+   kubectl delete helmrelease n8n -n default
+   kubectl delete configmap n8n-values -n default
+   kubectl delete secret n8n-secrets -n default
+   kubectl delete ocirepository 8gears -n default
+   ```
+
+3. **Resume the kustomization**:
+
+   ```bash
+   flux resume kustomization n8n -n flux-system
+   ```
 
 ## Customization
 
 ### Modify Hostname
 
-Update the `tailscale.com/hostname` annotation in `helm/values.yaml`:
+Update the hostname in the ingress configuration in `helm/values.yaml`:
 
 ```yaml
-annotations:
-  tailscale.com/hostname: "my-custom-n8n"
+ingress:
+  enabled: true
+  className: tailscale
+  hosts:
+    - host: my-custom-n8n  # Change this
+      paths: ["/"]
+  tls:
+    - hosts:
+        - my-custom-n8n  # Change this too
 ```
 
-### Add Tags
+### Add Tailscale Tags
 
-Update the `tailscale.com/tags` annotation:
+Add Tailscale tags by creating a ProxyClass resource or using annotations on the Ingress:
 
 ```yaml
-annotations:
-  tailscale.com/tags: "tag:automation,tag:internal,tag:production"
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: n8n
+  annotations:
+    tailscale.com/tags: "tag:automation,tag:internal,tag:production"
 ```
 
 ### Scale Resources
@@ -187,3 +251,16 @@ The deployment will automatically update when:
 - [n8n Documentation](https://docs.n8n.io/)
 - [8gears n8n Helm Chart](https://github.com/8gears/n8n-helm-chart)
 - [Tailscale Kubernetes Operator](https://tailscale.com/kb/1236/kubernetes-operator)
+- [Flux GitOps Documentation](https://fluxcd.io/docs/)
+
+## Deployment Notes
+
+This deployment was successfully tested and resolved the following issues:
+
+1. **Ingress Configuration**: The 8gears n8n Helm chart requires ingress paths to be defined as a string array (`["/"]`) rather than the standard Kubernetes object array format.
+
+2. **Flux Kustomization Sync**: If the kustomization gets stuck on an old Git revision, suspending and resuming the kustomization can break circular dependencies and allow it to process the latest changes.
+
+3. **Health Checks**: The kustomization includes health checks for the n8n Deployment, which ensures proper monitoring of the application status.
+
+The application is accessible at `https://n8n.tail*.ts.net` with automatic TLS certificate management by Tailscale.
