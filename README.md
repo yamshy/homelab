@@ -227,6 +227,7 @@ task talos:upgrade-k8s
 ```
 
 ### Application Updates
+- **Update Schedule**: Renovate checks for updates daily
 - **Helm Charts**: Automatic updates via Renovate
 - **Container Images**: Automated image updates
 - **Configuration**: Git-based configuration management
