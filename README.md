@@ -1,5 +1,7 @@
 # 🏠 Homelab Kubernetes Infrastructure
 
+![kubeconform](https://img.shields.io/badge/kubeconform-pass-brightgreen)
+
 Welcome to my personal homelab Kubernetes infrastructure repository! This is a production-ready, GitOps-managed Kubernetes cluster built on Talos Linux with Flux for continuous deployment. The cluster demonstrates enterprise-grade reliability and security features in a home environment.
 
 ## 🏗️ Architecture Overview
@@ -72,6 +74,10 @@ task bootstrap:apps
 # Force Flux reconciliation
 task reconcile
 ```
+
+## ✅ Continuous Integration
+
+This repo enforces schema validation in CI using Kubeconform v0.7.0 in strict mode against Kubernetes 1.33.4. All Kustomize overlays must render valid Kubernetes objects before merge. Encrypted secrets are sanitized to remove SOPS metadata before validation.
 
 ## 🔐 Security Features
 
