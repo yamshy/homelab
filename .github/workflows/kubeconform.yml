@@ -1,0 +1,67 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+name: kubeconform-validate
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+env:
+  KUBE_VERSION: "1.33.4"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+
+      - name: Install kustomize (v5.7.0)
+        run: |
+          curl -fsSL https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv5.7.0/kustomize_v5.7.0_linux_amd64.tar.gz \
+            | tar -xz && sudo mv kustomize /usr/local/bin/kustomize
+          kustomize version
+
+      - name: Install kubeconform (v0.7.0)
+        run: |
+          curl -fsSL https://github.com/yannh/kubeconform/releases/download/v0.7.0/kubeconform-linux-amd64.tar.gz \
+            | tar -xz && sudo mv kubeconform /usr/local/bin/kubeconform
+          kubeconform -v
+      - name: Install yq (v4.44.1)
+        run: |
+          curl -fsSL https://github.com/mikefarah/yq/releases/download/v4.44.1/yq_linux_amd64.tar.gz \
+            | tar -xz && sudo mv yq_linux_amd64 /usr/local/bin/yq
+          yq --version
+
+      - name: Build overlay list
+        id: overlays
+        shell: bash
+        run: |
+          IGNORE_REGEX=$(sed 's#\\*\\*/##g; s#/\\*\\*##g' .kubeconformignore | paste -sd '|' -)
+          mapfile -t OVERLAYS < <(git ls-files | grep -E '/kustomization\\.ya?ml$' | grep -Ev "$IGNORE_REGEX" | xargs -n1 dirname | sort -u)
+          if [ ${#OVERLAYS[@]} -eq 0 ]; then
+            echo "No kustomize overlays found."; exit 1
+          fi
+          printf '%s\n' "${OVERLAYS[@]}" > overlays.txt
+          echo "count=${#OVERLAYS[@]}" >> $GITHUB_OUTPUT
+
+      - name: Validate with kubeconform (strict)
+        shell: bash
+        run: |
+          SKIP_KINDS="Kustomization,HelmRelease,GitRepository,OCIRepository,HelmRepository,Bucket,HelmChart,ImageRepository,ImagePolicy,ImageUpdateAutomation"
+          while read -r overlay; do
+            echo "::group::Validate ${overlay}"
+            kustomize build "${overlay}" \
+                | yq eval 'del(.sops)' - \
+              | kubeconform \
+                  -strict \
+                  -summary \
+                  -kubernetes-version "${KUBE_VERSION}" \
+                  -schema-location default \
+                  -skip "${SKIP_KINDS}"
+            echo "::endgroup::"
+          done < overlays.txt
+
+      - name: Report overlay count
+        run: echo "Validated ${{ steps.overlays.outputs.count }} overlays."
