@@ -49,7 +49,7 @@ spec:
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
-              capabilities: { drop: ["ALL"] }
+              capabilities: {drop: ["ALL"]}
             resources:
               requests:
                 cpu: 10m
@@ -65,12 +65,25 @@ spec:
         ports:
           http:
             port: *port
-        type: LoadBalancer
-        loadBalancerClass: tailscale
     serviceMonitor:
       app:
         endpoints:
           - port: http
+    ingress:
+      app:
+        enabled: true
+        className: tailscale
+        hosts:
+          - host: echo
+            paths:
+              - path: /
+                pathType: Prefix
+                service:
+                  identifier: app
+                  port: http
+        tls:
+          - hosts:
+              - echo
     route:
       app:
         hostnames: ["{{ .Release.Name }}.${SECRET_DOMAIN}"]
