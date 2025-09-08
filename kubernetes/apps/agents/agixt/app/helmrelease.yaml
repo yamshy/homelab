@@ -47,9 +47,9 @@ spec:
             resources:
               requests:
                 cpu: 50m
-                memory: 1Gi
-              limits:
                 memory: 2Gi
+              limits:
+                memory: 8Gi
     persistence:
       data:
         enabled: true

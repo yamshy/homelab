@@ -6,7 +6,7 @@ metadata:
 data:
   DATABASE_TYPE: sqlite
   DATABASE_NAME: models/agixt
-  UVICORN_WORKERS: "10"
+  UVICORN_WORKERS: "2"
   AGIXT_URI: https://agixt
   APP_URI: https://agixt
   DISABLED_EXTENSIONS: ""
