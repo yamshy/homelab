@@ -5,5 +5,4 @@ kind: Kustomization
 namespace: agents
 components:
   - ../../components/common
-resources:
-  - ./agixt/ks.yaml
+resources: []
