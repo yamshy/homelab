@@ -103,16 +103,16 @@ spec:
         tls:
           - hosts:
               - open-swe
-    # Persistent volume configuration (temporarily disabled for schema validation)
-    # persistence:
-    #   data:
-    #     enabled: true
-    #     type: persistentVolumeClaim
-    #     accessMode: ReadWriteOnce
-    #     size: 5Gi
-    #     storageClass: synology-iscsi-delete
-    #     globalMounts:
-    #       - path: /app/data
+    # Persistent volume configuration
+    persistence:
+      data:
+        enabled: true
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        size: 5Gi
+        storageClass: synology-iscsi-delete
+        globalMounts:
+          - path: /app/data
     # ServiceMonitor for monitoring (optional)
     serviceMonitor:
       app:
