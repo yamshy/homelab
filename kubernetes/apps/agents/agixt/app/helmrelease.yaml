@@ -38,11 +38,11 @@ spec:
                 spec:
                   httpGet:
                     path: /
-                    port: &port 7437
-                  initialDelaySeconds: 10
-                  periodSeconds: 10
-                  timeoutSeconds: 1
-                  failureThreshold: 3
+                    port: 7437
+                  initialDelaySeconds: 60
+                  periodSeconds: 30
+                  timeoutSeconds: 10
+                  failureThreshold: 5
               readiness: *probes
             resources:
               requests:
@@ -63,7 +63,7 @@ spec:
       app:
         ports:
           http:
-            port: *port
+            port: 7437
     ingress:
       app:
         enabled: true
