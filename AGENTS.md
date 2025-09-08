@@ -37,9 +37,9 @@ This repository implements a GitOps workflow using Flux for continuous deploymen
 - **`kubernetes/flux/`** - Flux configuration for GitOps (cluster and meta configurations)
 - **`kubernetes/components/`** - Shared Kubernetes components and common resources
 - **`talos/`** - Talos Linux cluster configuration managed by talhelper
-  - `talconfig.yaml` - Main cluster configuration
-  - `patches/` - Node-specific and global configuration patches
-  - `clusterconfig/` - Generated Talos configuration files
+    - `talconfig.yaml` - Main cluster configuration
+    - `patches/` - Node-specific and global configuration patches
+    - `clusterconfig/` - Generated Talos configuration files
 - **`scripts/`** - Automation scripts for validation and bootstrapping
 - **`.taskfiles/`** - Task runner definitions for bootstrap and Talos operations
 - **`bootstrap/`** - Initial cluster bootstrap configuration with helmfile
@@ -118,4 +118,5 @@ which kubectl flux talosctl sops helmfile kustomize kubeconform
 
 <pull_request_formatting>
 </pull_request_formatting>
+
 
