@@ -24,6 +24,30 @@ spec:
     controllers:
       open-swe:
         strategy: RollingUpdate
+        initContainers:
+          - name: prepare-app
+            image:
+              repository: node
+              tag: 18-alpine
+            command: ["/bin/sh"]
+            args:
+              - -c
+              - |
+                # Install dependencies
+                apk add --no-cache git python3 make g++
+                npm install -g yarn
+                # Clone and build the application
+                git clone https://github.com/langchain-ai/open-swe.git /shared/app
+                cd /shared/app
+                yarn install
+                # Change ownership to non-root user
+                chown -R 1000:1000 /shared/app
+            volumeMounts:
+              - name: app-data
+                mountPath: /shared
+            securityContext:
+              runAsUser: 0
+              runAsGroup: 0
         containers:
           app:
             image:
@@ -44,15 +68,13 @@ spec:
             args:
               - -c
               - |
-                # Install dependencies
-                apk add --no-cache git python3 make g++
-                npm install -g yarn
-                # Clone and build the application
-                git clone https://github.com/langchain-ai/open-swe.git /app
+                # Start the application
                 cd /app
-                yarn install
                 cd apps/open-swe
                 yarn dev
+            volumeMounts:
+              - name: app-data
+                mountPath: /app
             probes:
               liveness: &probes
                 enabled: true
@@ -113,6 +135,11 @@ spec:
         storageClass: synology-iscsi-delete
         globalMounts:
           - path: /app/data
+      app-data:
+        enabled: true
+        type: emptyDir
+        globalMounts:
+          - path: /shared
     # ServiceMonitor for monitoring (optional)
     serviceMonitor:
       app:
