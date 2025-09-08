@@ -27,8 +27,8 @@ spec:
         containers:
           app:
             image:
-              repository: langchain-ai/open-swe
-              tag: latest
+              repository: node
+              tag: 18-alpine
             env:
               PORT: &port 2024
               # Application configuration
@@ -40,6 +40,19 @@ spec:
             envFrom:
               - secretRef:
                   name: open-swe-secrets
+            command: ["/bin/sh"]
+            args:
+              - -c
+              - |
+                # Install dependencies
+                apk add --no-cache git python3 make g++
+                npm install -g yarn
+                # Clone and build the application
+                git clone https://github.com/langchain-ai/open-swe.git /app
+                cd /app
+                yarn install
+                cd apps/open-swe
+                yarn dev
             probes:
               liveness: &probes
                 enabled: true
