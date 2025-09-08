@@ -6,20 +6,26 @@ function log() {
     local level="${1:-info}"
     shift
 
-    # Define log levels with their priorities
-    local -A level_priority=(
-        [debug]=1
-        [info]=2
-        [warn]=3
-        [error]=4
-    )
-
     # Get the current log level's priority
-    local current_priority=${level_priority[$level]:-2} # Default to "info" priority
+    local current_priority
+    case "$level" in
+        debug) current_priority=1 ;;
+        info) current_priority=2 ;;
+        warn) current_priority=3 ;;
+        error) current_priority=4 ;;
+        *) current_priority=2 ;;
+    esac
 
     # Get the configured log level from the environment, default to "info"
     local configured_level=${LOG_LEVEL:-info}
-    local configured_priority=${level_priority[$configured_level]:-2}
+    local configured_priority
+    case "$configured_level" in
+        debug) configured_priority=1 ;;
+        info) configured_priority=2 ;;
+        warn) configured_priority=3 ;;
+        error) configured_priority=4 ;;
+        *) configured_priority=2 ;;
+    esac
 
     # Skip log messages below the configured log level
     if ((current_priority < configured_priority)); then
@@ -27,15 +33,14 @@ function log() {
     fi
 
     # Define log colors
-    local -A colors=(
-        [debug]="\033[1m\033[38;5;63m"  # Blue
-        [info]="\033[1m\033[38;5;87m"   # Cyan
-        [warn]="\033[1m\033[38;5;192m"  # Yellow
-        [error]="\033[1m\033[38;5;198m" # Red
-    )
-
-    # Fallback to "info" if the color for the given level is not defined
-    local color="${colors[$level]:-${colors[info]}}"
+    local color
+    case "$level" in
+        debug) color="\033[1m\033[38;5;63m" ;;  # Blue
+        info) color="\033[1m\033[38;5;87m" ;;   # Cyan
+        warn) color="\033[1m\033[38;5;192m" ;;  # Yellow
+        error) color="\033[1m\033[38;5;198m" ;; # Red
+        *) color="\033[1m\033[38;5;87m" ;;      # Default to cyan
+    esac
     local msg="$1"
     shift
 
@@ -58,8 +63,9 @@ function log() {
     fi
 
     # Print the log message
+    local level_upper=$(echo "$level" | tr '[:lower:]' '[:upper:]')
     printf "%s %b%s%b %s %b\n" "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" \
-        "${color}" "${level^^}" "\033[0m" "${msg}" "${data}" >"${output_stream}"
+        "${color}" "${level_upper}" "\033[0m" "${msg}" "${data}" >"${output_stream}"
 
     # Exit if the log level is error
     if [[ "$level" == "error" ]]; then

@@ -1,0 +1,123 @@
+# Open-SWE Helm chart values
+# This file is used to generate a ConfigMap for the HelmRelease
+
+# Main Open-SWE application configuration
+controllers:
+  open-swe:
+    strategy: RollingUpdate
+    containers:
+      app:
+        image:
+          repository: langchain-ai/open-swe
+          tag: latest
+        env:
+          PORT: &port 2024
+          # GitHub App configuration
+          GITHUB_APP_NAME: ${GITHUB_APP_NAME}
+          GITHUB_APP_ID: ${GITHUB_APP_ID}
+          GITHUB_APP_CLIENT_ID: ${GITHUB_APP_CLIENT_ID}
+          GITHUB_APP_CLIENT_SECRET: ${GITHUB_APP_CLIENT_SECRET}
+          GITHUB_APP_PRIVATE_KEY: ${GITHUB_APP_PRIVATE_KEY}
+          GITHUB_WEBHOOK_SECRET: ${GITHUB_WEBHOOK_SECRET}
+          # LLM API configuration
+          OPENAI_API_KEY: ${OPENAI_API_KEY}
+          ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+          # LangSmith tracing (optional)
+          LANGCHAIN_API_KEY: ${LANGCHAIN_API_KEY}
+          LANGCHAIN_PROJECT: ${LANGCHAIN_PROJECT}
+          LANGCHAIN_TRACING_V2: "true"
+          # Application configuration
+          OPEN_SWE_APP_URL: "https://open-swe.${SECRET_DOMAIN}"
+          SECRETS_ENCRYPTION_KEY: ${SECRETS_ENCRYPTION_KEY}
+          # Optional: Database configuration
+          DATABASE_URL: "sqlite:///app/data/open-swe.db"
+          # Optional: Logging configuration
+          LOG_LEVEL: "INFO"
+        probes:
+          liveness: &probes
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /health
+                port: *port
+              initialDelaySeconds: 30
+              periodSeconds: 10
+              timeoutSeconds: 5
+              failureThreshold: 3
+          readiness: *probes
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false
+          capabilities: { drop: ["ALL"] }
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 1Gi
+        # Volume mounts for persistent data
+        volumeMounts:
+          - name: data
+            mountPath: /app/data
+    # Pod security context
+    securityContext:
+      runAsNonRoot: true
+      runAsUser: 1000
+      runAsGroup: 1000
+      fsGroup: 1000
+    # Volumes for persistent storage
+    volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: open-swe-data
+
+# Default pod options
+defaultPodOptions:
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 1000
+
+# Service configuration
+service:
+  app:
+    ports:
+      http:
+        port: 80
+        targetPort: *port
+
+# Ingress configuration with Tailscale
+ingress:
+  app:
+    enabled: true
+    className: tailscale
+    hosts:
+      - host: open-swe
+        paths:
+          - path: /
+            pathType: Prefix
+            service:
+              identifier: app
+              port: http
+    tls:
+      - hosts:
+          - open-swe
+
+# Persistent volume configuration
+persistence:
+  enabled: true
+  storageClass: synology-iscsi-delete
+  accessModes:
+    - ReadWriteOnce
+  size: 5Gi
+  annotations:
+    pv.kubernetes.io/bind-completed: "yes"
+
+# ServiceMonitor for monitoring (optional)
+serviceMonitor:
+  app:
+    enabled: false
+    endpoints:
+      - port: http

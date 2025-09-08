@@ -14,10 +14,10 @@ cd "${ROOT_DIR}"
 
 IGNORE_FILE=".kubeconformignore"
 
-mapfile -t OVERLAYS < <(
+OVERLAYS=($(
   git ls-files | grep -E '/kustomization\.ya?ml$' | xargs -n1 dirname | sort -u |
     grep -F -v -f <(sed 's#\*\*/##g; s#/\*\*##g' "${IGNORE_FILE}")
-)
+))
 if [ "${#OVERLAYS[@]}" -eq 0 ]; then
   log error "No kustomize overlays found"
 fi
