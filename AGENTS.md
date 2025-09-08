@@ -13,13 +13,13 @@
 ## Task Automation
 - **Use Task for all automation** - run `task --list` to see available commands
 - **Key bootstrap commands**:
-  - `task bootstrap:talos` - Bootstrap the Talos cluster
-  - `task bootstrap:apps` - Deploy applications via helmfile and Flux
-  - `task reconcile` - Force Flux to sync from Git repository
+    - `task bootstrap:talos` - Bootstrap the Talos cluster
+    - `task bootstrap:apps` - Deploy applications via helmfile and Flux
+    - `task reconcile` - Force Flux to sync from Git repository
 - **Talos operations**:
-  - `task talos:generate-config` - Generate Talos configuration
-  - `task talos:apply-node IP=<node-ip>` - Apply config to specific node
-  - `task talos:upgrade-node IP=<node-ip>` - Upgrade Talos on a node
+    - `task talos:generate-config` - Generate Talos configuration
+    - `task talos:apply-node IP=<node-ip>` - Apply config to specific node
+    - `task talos:upgrade-node IP=<node-ip>` - Upgrade Talos on a node
 
 ## Validation and Quality
 - **Always validate YAML before committing** using `scripts/validate.sh`
@@ -118,3 +118,4 @@ which kubectl flux talosctl sops helmfile kustomize kubeconform
 
 <pull_request_formatting>
 </pull_request_formatting>
+
