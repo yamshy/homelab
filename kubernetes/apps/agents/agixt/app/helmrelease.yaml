@@ -38,7 +38,7 @@ spec:
                 spec:
                   httpGet:
                     path: /
-                    port: 7437
+                    port: 3437
                   initialDelaySeconds: 60
                   periodSeconds: 30
                   timeoutSeconds: 10
@@ -63,7 +63,7 @@ spec:
       app:
         ports:
           http:
-            port: 7437
+            port: 3437
     ingress:
       app:
         enabled: true
