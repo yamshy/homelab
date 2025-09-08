@@ -61,21 +61,12 @@ spec:
           - path: /agixt/models
     service:
       app:
+        type: LoadBalancer
+        loadBalancerClass: tailscale
+        annotations:
+          tailscale.com/hostname: agixt
         ports:
           http:
+            port: 7437
+          web:
             port: 3437
-    ingress:
-      app:
-        enabled: true
-        className: tailscale
-        hosts:
-          - host: agixt
-            paths:
-              - path: /
-                pathType: Prefix
-                service:
-                  identifier: app
-                  port: http
-        tls:
-          - hosts:
-              - agixt
