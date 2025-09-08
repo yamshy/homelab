@@ -76,12 +76,6 @@ spec:
               limits:
                 cpu: 500m
                 memory: 1Gi
-        # Pod security context
-        securityContext:
-          runAsNonRoot: true
-          runAsUser: 1000
-          runAsGroup: 1000
-          fsGroup: 1000
     # Default pod options
     defaultPodOptions:
       securityContext:
@@ -91,6 +85,7 @@ spec:
     # Service configuration
     service:
       app:
+        controller: open-swe
         ports:
           http:
             port: 80
@@ -113,13 +108,14 @@ spec:
               - open-swe
     # Persistent volume configuration
     persistence:
-      enabled: true
-      storageClass: synology-iscsi-delete
-      accessModes:
-        - ReadWriteOnce
-      size: 5Gi
-      annotations:
-        pv.kubernetes.io/bind-completed: "yes"
+      data:
+        enabled: true
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        size: 5Gi
+        storageClass: synology-iscsi-delete
+        globalMounts:
+          - path: /app/data
     # ServiceMonitor for monitoring (optional)
     serviceMonitor:
       app:
