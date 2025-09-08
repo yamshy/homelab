@@ -51,13 +51,14 @@ spec:
               limits:
                 memory: 1Gi
     persistence:
-      enabled: true
-      type: dynamic
-      storageClass: synology-iscsi-delete
-      accessModes:
-        - ReadWriteOnce
-      size: 10Gi
-      mountPath: /agixt/models
+      data:
+        enabled: true
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        size: 10Gi
+        storageClass: synology-iscsi-delete
+        globalMounts:
+          - path: /agixt/models
     service:
       app:
         ports:
