@@ -31,27 +31,15 @@ spec:
               tag: latest
             env:
               PORT: &port 2024
-              # GitHub App configuration
-              GITHUB_APP_NAME: ${GITHUB_APP_NAME}
-              GITHUB_APP_ID: ${GITHUB_APP_ID}
-              GITHUB_APP_CLIENT_ID: ${GITHUB_APP_CLIENT_ID}
-              GITHUB_APP_CLIENT_SECRET: ${GITHUB_APP_CLIENT_SECRET}
-              GITHUB_APP_PRIVATE_KEY: ${GITHUB_APP_PRIVATE_KEY}
-              GITHUB_WEBHOOK_SECRET: ${GITHUB_WEBHOOK_SECRET}
-              # LLM API configuration
-              OPENAI_API_KEY: ${OPENAI_API_KEY}
-              ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
-              # LangSmith tracing (optional)
-              LANGCHAIN_API_KEY: ${LANGCHAIN_API_KEY}
-              LANGCHAIN_PROJECT: ${LANGCHAIN_PROJECT}
-              LANGCHAIN_TRACING_V2: "true"
               # Application configuration
               OPEN_SWE_APP_URL: "https://open-swe.${SECRET_DOMAIN}"
-              SECRETS_ENCRYPTION_KEY: ${SECRETS_ENCRYPTION_KEY}
               # Optional: Database configuration
               DATABASE_URL: "sqlite:///app/data/open-swe.db"
               # Optional: Logging configuration
               LOG_LEVEL: "INFO"
+            envFrom:
+              - secretRef:
+                  name: open-swe-secrets
             probes:
               liveness: &probes
                 enabled: true
