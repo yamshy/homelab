@@ -25,7 +25,7 @@ spec:
           app:
             image:
               repository: ghcr.io/josh-xt/agixt
-              tag: sha-c74748d
+              tag: latest
             envFrom:
               - configMapRef:
                   name: agixt-config
