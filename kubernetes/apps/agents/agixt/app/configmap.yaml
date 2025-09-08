@@ -1,0 +1,17 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: agixt-config
+data:
+  DATABASE_TYPE: sqlite
+  DATABASE_NAME: models/agixt
+  UVICORN_WORKERS: "10"
+  AGIXT_URI: https://agixt
+  APP_URI: https://agixt
+  DISABLED_EXTENSIONS: ""
+  DISABLED_PROVIDERS: ""
+  WORKING_DIRECTORY: /agixt/WORKSPACE
+  REGISTRATION_DISABLED: "false"
+  TOKENIZERS_PARALLELISM: "false"
+  LOG_LEVEL: INFO
