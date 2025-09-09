@@ -1,0 +1,79 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrepository-source-v1.json
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: kestra
+  namespace: automation
+spec:
+  interval: 1h
+  url: https://helm.kestra.io
+
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app kestra
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: *app
+      version: 0.19.0
+      sourceRef:
+        kind: HelmRepository
+        name: kestra
+        namespace: automation
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  values:
+    # Persistent storage for Kestra (uses default Longhorn storage class)
+    persistence:
+      enabled: true
+      size: 10Gi
+
+    # Run in standalone mode for homelab simplicity
+    deployments:
+      standalone:
+        enabled: true
+      webserver:
+        enabled: false
+      executor:
+        enabled: false
+      indexer:
+        enabled: false
+      scheduler:
+        enabled: false
+      worker:
+        enabled: false
+
+    # Service and ingress via Tailscale ingress class
+    service:
+      type: ClusterIP
+      ports:
+        http: 8080
+
+    ingress:
+      enabled: true
+      className: tailscale
+      hosts:
+        - host: kestra
+          paths:
+            - path: /
+              pathType: Prefix
+      tls:
+        - hosts:
+            - kestra
+
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        memory: 512Mi
