@@ -35,7 +35,7 @@ spec:
   values:
     # Enable persistence for Longhorn UI
     persistence:
-      defaultClass: true
+      defaultClass: false
       defaultClassReplicaCount: 2
 
     # Enable metrics for monitoring

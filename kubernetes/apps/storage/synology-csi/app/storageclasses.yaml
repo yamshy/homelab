@@ -5,7 +5,7 @@ kind: StorageClass
 metadata:
   name: synology-iscsi-delete
   annotations:
-    storageclass.kubernetes.io/is-default-class: "false"
+    storageclass.kubernetes.io/is-default-class: "true"
 provisioner: csi.san.synology.com
 parameters:
   protocol: "iscsi"
