@@ -37,7 +37,25 @@ spec:
     persistence:
       enabled: true
       size: 10Gi
-      storageClass: synology-iscsi-retain
+      storageClass: synology-iscsi-delete
+
+    # PostgreSQL configuration with Synology CSI storage
+    postgresql:
+      enabled: true
+      primary:
+        persistence:
+          enabled: true
+          storageClass: synology-iscsi-delete
+          size: 8Gi
+        resourcesPreset: "medium"
+
+    # MinIO configuration with Synology CSI storage
+    minio:
+      enabled: true
+      persistence:
+        enabled: true
+        storageClass: synology-iscsi-delete
+        size: 10Gi
 
     # Production-ready server configuration
     configuration:
