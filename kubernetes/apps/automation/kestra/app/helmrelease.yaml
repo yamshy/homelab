@@ -38,6 +38,17 @@ spec:
       enabled: true
       size: 10Gi
 
+    # Production-ready server configuration
+    configuration:
+      kestra:
+        server:
+          liveness:
+            enabled: true
+            interval: 5s
+            timeout: 45s
+            initialDelay: 45s
+            heartbeatInterval: 3s
+
     # Run in standalone mode for homelab simplicity
     deployments:
       standalone:
@@ -71,9 +82,15 @@ spec:
         - hosts:
             - kestra
 
+    # JVM optimization for better memory management
+    extraEnv:
+      - name: JAVA_OPTS
+        value: "-Xmx4g -Xms2g -XX:+UseG1GC -XX:MaxGCPauseMillis=200"
+
     resources:
       requests:
-        cpu: 100m
-        memory: 256Mi
+        cpu: 2000m  # 2 vCPUs (minimum requirement)
+        memory: 4Gi  # 4 GiB (minimum requirement)
       limits:
-        memory: 512Mi
+        cpu: 4000m  # 4 vCPUs (allow bursting)
+        memory: 6Gi  # 6 GiB (headroom for JVM)
