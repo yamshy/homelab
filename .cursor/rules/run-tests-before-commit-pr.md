@@ -3,20 +3,16 @@
 Purpose: Ensure code quality stays high and prevent breaking changes from entering the main branch.
 
 ### What Cursor agents must do
-- Run the full test suite locally before creating commits or opening pull requests.
-- If tests fail, do not proceed with committing or opening a PR. Fix failures first.
-- For monorepos or multi-package repos, run tests for all impacted packages/modules.
-- If the repository genuinely has no tests, explicitly note this in the commit/PR description and explain how the change was validated.
+- Run repository validation locally before creating commits or opening pull requests.
+- In this repo, run: `bash scripts/validate.sh` from the repo root.
+- If validation fails, do not proceed with committing or opening a PR. Fix failures first.
+- For changes spanning multiple overlays, ensure all impacted overlays pass validation.
 
-### Common commands (examples)
-- Node.js: `npm test` (or `pnpm test`, `yarn test`)
-- Python: `pytest`
-- Go: `go test ./...`
-- Rust: `cargo test`
-- Make: `make test`
+### Common commands in this repository
+- Kustomize build + kubeconform: `bash scripts/validate.sh`
 
 ### CI enforcement
-- CI will run tests on pull requests. Keep the main branch green.
+- CI runs kubeconform and flux-local on pull requests. Keep the main branch green.
 - Do not bypass CI failures without an explicit, reviewed justification.
 
 ### Notes for automation

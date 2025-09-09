@@ -4,7 +4,7 @@ Describe the change and why it is needed.
 
 ## Checklist
 
-- [ ] I ran the test suite locally and all tests passed.
+- [ ] I ran `bash scripts/validate.sh` locally from repo root and it passed.
 - [ ] I updated docs/configuration as needed (including CI) for this change.
 - [ ] I validated that this change does not break existing behavior.
 
@@ -13,12 +13,8 @@ Describe the change and why it is needed.
 Provide clear steps or commands for reviewers to reproduce the test results locally.
 
 ```bash
-# examples (adjust as needed for the stack)
-npm ci && npm test
-pytest -q
-go test ./...
-cargo test
-make test
+# repo-local validation
+bash scripts/validate.sh
 ```
 
 ## Additional context
