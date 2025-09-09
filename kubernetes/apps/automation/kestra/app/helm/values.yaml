@@ -1,0 +1,23 @@
+# Minimal Kestra values tailored for homelab
+configurations:
+  application:
+    kestra:
+      server:
+        basicAuth:
+          enabled: false
+    datasources:
+      jdbc:
+        url: "jdbc:h2:file:/data/kestra.db"
+        username: "sa"
+        password: ""
+  # Optional: add extra secrets or configmaps later
+
+service:
+  type: ClusterIP
+
+ingress:
+  enabled: false
+
+dind:
+  enabled: false
+
