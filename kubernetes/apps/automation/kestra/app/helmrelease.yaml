@@ -4,7 +4,7 @@ apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
   name: kestra
-  namespace: default
+  namespace: automation
 spec:
   interval: 1h
   url: https://helm.kestra.io
@@ -24,7 +24,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: kestra
-        namespace: default
+        namespace: automation
   install:
     remediation:
       retries: -1
