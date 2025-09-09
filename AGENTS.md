@@ -30,7 +30,7 @@
 - CI: PRs run strict kubeconform and flux‑local diff/tests; fix all diffs/violations.
 
 ## Commit & Pull Request Guidelines
-- Conventional Commits: `type(scope): subject` (e.g., `feat(network): add k8s-gateway`, `fix(agixt): expose web port 3437`).
+- All commits and PR titles must follow Conventional Commits: `type(scope): subject` (e.g., `feat(network): add k8s-gateway`, `fix(agixt): expose web port 3437`).
 - PRs must include: clear description, impacted paths (e.g., `kubernetes/apps/...`), rationale; screenshots/logs when relevant; linked issues; green CI; passing local validation.
 
 ## Security & Configuration Tips
