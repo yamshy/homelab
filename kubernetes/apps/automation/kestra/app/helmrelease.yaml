@@ -33,10 +33,11 @@ spec:
     remediation:
       retries: 3
   values:
-    # Persistent storage for Kestra (uses default Longhorn storage class)
+    # Persistent storage for Kestra using Synology CSI
     persistence:
       enabled: true
       size: 10Gi
+      storageClass: synology-iscsi-retain
 
     # Production-ready server configuration
     configuration:
@@ -89,8 +90,8 @@ spec:
 
     resources:
       requests:
-        cpu: 2000m  # 2 vCPUs (minimum requirement)
-        memory: 4Gi  # 4 GiB (minimum requirement)
+        cpu: 2000m # 2 vCPUs (minimum requirement)
+        memory: 4Gi # 4 GiB (minimum requirement)
       limits:
-        cpu: 4000m  # 4 vCPUs (allow bursting)
-        memory: 6Gi  # 6 GiB (headroom for JVM)
+        cpu: 4000m # 4 vCPUs (allow bursting)
+        memory: 6Gi # 6 GiB (headroom for JVM)
