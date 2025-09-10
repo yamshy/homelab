@@ -38,3 +38,127 @@
 - Required CLIs are managed by `mise` (`task`, `kubectl`, `kustomize`, `sops`, `yq`, `flux`, `talhelper`).
 - Prefer additive Kustomize patches over in‑place edits to ease diffs.
 
+## Per‑app Helm layout standard (future apps)
+
+Use this structure for every new app. Keep the `HelmRepository` (or `OCIRepository`) and `HelmRelease` in the same file, and put all values under `app/helm/values.yaml`.
+
+```text
+kubernetes/apps/<namespace>/<app>/
+  app/
+    helm/
+      values.yaml
+    helmrelease.yaml
+    kustomization.yaml
+    kustomizeconfig.yaml
+  ks.yaml
+```
+
+- `app/helm/values.yaml`: the only place for chart values (do not use `spec.values` inline)
+- `app/helmrelease.yaml`: contains both the repository object and the `HelmRelease` (two YAML docs in one file)
+- `app/kustomization.yaml`: generates a `ConfigMap` from `helm/values.yaml` and applies `helmrelease.yaml`
+- `app/kustomizeconfig.yaml`: rewrites `HelmRelease.spec.valuesFrom.name` to the hashed `ConfigMap` name
+- Anchors: only within a single YAML document; never across `---`
+- Schemas: include yaml-language-server schema headers for validation
+
+### Template: `app/helmrelease.yaml`
+```yaml
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/source-helmrepository-v1.json
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: <app>-repo
+  namespace: <namespace>
+spec:
+  interval: 1h
+  url: https://example.com/charts
+  timeout: 1m
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: <app>
+  namespace: <namespace>
+spec:
+  interval: 15m
+  timeout: 10m
+  chart:
+    spec:
+      chart: <app>
+      version: 1.x.x
+      sourceRef:
+        kind: HelmRepository
+        name: <app>-repo
+        namespace: <namespace>
+  install:
+    createNamespace: false
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+    cleanupOnFail: true
+  valuesFrom:
+    - kind: ConfigMap
+      name: <app>-values
+      valuesKey: values.yaml
+  driftDetection:
+    mode: enabled
+```
+
+Note: If using an `OCIRepository` instead of `HelmRepository`, co‑locate that object in the same file above the `HelmRelease` and set `spec.chartRef` accordingly.
+
+### Template: `app/kustomization.yaml`
+```yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - helmrelease.yaml
+
+configMapGenerator:
+  - name: <app>-values
+    files:
+      - values.yaml=helm/values.yaml
+
+generatorOptions:
+  disableNameSuffixHash: false
+
+configurations:
+  - kustomizeconfig.yaml
+```
+
+### Template: `app/kustomizeconfig.yaml`
+```yaml
+nameReference:
+  - kind: ConfigMap
+    version: v1
+    fieldSpecs:
+      - group: helm.toolkit.fluxcd.io
+        version: v2
+        kind: HelmRelease
+        path: spec/valuesFrom/name
+```
+
+### Template: `app/helm/values.yaml`
+```yaml
+# Place all chart values here; referenced via valuesFrom
+replicaCount: 1
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 200m
+    memory: 256Mi
+```
+
+### Quick checklist
+- Create `kubernetes/apps/<namespace>/<app>/app/`
+- Add `helm/values.yaml` and keep all values there
+- Put repo object + `HelmRelease` in `helmrelease.yaml` (same file)
+- Reference values via `valuesFrom` `ConfigMap` named `<app>-values`
+- Include schema headers on both YAML documents
+- Use anchors only within a single YAML document
+
