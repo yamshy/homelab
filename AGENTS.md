@@ -38,7 +38,7 @@
 - Required CLIs are managed by `mise` (`task`, `kubectl`, `kustomize`, `sops`, `yq`, `flux`, `talhelper`).
 - Prefer additive Kustomize patches over in‑place edits to ease diffs.
 
-## Per‑app Helm layout standard (future apps)
+## Per‑app Helm layout standard
 
 Use this structure for every new app. Keep the `HelmRepository` (or `OCIRepository`) and `HelmRelease` in the same file, and put all values under `app/helm/values.yaml`.
 
