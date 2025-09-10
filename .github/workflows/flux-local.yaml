@@ -30,6 +30,8 @@ jobs:
     name: Flux Local Test
     needs: pre-job
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     if: ${{ needs.pre-job.outputs.any_changed == 'true' }}
     steps:
       - name: Checkout
