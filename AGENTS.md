@@ -162,3 +162,6 @@ resources:
 - Include schema headers on both YAML documents
 - Use anchors only within a single YAML document
 
+### Important
+- Do not change which chart a service uses as part of this refactor. If an app currently uses the `app-template` chart via a centralized `OCIRepository` named `app-template`, keep that reference intact. This standardization only moves inline values into `app/helm/values.yaml` and wires them with `valuesFrom`.
+
