@@ -40,7 +40,7 @@
 
 ## Per‑app Helm layout standard
 
-Use this structure for every new app. Keep the `HelmRepository` (or `OCIRepository`) and `HelmRelease` in the same file, and put all values under `app/helm/values.yaml`.
+Use this structure for every new app. Keep chart source references as they are today (do not change charts). Only move inline values into `app/helm/values.yaml` and wire them via `valuesFrom`.
 
 ```text
 kubernetes/apps/<namespace>/<app>/
@@ -61,18 +61,47 @@ kubernetes/apps/<namespace>/<app>/
 - Schemas: include yaml-language-server schema headers for validation
 
 ### Template: `app/helmrelease.yaml`
+
+Centralized chart source (preferred for `app-template`):
 ```yaml
-# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/source-helmrepository-v1.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: <app>
+  namespace: <namespace>
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  valuesFrom:
+    - kind: ConfigMap
+      name: <app>-values
+      valuesKey: values.yaml
+```
+
+Co‑located source (only if the app already follows this pattern):
+```yaml
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/ocirepository-source-v1.json
 ---
 apiVersion: source.toolkit.fluxcd.io/v1
-kind: HelmRepository
+kind: OCIRepository
 metadata:
   name: <app>-repo
   namespace: <namespace>
 spec:
-  interval: 1h
-  url: https://example.com/charts
-  timeout: 1m
+  interval: 5m
+  ref:
+    tag: <chart-version>
+  url: oci://example.com/org/chart
 ---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
 apiVersion: helm.toolkit.fluxcd.io/v2
@@ -81,33 +110,15 @@ metadata:
   name: <app>
   namespace: <namespace>
 spec:
-  interval: 15m
-  timeout: 10m
-  chart:
-    spec:
-      chart: <app>
-      version: 1.x.x
-      sourceRef:
-        kind: HelmRepository
-        name: <app>-repo
-        namespace: <namespace>
-  install:
-    createNamespace: false
-    remediation:
-      retries: 3
-  upgrade:
-    remediation:
-      retries: 3
-    cleanupOnFail: true
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: <app>-repo
   valuesFrom:
     - kind: ConfigMap
       name: <app>-values
       valuesKey: values.yaml
-  driftDetection:
-    mode: enabled
 ```
-
-Note: If using an `OCIRepository` instead of `HelmRepository`, co‑locate that object in the same file above the `HelmRelease` and set `spec.chartRef` accordingly.
 
 ### Template: `app/kustomization.yaml`
 ```yaml
@@ -157,11 +168,16 @@ resources:
 ### Quick checklist
 - Create `kubernetes/apps/<namespace>/<app>/app/`
 - Add `helm/values.yaml` and keep all values there
-- Put repo object + `HelmRelease` in `helmrelease.yaml` (same file)
+- Keep existing chart source untouched:
+  - If using centralized `OCIRepository` (e.g., `app-template`), continue referencing it via `chartRef`.
+  - If the app already co‑locates a repository object, keep it co‑located.
 - Reference values via `valuesFrom` `ConfigMap` named `<app>-values`
 - Include schema headers on both YAML documents
 - Use anchors only within a single YAML document
+- Include `kustomizeconfig.yaml` so Kustomize rewrites `spec/valuesFrom/name` to the hashed `ConfigMap` name when `disableNameSuffixHash: false`.
 
 ### Important
-- Do not change which chart a service uses as part of this refactor. If an app currently uses the `app-template` chart via a centralized `OCIRepository` named `app-template`, keep that reference intact. This standardization only moves inline values into `app/helm/values.yaml` and wires them with `valuesFrom`.
+- Do not change which chart a service uses as part of this refactor.
+- If an app uses the `app-template` chart via the centralized `OCIRepository` named `app-template`, keep that reference intact (do not add a local repo object).
+- The only change is to move inline Helm values/customizations into `app/helm/values.yaml` and reference them via `valuesFrom`.
 
