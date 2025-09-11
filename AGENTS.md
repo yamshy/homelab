@@ -38,3 +38,146 @@
 - Required CLIs are managed by `mise` (`task`, `kubectl`, `kustomize`, `sops`, `yq`, `flux`, `talhelper`).
 - Prefer additive Kustomize patches over in‑place edits to ease diffs.
 
+## Per‑app Helm layout standard
+
+Use this structure for every new app. Keep chart source references as they are today (do not change charts). Only move inline values into `app/helm/values.yaml` and wire them via `valuesFrom`. Place the Kustomize nameReference file under `app/helm/` and reference it from `app/kustomization.yaml`.
+
+```text
+kubernetes/apps/<namespace>/<app>/
+  app/
+    helm/
+      values.yaml
+      kustomizeconfig.yaml
+    helmrelease.yaml
+    kustomization.yaml
+  ks.yaml
+```
+
+- `app/helm/values.yaml`: the only place for chart values (do not use `spec.values` inline)
+- `app/helmrelease.yaml`: contains both the repository object and the `HelmRelease` (two YAML docs in one file)
+- `app/kustomization.yaml`: generates a `ConfigMap` from `helm/values.yaml` and applies `helmrelease.yaml`
+- `app/kustomizeconfig.yaml`: rewrites `HelmRelease.spec.valuesFrom.name` to the hashed `ConfigMap` name
+- Anchors: only within a single YAML document; never across `---`
+- Schemas: include yaml-language-server schema headers for validation
+
+### Template: `app/helmrelease.yaml`
+
+Centralized chart source (preferred for `app-template`):
+```yaml
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: <app>
+  namespace: <namespace>
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  valuesFrom:
+    - kind: ConfigMap
+      name: <app>-values
+      valuesKey: values.yaml
+```
+
+Co‑located source (only if the app already follows this pattern):
+```yaml
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/ocirepository-source-v1.json
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: <app>-repo
+  namespace: <namespace>
+spec:
+  interval: 5m
+  ref:
+    tag: <chart-version>
+  url: oci://example.com/org/chart
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: <app>
+  namespace: <namespace>
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: <app>-repo
+  valuesFrom:
+    - kind: ConfigMap
+      name: <app>-values
+      valuesKey: values.yaml
+```
+
+### Template: `app/kustomization.yaml`
+```yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - helmrelease.yaml
+
+configMapGenerator:
+  - name: <app>-values
+    files:
+      - values.yaml=./helm/values.yaml
+
+generatorOptions:
+  disableNameSuffixHash: false
+
+configurations:
+  - ./helm/kustomizeconfig.yaml
+```
+
+### Template: `app/kustomizeconfig.yaml`
+```yaml
+nameReference:
+  - kind: ConfigMap
+    version: v1
+    fieldSpecs:
+      - group: helm.toolkit.fluxcd.io
+        version: v2
+        kind: HelmRelease
+        path: spec/valuesFrom/name
+```
+
+### Template: `app/helm/values.yaml`
+```yaml
+# Place all chart values here; referenced via valuesFrom
+replicaCount: 1
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 200m
+    memory: 256Mi
+```
+
+### Quick checklist
+- Create `kubernetes/apps/<namespace>/<app>/app/`
+- Add `helm/values.yaml` and keep all values there
+- Keep existing chart source untouched:
+  - If using centralized `OCIRepository` (e.g., `app-template`), continue referencing it via `chartRef`.
+  - If the app already co‑locates a repository object, keep it co‑located.
+- Reference values via `valuesFrom` `ConfigMap` named `<app>-values`
+- Include schema headers on both YAML documents
+- Use anchors only within a single YAML document
+- Include `kustomizeconfig.yaml` so Kustomize rewrites `spec/valuesFrom/name` to the hashed `ConfigMap` name when `disableNameSuffixHash: false`.
+
+### Important
+- Do not change which chart a service uses as part of this refactor.
+- If an app uses the `app-template` chart via the centralized `OCIRepository` named `app-template`, keep that reference intact (do not add a local repo object).
+- The only change is to move inline Helm values/customizations into `app/helm/values.yaml` and reference them via `valuesFrom`.
+
