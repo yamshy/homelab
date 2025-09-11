@@ -1,0 +1,40 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrepository-source-v1.json
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: coder
+  namespace: workspaces
+spec:
+  interval: 1h
+  # Official Coder Helm chart repository
+  url: https://helm.coder.com
+
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app coder
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: *app
+      # Keep version floating to Renovate/Flux notifications; pin later if desired.
+      # version: 2.x.x
+      sourceRef:
+        kind: HelmRepository
+        name: coder
+        namespace: workspaces
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  valuesFrom:
+    - kind: ConfigMap
+      name: coder-values
+      valuesKey: values.yaml
