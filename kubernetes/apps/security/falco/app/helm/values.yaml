@@ -37,3 +37,6 @@ falcosidekick:
         - host: falco-ui
           paths:
             - path: /
+      tls:
+        - hosts:
+            - falco-ui
