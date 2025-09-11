@@ -9,3 +9,9 @@ configMapGenerator:
   - name: coder-values
     files:
       - values.yaml=./helm/values.yaml
+
+generatorOptions:
+  disableNameSuffixHash: false
+
+configurations:
+  - ./helm/kustomizeconfig.yaml
