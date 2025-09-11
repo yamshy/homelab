@@ -1,0 +1,120 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/ocirepository-source-v1.json
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: falco
+spec:
+  interval: 5m
+  layerSelector:
+    mediaType: application/vnd.cncf.helm.chart.content.v1.tar+gzip
+    operation: copy
+  ref:
+    tag: 3.0.0
+  url: oci://ghcr.io/falcosecurity/charts/falco
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: falco
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: falco
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  values:
+    # Driver configuration for eBPF CO-RE (modern bpf)
+    # This avoids kernel modules and works with Talos-like locked-down kernels
+    driver:
+      kind: modern_bpf
+      enabled: true
+    
+    # Resource configuration following repo patterns
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 200m
+        memory: 512Mi
+    
+    # DaemonSet configuration
+    daemonset:
+      # Ensure it runs on Linux nodes
+      nodeSelector:
+        kubernetes.io/os: linux
+      
+      # Tolerations to run on control plane nodes if needed
+      tolerations:
+        - key: node-role.kubernetes.io/control-plane
+          operator: Exists
+          effect: NoSchedule
+        - key: node-role.kubernetes.io/master
+          operator: Exists
+          effect: NoSchedule
+    
+    # Falco configuration
+    falco:
+      # Enable JSON output for better log parsing
+      json_output: true
+      
+      # Configure rules file
+      rules_file:
+        - /etc/falco/falco_rules.yaml
+        - /etc/falco/falco_rules.local.yaml
+        - /etc/falco/k8s_audit_rules.yaml
+        - /etc/falco/k8s_audit_rules.local.yaml
+      
+      # Enable Kubernetes audit events
+      k8s_audit_log_url: "http://localhost:8080/audit"
+      
+      # Output configuration - start with stdout
+      stdout_output:
+        enabled: true
+      
+      # Disable file output by default
+      file_output:
+        enabled: false
+    
+    # Service configuration
+    service:
+      type: ClusterIP
+      port: 8765
+    
+    # Security context following repo patterns
+    securityContext:
+      runAsNonRoot: true
+      runAsUser: 65534
+      fsGroup: 65534
+      seccompProfile:
+        type: RuntimeDefault
+    
+    # Pod security context
+    podSecurityContext:
+      runAsNonRoot: true
+      runAsUser: 65534
+      fsGroup: 65534
+      seccompProfile:
+        type: RuntimeDefault
+    
+    # Service account configuration
+    serviceAccount:
+      create: true
+      annotations: {}
+    
+    # RBAC configuration
+    rbac:
+      create: true
+    
+    # Pod disruption budget
+    podDisruptionBudget:
+      enabled: true
+      minAvailable: 1
