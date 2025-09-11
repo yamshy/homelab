@@ -40,16 +40,16 @@
 
 ## Per‑app Helm layout standard
 
-Use this structure for every new app. Keep chart source references as they are today (do not change charts). Only move inline values into `app/helm/values.yaml` and wire them via `valuesFrom`.
+Use this structure for every new app. Keep chart source references as they are today (do not change charts). Only move inline values into `app/helm/values.yaml` and wire them via `valuesFrom`. Place the Kustomize nameReference file under `app/helm/` and reference it from `app/kustomization.yaml`.
 
 ```text
 kubernetes/apps/<namespace>/<app>/
   app/
     helm/
       values.yaml
+      kustomizeconfig.yaml
     helmrelease.yaml
     kustomization.yaml
-    kustomizeconfig.yaml
   ks.yaml
 ```
 
@@ -131,13 +131,13 @@ resources:
 configMapGenerator:
   - name: <app>-values
     files:
-      - values.yaml=helm/values.yaml
+      - values.yaml=./helm/values.yaml
 
 generatorOptions:
   disableNameSuffixHash: false
 
 configurations:
-  - kustomizeconfig.yaml
+  - ./helm/kustomizeconfig.yaml
 ```
 
 ### Template: `app/kustomizeconfig.yaml`

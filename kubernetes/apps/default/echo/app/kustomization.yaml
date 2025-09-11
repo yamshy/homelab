@@ -7,8 +7,8 @@ resources:
 configMapGenerator:
   - name: echo-values
     files:
-      - values.yaml=helm/values.yaml
+      - values.yaml=./helm/values.yaml
 generatorOptions:
   disableNameSuffixHash: false
 configurations:
-  - kustomizeconfig.yaml
+  - ./helm/kustomizeconfig.yaml
