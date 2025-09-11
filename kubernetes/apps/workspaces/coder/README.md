@@ -5,9 +5,10 @@ This app deploys the Coder control plane using the official Helm chart and expos
 ## Accessing the UI
 
 1) Ensure the Tailscale operator is installed and managing the `tailscale` IngressClass (already present under apps/network/tailscale in this repo).
-2) Edit `kubernetes/apps/workspaces/coder/app/helm/values.yaml` and set:
-   - `ingress.hosts[0].host` to your tailnet domain (for example, `coder.<your-tailnet>.ts.net`).
-   - `ingress.tls[0].hosts[0]` to the same host.
+2) The hostname is a short name managed by Tailscale. By default this is set to:
+   - `ingress.hosts[0].host: coder`
+   - `ingress.tls[0].hosts[0]: coder`
+   Tailscale will publish this as `coder.<your-tailnet>.ts.net`.
 3) Commit and wait for Flux to reconcile.
 4) Once the Tailscale operator creates the endpoint, browse to the host from a device in your tailnet.
 
