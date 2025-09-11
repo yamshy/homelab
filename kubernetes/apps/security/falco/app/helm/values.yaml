@@ -22,3 +22,18 @@ resources:
   limits:
     cpu: 200m
     memory: 512Mi
+
+falcosidekick:
+  enabled: true
+  webui:
+    enabled: true
+    service:
+      type: ClusterIP
+    ingress:
+      enabled: true
+      ingressClassName: tailscale
+      annotations: {}
+      hosts:
+        - host: falco-ui
+          paths:
+            - path: /
