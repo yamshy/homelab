@@ -5,7 +5,7 @@ kind: Kustomization
 resources:
   - ./helmrelease.yaml
   - ./ingress.yaml
-  - ./rbac-default-namespace.yaml
+  - ./rbac.yaml
 
 configMapGenerator:
   - name: coder-values
