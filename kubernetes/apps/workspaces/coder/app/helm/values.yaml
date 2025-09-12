@@ -19,6 +19,3 @@ ingress:
       paths:
         - path: /
           pathType: Prefix
-  tls:
-    - hosts:
-        - coder
