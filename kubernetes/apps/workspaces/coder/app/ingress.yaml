@@ -15,7 +15,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: coderd
+                name: coder
                 port:
                   number: 80
   tls:
