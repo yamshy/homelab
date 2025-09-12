@@ -8,7 +8,7 @@ metadata:
 spec:
   ingressClassName: tailscale
   rules:
-    - host: coder
+    - host: coder.${SECRET_TAILNET}
       http:
         paths:
           - path: /
@@ -20,4 +20,4 @@ spec:
                   number: 80
   tls:
     - hosts:
-        - coder
+        - coder.${SECRET_TAILNET}

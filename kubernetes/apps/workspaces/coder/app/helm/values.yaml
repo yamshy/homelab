@@ -10,7 +10,7 @@
 coder:
   env:
     - name: CODER_ACCESS_URL
-      value: "https://coder.tail2a848.ts.net"
+      value: "https://coder.${SECRET_TAILNET}"
 
 service:
   type: ClusterIP
