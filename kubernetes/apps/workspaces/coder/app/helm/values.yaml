@@ -1,12 +1,16 @@
 # Minimal Coder config for brokered SSH only via Tailscale Ingress.
 # - Service remains ClusterIP (no NodePort/LoadBalancer)
 # - Ingress uses className: tailscale (managed by Tailscale operator)
-# - Host is a placeholder; update to your tailnet domain.
 #
 # Notes:
 # - Coder defaults to brokered SSH; no extra ports/services required.
 # - The chart provides in-cluster dependencies (e.g., Postgres) by default;
 #   no explicit configuration is needed here for evaluation/small clusters.
+
+coder:
+  env:
+    - name: CODER_ACCESS_URL
+      value: "https://coder"
 
 service:
   type: ClusterIP
