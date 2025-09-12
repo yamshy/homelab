@@ -3,7 +3,7 @@
 # - Ingress uses className: tailscale (managed by Tailscale operator)
 #
 # Notes:
-# - Coder defaults to brokered SSH; no extra ports/services required.
+# - Ccoder defaults to brokered SSH; no extra ports/services required.
 # - The chart provides in-cluster dependencies (e.g., Postgres) by default;
 #   no explicit configuration is needed here for evaluation/small clusters.
 
@@ -17,3 +17,8 @@ service:
 
 ingress:
   enabled: false
+
+# Explicitly use Synology CSI delete StorageClass for bundled Postgres PVCs
+postgres:
+  default:
+    storageClassName: "synology-iscsi-delete"
