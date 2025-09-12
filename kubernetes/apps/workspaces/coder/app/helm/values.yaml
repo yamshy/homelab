@@ -16,13 +16,4 @@ service:
   type: ClusterIP
 
 ingress:
-  enabled: true
-  className: tailscale
-  hosts:
-    - host: coder
-      paths:
-        - path: /
-          pathType: Prefix
-  tls:
-    - hosts:
-        - coder
+  enabled: false
