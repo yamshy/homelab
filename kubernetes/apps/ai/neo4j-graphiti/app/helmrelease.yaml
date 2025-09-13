@@ -1,0 +1,38 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrepository-source-v1.json
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: neo4j
+  namespace: ai # Required for Renovate lookups
+spec:
+  interval: 1h
+  url: https://helm.neo4j.com/neo4j
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app neo4j-graphiti
+  namespace: ai
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: neo4j
+      version: v2025.8.0-0
+      sourceRef:
+        kind: HelmRepository
+        name: neo4j
+        namespace: ai
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  valuesFrom:
+    - kind: ConfigMap
+      name: neo4j-graphiti-values
+      valuesKey: values.yaml

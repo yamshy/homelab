@@ -1,0 +1,71 @@
+controllers:
+  graphiti:
+    containers:
+      app:
+        env:
+          - name: MODEL_NAME
+            value: gpt-4o-mini
+          - name: OPENAI_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: graphiti-env
+                key: OPENAI_API_KEY
+          - name: NEO4J_URI
+            value: bolt://neo4j-graphiti-neo4j:7687
+          - name: NEO4J_USER
+            value: neo4j
+          - name: NEO4J_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: graphiti-env
+                key: NEO4J_PASSWORD
+        probes:
+          liveness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /sse
+                port: 8000
+              initialDelaySeconds: 0
+              periodSeconds: 10
+              timeoutSeconds: 1
+              failureThreshold: 3
+          readiness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /sse
+                port: 8000
+              initialDelaySeconds: 0
+              periodSeconds: 10
+              timeoutSeconds: 1
+              failureThreshold: 3
+        resources:
+          requests:
+            cpu: 250m
+            memory: 512Mi
+          limits:
+            cpu: 500m
+            memory: 1Gi
+service:
+  app:
+    ports:
+      http:
+        port: 8000
+ingress:
+  app:
+    enabled: true
+    className: tailscale
+    hosts:
+      - host: graphiti.${SECRET_TAILNET}
+        paths:
+          - path: /
+            pathType: Prefix
+            service:
+              identifier: app
+              port: http
+    tls:
+      - hosts:
+          - graphiti.${SECRET_TAILNET}

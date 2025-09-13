@@ -7,3 +7,5 @@ components:
   - ../../components/common
 resources:
   - ./dify/ks.yaml
+  - ./neo4j-graphiti/ks.yaml
+  - ./graphiti/ks.yaml
