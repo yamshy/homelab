@@ -1,0 +1,86 @@
+# Dify configuration for homelab deployment
+global:
+  # Enable migrations and sandbox
+  enableMigrations: true
+  enableSandbox: true
+
+# Ingress disabled - using separate ingress.yaml with SECRET_TAILNET
+ingress:
+  enabled: false
+
+# PostgreSQL configuration with Synology CSI storage
+postgresql:
+  enabled: true
+  primary:
+    persistence:
+      enabled: true
+      storageClass: synology-iscsi-delete
+      size: 20Gi
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+
+# Redis configuration with Synology CSI storage
+redis:
+  enabled: true
+  master:
+    persistence:
+      enabled: true
+      storageClass: synology-iscsi-delete
+      size: 5Gi
+    resources:
+      requests:
+        cpu: 250m
+        memory: 512Mi
+      limits:
+        cpu: 500m
+        memory: 1Gi
+
+# Dify API configuration with Synology CSI storage
+api:
+  persistence:
+    enabled: true
+    storageClass: synology-iscsi-delete
+    size: 10Gi
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+  env:
+    # Reference secret for sensitive values
+    - name: SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: dify-env
+          key: SECRET_KEY
+
+# Dify Web configuration
+web:
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi
+
+# Worker configuration with Synology CSI storage
+worker:
+  persistence:
+    enabled: true
+    storageClass: synology-iscsi-delete
+    size: 10Gi
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: 1000m
+      memory: 2Gi
