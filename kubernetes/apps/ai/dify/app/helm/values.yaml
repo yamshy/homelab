@@ -11,20 +11,22 @@ ingress:
   annotations:
     tailscale.com/tags: "tag:k8s"
   hosts:
-    - host: ""  # Tailscale will auto-generate hostname
+    - host: dify
       paths:
         - path: /
-          pathType: ImplementationSpecific
-  tls: []
+          pathType: Prefix
+  tls:
+    - hosts:
+        - dify
 
-# PostgreSQL configuration with persistent storage
+# PostgreSQL configuration with Synology CSI storage
 postgresql:
   enabled: true
   primary:
     persistence:
       enabled: true
+      storageClass: synology-iscsi-delete
       size: 20Gi
-      # Use default StorageClass
     resources:
       requests:
         cpu: 500m
@@ -33,14 +35,14 @@ postgresql:
         cpu: 1000m
         memory: 2Gi
 
-# Redis configuration with persistent storage
+# Redis configuration with Synology CSI storage
 redis:
   enabled: true
   master:
     persistence:
       enabled: true
+      storageClass: synology-iscsi-delete
       size: 5Gi
-      # Use default StorageClass
     resources:
       requests:
         cpu: 250m
@@ -49,8 +51,12 @@ redis:
         cpu: 500m
         memory: 1Gi
 
-# Dify API configuration
+# Dify API configuration with Synology CSI storage
 api:
+  persistence:
+    enabled: true
+    storageClass: synology-iscsi-delete
+    size: 10Gi
   resources:
     requests:
       cpu: 500m
@@ -76,8 +82,12 @@ web:
       cpu: 500m
       memory: 1Gi
 
-# Worker configuration
+# Worker configuration with Synology CSI storage
 worker:
+  persistence:
+    enabled: true
+    storageClass: synology-iscsi-delete
+    size: 10Gi
   resources:
     requests:
       cpu: 500m
