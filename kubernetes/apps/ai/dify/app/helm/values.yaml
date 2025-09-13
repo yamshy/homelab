@@ -3,6 +3,8 @@ global:
   # Enable migrations and sandbox
   enableMigrations: true
   enableSandbox: true
+  # Set default storage class to longhorn
+  storageClass: longhorn
 
 # Ingress configuration with Tailscale
 ingress:
@@ -51,6 +53,14 @@ redis:
         cpu: 500m
         memory: 1Gi
 
+# Weaviate configuration with Longhorn storage
+weaviate:
+  enabled: true
+  persistence:
+    enabled: true
+    storageClass: longhorn
+    size: 32Gi
+
 # Dify API configuration with Longhorn storage
 api:
   persistence:
@@ -95,3 +105,10 @@ worker:
     limits:
       cpu: 1000m
       memory: 2Gi
+
+# Plugin daemon configuration with Longhorn storage
+pluginDaemon:
+  persistence:
+    enabled: true
+    storageClass: longhorn
+    size: 5Gi
