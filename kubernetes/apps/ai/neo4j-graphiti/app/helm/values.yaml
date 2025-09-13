@@ -1,0 +1,17 @@
+neo4j:
+  name: neo4j
+  acceptLicenseAgreement: "yes"
+  existingPasswordSecret: graphiti-env
+  existingPasswordSecretKey: NEO4J_PASSWORD
+core:
+  standalone: true
+  resources:
+    requests:
+      cpu: 500m
+      memory: 2Gi
+    limits:
+      cpu: 1
+      memory: 4Gi
+  persistentVolume:
+    storageClassName: longhorn
+    size: 10Gi
