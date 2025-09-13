@@ -4,7 +4,7 @@ apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
   name: dify
-  namespace: automation
+  namespace: ai
 spec:
   interval: 1h
   url: https://borispolonsky.github.io/dify-helm
@@ -24,7 +24,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: dify
-        namespace: automation
+        namespace: ai
   install:
     remediation:
       retries: -1
