@@ -1,0 +1,98 @@
+# Dify configuration for homelab deployment
+global:
+  # Enable migrations and sandbox
+  enableMigrations: true
+  enableSandbox: true
+
+# Ingress configuration with Tailscale
+ingress:
+  enabled: true
+  className: tailscale
+  annotations:
+    tailscale.com/tags: "tag:k8s"
+  tls: true
+  # No hostname specified - Tailscale will auto-generate
+
+# PostgreSQL configuration with persistent storage
+postgresql:
+  enabled: true
+  primary:
+    persistence:
+      enabled: true
+      size: 20Gi
+      # Use default StorageClass
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+
+# Redis configuration with persistent storage
+redis:
+  enabled: true
+  master:
+    persistence:
+      enabled: true
+      size: 5Gi
+      # Use default StorageClass
+    resources:
+      requests:
+        cpu: 250m
+        memory: 512Mi
+      limits:
+        cpu: 500m
+        memory: 1Gi
+
+# MinIO configuration with persistent storage
+minio:
+  enabled: true
+  persistence:
+    enabled: true
+    size: 50Gi
+    # Use default StorageClass
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi
+
+# Dify API configuration
+api:
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+  env:
+    # Reference secret for sensitive values
+    - name: SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: dify-env
+          key: SECRET_KEY
+
+# Dify Web configuration
+web:
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi
+
+# Worker configuration
+worker:
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: 1000m
+      memory: 2Gi

@@ -6,4 +6,5 @@ namespace: automation
 components:
   - ../../components/common
 resources:
+  - ./dify/ks.yaml
   - ./kestra/ks.yaml
