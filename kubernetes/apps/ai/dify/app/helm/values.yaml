@@ -3,8 +3,6 @@ global:
   # Enable migrations and sandbox
   enableMigrations: true
   enableSandbox: true
-  # Set default storage class to longhorn
-  storageClass: longhorn
 
 # Ingress configuration with Tailscale
 ingress:
