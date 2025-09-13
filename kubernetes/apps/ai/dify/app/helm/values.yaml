@@ -19,13 +19,13 @@ ingress:
       hosts:
         - dify.${SECRET_TAILNET}
 
-# PostgreSQL configuration with Synology CSI storage
+# PostgreSQL configuration with Longhorn storage
 postgresql:
   enabled: true
   primary:
     persistence:
       enabled: true
-      storageClass: synology-iscsi-delete
+      storageClass: longhorn
       size: 20Gi
     resources:
       requests:
@@ -35,13 +35,13 @@ postgresql:
         cpu: 1000m
         memory: 2Gi
 
-# Redis configuration with Synology CSI storage
+# Redis configuration with Longhorn storage
 redis:
   enabled: true
   master:
     persistence:
       enabled: true
-      storageClass: synology-iscsi-delete
+      storageClass: longhorn
       size: 5Gi
     resources:
       requests:
@@ -51,11 +51,11 @@ redis:
         cpu: 500m
         memory: 1Gi
 
-# Dify API configuration with Synology CSI storage
+# Dify API configuration with Longhorn storage
 api:
   persistence:
     enabled: true
-    storageClass: synology-iscsi-delete
+    storageClass: longhorn
     size: 10Gi
   resources:
     requests:
@@ -82,11 +82,11 @@ web:
       cpu: 500m
       memory: 1Gi
 
-# Worker configuration with Synology CSI storage
+# Worker configuration with Longhorn storage
 worker:
   persistence:
     enabled: true
-    storageClass: synology-iscsi-delete
+    storageClass: longhorn
     size: 10Gi
   resources:
     requests:
