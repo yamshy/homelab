@@ -1,0 +1,40 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrepository-source-v1.json
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: qdrant
+  namespace: ai
+spec:
+  interval: 1h
+  url: https://qdrant.github.io/qdrant-helm
+
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app qdrant
+  namespace: ai
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: qdrant
+      # Pin chart for reproducibility; Renovate will keep this updated
+      version: 1.14.0
+      sourceRef:
+        kind: HelmRepository
+        name: qdrant
+        namespace: ai
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  valuesFrom:
+    - kind: ConfigMap
+      name: qdrant-values
+      valuesKey: values.yaml
