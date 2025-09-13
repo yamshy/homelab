@@ -4,9 +4,20 @@ global:
   enableMigrations: true
   enableSandbox: true
 
-# Ingress disabled - using separate ingress.yaml with SECRET_TAILNET
+# Ingress configuration with Tailscale
 ingress:
-  enabled: false
+  enabled: true
+  className: tailscale
+  annotations: {}
+  hosts:
+    - host: dify.${SECRET_TAILNET}
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: dify-tls
+      hosts:
+        - dify.${SECRET_TAILNET}
 
 # PostgreSQL configuration with Synology CSI storage
 postgresql:

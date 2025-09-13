@@ -16,7 +16,18 @@ service:
   type: ClusterIP
 
 ingress:
-  enabled: false
+  enabled: true
+  className: tailscale
+  annotations: {}
+  hosts:
+    - host: coder.${SECRET_TAILNET}
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: coder-tls
+      hosts:
+        - coder.${SECRET_TAILNET}
 
 # Explicitly use Synology CSI delete StorageClass for bundled Postgres PVCs
 postgres:
