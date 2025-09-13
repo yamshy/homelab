@@ -1,0 +1,52 @@
+# Qdrant configuration tuned for the homelab cluster
+image:
+  repository: qdrant/qdrant
+  # appVersion is managed by the chart; override only if needed
+  tag: ""
+
+service:
+  type: ClusterIP
+  port: 6333
+
+ingress:
+  enabled: true
+  className: tailscale
+  annotations: {}
+  hosts:
+    - host: qdrant.${SECRET_TAILNET}
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: qdrant-tls
+      hosts:
+        - qdrant.${SECRET_TAILNET}
+
+persistence:
+  enabled: true
+  storageClass: longhorn
+  accessModes:
+    - ReadWriteOnce
+  size: 32Gi
+
+resources:
+  requests:
+    cpu: 500m
+    memory: 1Gi
+  limits:
+    cpu: 2000m
+    memory: 4Gi
+
+# Configure API key auth (optional). If you enable, ensure clients send Api-Key header.
+# You can also set via env QDRANT__SERVICE__API_KEY through extraEnv.
+config:
+  service:
+    # api_key: ${QDRANT_API_KEY}
+    enable_tls: false
+
+# Extra environment for Qdrant container
+extraEnv: []
+
+# ServiceMonitor for scraping metrics (if chart supports)
+serviceMonitor:
+  enabled: false
