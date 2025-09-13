@@ -10,8 +10,12 @@ ingress:
   className: tailscale
   annotations:
     tailscale.com/tags: "tag:k8s"
-  tls: true
-  # No hostname specified - Tailscale will auto-generate
+  hosts:
+    - host: ""  # Tailscale will auto-generate hostname
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
 
 # PostgreSQL configuration with persistent storage
 postgresql:
@@ -44,21 +48,6 @@ redis:
       limits:
         cpu: 500m
         memory: 1Gi
-
-# MinIO configuration with persistent storage
-minio:
-  enabled: true
-  persistence:
-    enabled: true
-    size: 50Gi
-    # Use default StorageClass
-  resources:
-    requests:
-      cpu: 250m
-      memory: 512Mi
-    limits:
-      cpu: 500m
-      memory: 1Gi
 
 # Dify API configuration
 api:
