@@ -60,6 +60,17 @@ kubernetes/apps/<namespace>/<app>/
 - Anchors: only within a single YAML document; never across `---`
 - Schemas: include yaml-language-server schema headers for validation
 
+### Helm chart source placement policy
+
+- Default: define the chart source object in the same file as the app’s HelmRelease (two YAML docs in `app/helmrelease.yaml`).
+  - For HTTP Helm repos, co‑locate a HelmRepository alongside the HelmRelease.
+  - For OCI charts, co‑locate an OCIRepository alongside the HelmRelease (unless your app already uses a central OCIRepository).
+- Centralized sources: only use centralized repositories if they already exist and are intentionally shared (e.g., the common `app-template` OCIRepository under components).
+  - Do not add new repo objects under `kubernetes/flux/meta/repos` unless the repo is truly cluster‑wide and shared across multiple apps.
+- Namespace: put co‑located repository objects in the same namespace as the app’s HelmRelease (helps Renovate lookups and keeps ownership clear).
+- Values: keep all chart values in `app/helm/values.yaml` and reference via `valuesFrom` in the HelmRelease.
+- If you move a repo definition that was previously under `flux/meta`, ensure you also remove any references to it from `kubernetes/flux/meta/repos/kustomization.yaml` to keep `flux-local` happy.
+
 ### Template: `app/helmrelease.yaml`
 
 Centralized chart source (preferred for `app-template`):
