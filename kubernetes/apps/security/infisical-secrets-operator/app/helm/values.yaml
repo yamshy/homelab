@@ -1,0 +1,15 @@
+---
+controllerManager:
+  manager:
+    image:
+      # pin app version explicitly to avoid surprise upgrades
+      tag: v0.7.5
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        memory: 256Mi
+metrics:
+  serviceMonitor:
+    enabled: true
