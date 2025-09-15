@@ -7,4 +7,3 @@ resources:
   - ./repos
   - ./sops
   - ./image-automation
-  - ./infisical
