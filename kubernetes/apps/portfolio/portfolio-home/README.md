@@ -1,21 +1,46 @@
-# Portfolio Application Deployment
+# Portfolio Home (Kubernetes App)
 
-This directory contains the HelmRelease and associated configurations for deploying the portfolio application using the bjw-s/app-template Helm chart.
+Concise documentation for the portfolio website deployment managed by Flux and the bjw-s/app-template Helm chart.
 
-## What it deploys
+## Quick links
 
-- **Container**: `ghcr.io/yamshy/portfolio` (Astro static site served by Caddy)
-- **Port**: 8080 (internal), exposed on port 80 via service
-- **Resources**: 50m CPU, 64Mi memory (requests), 128Mi memory (limits)
-- **Security**: Runs as non-root user (65534) with read-only root filesystem
+- Namespace: `portfolio`
+- Flux Kustomization: `kubernetes/apps/portfolio/portfolio-home/ks.yaml`
+- HelmRelease: `kubernetes/apps/portfolio/portfolio-home/app/helmrelease.yaml`
+- ImageRepository: `kubernetes/apps/portfolio/portfolio-home/app/imagerepository.yaml`
+- ImagePolicy: `kubernetes/apps/portfolio/portfolio-home/app/imagepolicy.yaml`
 
-## Exposure
+## Overview
 
-The application is exposed via **Gateway API HTTPRoute** at `${SECRET_DOMAIN}` (root domain) over HTTPS using the existing external gateway in the kube-system namespace.
+Deploys the public portfolio site using the bjw-s/app-template chart. Reconciliation and image automation are handled by Flux.
 
-### Switching to Tailscale LoadBalancer
+## Workload
 
-To switch from Gateway API to Tailscale LoadBalancer, modify the `service` section in `helmrelease.yaml`:
+- Controller: `portfolio`
+- Container image: `ghcr.io/yamshy/portfolio` (auto-tracked via Flux ImagePolicy, semver `>=2.0.0`)
+- Ports:
+  - Container: 8080
+  - Service: `http` on port 80 → targetPort 8080
+- Probes: HTTP GET `/` on port 8080 (liveness/readiness)
+- Resources:
+  - requests: 50m CPU, 64Mi memory
+  - limits: 128Mi memory
+- Security:
+  - runAsNonRoot: true
+  - runAsUser/group: 1001
+  - readOnlyRootFilesystem: true
+  - allowPrivilegeEscalation: false
+  - capabilities: drop ALL
+
+## Networking and exposure
+
+- Exposed via Gateway API HTTPRoute at hostname `${SECRET_DOMAIN}`.
+- Gateway parentRef: `external` (namespace: `kube-system`, section: `https-root`).
+- TLS is terminated at the external Gateway; backend service listens on port 80.
+
+### Switch to Tailscale LoadBalancer (optional)
+
+To use a Tailscale LoadBalancer instead of Gateway API, update the service and remove the route in the HelmRelease values:
 
 ```yaml
 service:
@@ -26,21 +51,22 @@ service:
       tailscale.com/hostname: portfolio
 ```
 
-And remove or comment out the `route` section.
+Then remove (or comment) the `values.route` section.
 
-## Image Updates
+## Image automation
 
-Image tags are updated using **Renovate** with the `helm-values` manager. The image tag is explicitly defined in the HelmRelease values to facilitate automated updates:
+Flux tracks the container image and updates the HelmRelease `values.controllers.portfolio.containers.app.image.tag` via Image Automation:
 
-```yaml
-image:
-  repository: ghcr.io/yamshy/portfolio
-  tag: latest  # Renovate will update this
-```
+- ImageRepository: `ghcr.io/yamshy/portfolio`
+- ImagePolicy: semver range `>= 2.0.0`
+- HelmRelease tag field contains the JSON annotation:
+  - `{"$imagepolicy": "portfolio:portfolio-image-policy:tag"}`
 
-## Enabling ServiceMonitor
+New image tags that satisfy the policy are automatically rolled out.
 
-To enable monitoring via ServiceMonitor (compatible with kube-prometheus-stack), set the following in the HelmRelease values:
+## Monitoring
+
+ServiceMonitor is disabled by default. To enable (compatible with kube-prometheus-stack):
 
 ```yaml
 serviceMonitor:
@@ -50,9 +76,41 @@ serviceMonitor:
       - port: http
 ```
 
-## Configuration
+## Dependencies
 
-- **Namespace**: `portfolio`
-- **Chart**: `app-template` from OCIRepository `app-template` (version 4.2.0)
-- **Health Checks**: HTTP probes on port 8080, path `/`
-- **Security Context**: Non-root user with dropped capabilities and read-only filesystem
+- Flux (Kustomize, Helm, Image Automation controllers)
+- Gateway API (Gateway + HTTPRoute CRDs) and an existing external Gateway (`kube-system/external`)
+- Network app `cloudflare-tunnel` (HelmRelease dependsOn)
+
+The hostname `${SECRET_DOMAIN}` is injected via Flux postBuild substitution from the `cluster-secrets` Secret (see `ks.yaml`).
+
+## Operations
+
+- Reconcile this app:
+
+  ```sh
+  flux reconcile kustomization portfolio -n portfolio
+  ```
+
+- Inspect status and resources:
+
+  ```sh
+  kubectl -n portfolio get kustomization/portfolio
+  kubectl -n portfolio get deploy,svc,httproute,pod
+  ```
+
+- Check image automation:
+
+  ```sh
+  flux -n portfolio get image repository
+  flux -n portfolio get image policy
+  ```
+
+## File map
+
+- Kustomization (Flux): `kubernetes/apps/portfolio/portfolio-home/ks.yaml`
+- App manifests: `kubernetes/apps/portfolio/portfolio-home/app/`
+  - HelmRelease: `helmrelease.yaml`
+  - ImageRepository: `imagerepository.yaml`
+  - ImagePolicy: `imagepolicy.yaml`
+  - Kustomization (kustomize): `kustomization.yaml`
