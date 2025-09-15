@@ -9,6 +9,9 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
+  dependsOn:
+    - name: infisical-secrets-operator
+      namespace: infisical-system
   interval: 1h
   path: ./kubernetes/apps/network/cloudflare-dns
   postBuild:
