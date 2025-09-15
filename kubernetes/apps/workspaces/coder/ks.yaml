@@ -17,7 +17,7 @@ spec:
   path: ./kubernetes/apps/workspaces/coder/app
   postBuild:
     substituteFrom:
-      - name: cluster-secrets
+      - name: coder-infisical
         kind: Secret
   prune: true
   retryInterval: 2m

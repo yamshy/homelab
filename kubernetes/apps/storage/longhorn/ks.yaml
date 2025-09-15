@@ -20,10 +20,7 @@ spec:
       namespace: *namespace
   interval: 1h
   path: ./kubernetes/apps/storage/longhorn/app
-  postBuild:
-    substituteFrom:
-      - name: cluster-secrets
-        kind: Secret
+  # No postBuild substitution used
   prune: true
   retryInterval: 2m
   sourceRef:

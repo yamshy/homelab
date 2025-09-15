@@ -11,10 +11,7 @@ spec:
       app.kubernetes.io/name: *app
   interval: 1h
   path: ./kubernetes/apps/network/tailscale/app
-  postBuild:
-    substituteFrom:
-      - name: cluster-secrets
-        kind: Secret
+  # No postBuild substitution used
   prune: true
   retryInterval: 2m
   sourceRef:
@@ -41,10 +38,7 @@ spec:
       namespace: *namespace
   interval: 1h
   path: ./kubernetes/apps/network/tailscale/proxyclass
-  postBuild:
-    substituteFrom:
-      - name: cluster-secrets
-        kind: Secret
+  # No postBuild substitution used
   prune: true
   retryInterval: 2m
   sourceRef:

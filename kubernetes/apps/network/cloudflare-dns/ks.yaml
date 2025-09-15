@@ -13,7 +13,7 @@ spec:
   path: ./kubernetes/apps/network/cloudflare-dns
   postBuild:
     substituteFrom:
-      - name: cluster-secrets
+      - name: cloudflare-dns-secret
         kind: Secret
   prune: true
   retryInterval: 2m

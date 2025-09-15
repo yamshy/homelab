@@ -18,7 +18,7 @@ spec:
   path: ./kubernetes/apps/storage/synology-csi/app
   postBuild:
     substituteFrom:
-      - name: cluster-secrets
+      - name: synology-csi-infisical
         kind: Secret
   prune: true
   retryInterval: 2m

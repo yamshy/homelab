@@ -19,15 +19,17 @@ log info "See AGENTS.md (Helm chart source placement policy) and CONTRIBUTING.md
 IGNORE_FILE=".kubeconformignore"
 
 OVERLAYS=($(
-  git ls-files | grep -E '/kustomization\.ya?ml
- | xargs -n1 dirname | sort -u |
-    grep -F -v -f <(sed 's#\*\*/##g; s#/\*\*##g' "${IGNORE_FILE}")
+  git ls-files \
+    | grep -E '/kustomization\.ya?ml$' \
+    | xargs -n1 dirname \
+    | sort -u \
+    | grep -F -v -f <(sed 's#\*\*/##g; s#/\*\*##g' "${IGNORE_FILE}")
 ))
 if [ "${#OVERLAYS[@]}" -eq 0 ]; then
   log error "No kustomize overlays found"
 fi
 
-SKIP_KINDS="Kustomization,HelmRelease,GitRepository,OCIRepository,HelmRepository,Bucket,HelmChart,ImageRepository,ImagePolicy,ImageUpdateAutomation"
+SKIP_KINDS="Kustomization,HelmRelease,GitRepository,OCIRepository,HelmRepository,Bucket,HelmChart,ImageRepository,ImagePolicy,ImageUpdateAutomation,InfisicalSecret"
 
 for overlay in "${OVERLAYS[@]}"; do
   log info "Validate ${overlay}"

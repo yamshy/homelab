@@ -26,7 +26,7 @@ spec:
   path: ./kubernetes/apps/cert-manager/cert-manager/app
   postBuild:
     substituteFrom:
-      - name: cluster-secrets
+      - name: cert-manager-secret
         kind: Secret
   prune: true
   retryInterval: 2m

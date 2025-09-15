@@ -15,10 +15,7 @@ spec:
       name: sops-age
   interval: 1h
   path: ./kubernetes/apps/kube-system/cilium/app
-  postBuild:
-    substituteFrom:
-      - name: cluster-secrets
-        kind: Secret
+  # No postBuild substitution needed for cilium app
   prune: true
   retryInterval: 2m
   sourceRef:
@@ -50,7 +47,7 @@ spec:
   path: ./kubernetes/apps/kube-system/cilium/gateway
   postBuild:
     substituteFrom:
-      - name: cluster-secrets
+      - name: cilium-infisical
         kind: Secret
   prune: true
   sourceRef:

@@ -13,7 +13,7 @@ spec:
   path: ./kubernetes/apps/ai/dify/app
   postBuild:
     substituteFrom:
-      - name: cluster-secrets
+      - name: dify-env
         kind: Secret
   prune: true
   retryInterval: 2m

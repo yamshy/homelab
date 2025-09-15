@@ -13,7 +13,7 @@ spec:
   path: ./kubernetes/apps/ai/qdrant/app
   postBuild:
     substituteFrom:
-      - name: cluster-secrets
+      - name: qdrant-infisical
         kind: Secret
   prune: true
   retryInterval: 2m

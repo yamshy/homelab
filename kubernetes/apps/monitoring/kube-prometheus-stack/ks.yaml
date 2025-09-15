@@ -33,10 +33,7 @@ spec:
       current: status.conditions.filter(e, e.type == 'Available').all(e, e.status == 'True')
   interval: 10m
   path: ./kubernetes/apps/monitoring/kube-prometheus-stack/app
-  postBuild:
-    substituteFrom:
-      - name: cluster-secrets
-        kind: Secret
+  # No postBuild substitution needed; values use existing secrets by name
   prune: true
   retryInterval: 2m
   sourceRef:

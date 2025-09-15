@@ -17,7 +17,7 @@ spec:
   path: ./kubernetes/apps/portfolio/portfolio-home/app
   postBuild:
     substituteFrom:
-      - name: cluster-secrets
+      - name: portfolio-home-infisical
         kind: Secret
   prune: true
   retryInterval: 2m

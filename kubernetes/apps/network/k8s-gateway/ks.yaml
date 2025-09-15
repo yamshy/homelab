@@ -13,7 +13,7 @@ spec:
   path: ./kubernetes/apps/network/k8s-gateway
   postBuild:
     substituteFrom:
-      - name: cluster-secrets
+      - name: k8s-gateway-infisical
         kind: Secret
   prune: true
   retryInterval: 2m
