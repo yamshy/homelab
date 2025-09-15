@@ -12,10 +12,15 @@ check_cli git kustomize kubeconform yq
 ROOT_DIR="$(git rev-parse --show-toplevel)"
 cd "${ROOT_DIR}"
 
+# Guidance for contributors/agents
+log info "Guideline: Co-locate chart sources with HelmReleases (HelmRepository/OCIRepository) in app/helmrelease.yaml unless a central shared repo already exists."
+log info "See AGENTS.md (Helm chart source placement policy) and CONTRIBUTING.md for details."
+
 IGNORE_FILE=".kubeconformignore"
 
 OVERLAYS=($(
-  git ls-files | grep -E '/kustomization\.ya?ml$' | xargs -n1 dirname | sort -u |
+  git ls-files | grep -E '/kustomization\.ya?ml
+ | xargs -n1 dirname | sort -u |
     grep -F -v -f <(sed 's#\*\*/##g; s#/\*\*##g' "${IGNORE_FILE}")
 ))
 if [ "${#OVERLAYS[@]}" -eq 0 ]; then
