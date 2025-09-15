@@ -1,24 +1,59 @@
 # Cloudflare DNS (ExternalDNS)
 
-This directory contains the HelmRelease for deploying [ExternalDNS](https://github.com/kubernetes-sigs/external-dns) configured to manage DNS records in Cloudflare for the cluster.
+Concise documentation for managing DNS via ExternalDNS with Cloudflare.
 
-## What it does
+## Quick links
 
-- Uses the `external-dns` Helm chart (version 1.18.0)
-- Updates Cloudflare DNS records for `${SECRET_DOMAIN}`
-- Sources records from Gateway `HTTPRoute` resources and `DNSEndpoint` CRDs
-- Publishes TXT ownership records with the `k8s.` prefix and `default` owner ID
-- Exposes metrics via a `ServiceMonitor`
+- Namespace: `network`
+- Flux Kustomization: `kubernetes/apps/network/cloudflare-dns/ks.yaml`
+- HelmRelease: `kubernetes/apps/network/cloudflare-dns/app/helmrelease.yaml`
+- Secret (SOPS): `kubernetes/apps/network/cloudflare-dns/app/secret.sops.yaml`
 
-## Secrets
+## Overview
 
-ExternalDNS requires a Cloudflare API token stored in the encrypted secret at `app/secret.sops.yaml`:
+Deploys ExternalDNS configured for Cloudflare to manage DNS for `${SECRET_DOMAIN}`. Records are sourced from Gateway HTTPRoutes and DNSEndpoint CRDs. TXT ownership is prefixed with `k8s.` and owner ID `default`.
 
-- **Secret name:** `cloudflare-dns-secret`
-- **Key:** `api-token`
+## Networking and exposure
 
-Ensure the secret is encrypted with SOPS before committing changes.
+No service exposure; ExternalDNS reconciles DNS records against Cloudflare.
+
+## Image automation
+
+Not applicable.
 
 ## Monitoring
 
-Prometheus metrics are enabled through the `ServiceMonitor` configuration, allowing visibility into sync status and errors.
+- ServiceMonitor is enabled for metrics scraping.
+
+## Dependencies
+
+- Flux (Helm controller)
+- Cloudflare API token Secret:
+  - name: `cloudflare-dns-secret`
+  - key: `api-token`
+- ExternalDNS CRDs and Gateway API (for HTTPRoute sources)
+
+Substitutions:
+- `${SECRET_DOMAIN}` injected via Flux postBuild.
+
+## Operations
+
+- Reconcile:
+
+  ```sh
+  flux reconcile kustomization cloudflare-dns -n network
+  ```
+
+- Inspect:
+
+  ```sh
+  kubectl -n network get helmrelease,svc,pod
+  ```
+
+## File map
+
+- Kustomization (Flux): `kubernetes/apps/network/cloudflare-dns/ks.yaml`
+- App manifests: `kubernetes/apps/network/cloudflare-dns/app/`
+  - HelmRelease: `helmrelease.yaml`
+  - Secret (SOPS): `secret.sops.yaml`
+  - Kustomization (kustomize): `kustomization.yaml`

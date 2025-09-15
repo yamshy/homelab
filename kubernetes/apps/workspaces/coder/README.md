@@ -1,35 +1,80 @@
-# Coder on Kubernetes (brokered SSH via Tailscale Ingress)
+# Coder (Kubernetes App)
 
-This app deploys the Coder control plane using the official Helm chart and exposes only the web UI via the Tailscale IngressClass. Brokered SSH is used (no direct pod SSH exposure).
+Concise documentation for deploying Coder via Flux with brokered SSH and Tailscale Ingress.
 
-## Accessing the UI
+## Quick links
 
-1) Ensure the Tailscale operator is installed and managing the `tailscale` IngressClass (already present under apps/network/tailscale in this repo).
-2) The hostname is a short name managed by Tailscale. By default this is set to:
-   - `ingress.hosts[0].host: coder`
-   - `ingress.tls[0].hosts[0]: coder`
-   Tailscale will publish this as `coder.<your-tailnet>.ts.net`.
-3) Commit and wait for Flux to reconcile.
-4) Once the Tailscale operator creates the endpoint, browse to the host from a device in your tailnet.
+- Namespace: `workspaces`
+- Flux Kustomization: `kubernetes/apps/workspaces/coder/ks.yaml`
+- HelmRelease: `kubernetes/apps/workspaces/coder/app/helmrelease.yaml`
+- Chart values: `kubernetes/apps/workspaces/coder/app/helm/values.yaml`
+- RBAC: `kubernetes/apps/workspaces/coder/app/rbac.yaml`
 
-## Creating a workspace
+## Overview
 
-- Login to the UI and create a workspace from a template.
-- Ensure the workspace template uses brokered SSH (default with recent templates).
+Deploys the Coder control plane using the official Helm chart (Community Edition). Brokered SSH is used; only the web UI is exposed via Tailscale Ingress.
 
-## Brokered SSH
+## Workload
 
-From your workstation (with the Coder CLI installed and authenticated):
+- Chart: `coder` 2.25.0 from HelmRepository `coder`
+- Service: ClusterIP
+- Ingress:
+  - className: `tailscale`
+  - host: `coder.${SECRET_TAILNET}`
+  - TLS secret: `coder-tls`
+- Storage:
+  - Postgres PVCs use StorageClass `synology-iscsi-delete` (bundled chart DB)
 
-- List workspaces:
+## Networking and exposure
+
+- UI exposed via Tailscale IngressClass at `https://coder.${SECRET_TAILNET}`.
+- TLS is terminated by the Tailscale ingress controller.
+- No NodePort/LoadBalancer; SSH is brokered through the control plane.
+
+## Image automation
+
+Not applicable.
+
+## Monitoring
+
+Enable chart metrics options if required; none enabled by default.
+
+## Dependencies
+
+- Flux (Helm controller)
+- Tailscale Operator providing the `tailscale` IngressClass
+- Synology CSI StorageClass `synology-iscsi-delete`
+- Coder CLI for developer workflows (optional)
+
+Substitutions:
+- `${SECRET_TAILNET}` injected via Flux postBuild from `cluster-secrets`.
+
+## Operations
+
+- Reconcile:
+
+  ```sh
+  flux reconcile kustomization coder -n workspaces
+  ```
+
+- Inspect:
+
+  ```sh
+  kubectl -n workspaces get helmrelease,deploy,svc,ingress,pod
+  ```
+
+- Example CLI operations:
+
+  ```sh
   coder list
-
-- SSH into a workspace:
   coder ssh <workspace-name>
+  ```
 
-No NodePort/LoadBalancer is used. All access is via the control plane and Tailscale ingress to the web UI.
+## File map
 
-## Notes
-
-- The install uses minimal values and defaults to in-cluster dependencies provided by the chart (suitable for evaluation). For production, consider externalizing PostgreSQL and reviewing persistence settings.
-- The service is ClusterIP; only the web UI is exposed through the Tailscale `IngressClass`.
+- Kustomization (Flux): `kubernetes/apps/workspaces/coder/ks.yaml`
+- App manifests: `kubernetes/apps/workspaces/coder/app/`
+  - HelmRelease: `helmrelease.yaml`
+  - Values: `helm/values.yaml` (+ `helm/kustomizeconfig.yaml`)
+  - RBAC: `rbac.yaml`
+  - Kustomization (kustomize): `kustomization.yaml`
