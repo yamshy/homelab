@@ -23,6 +23,7 @@ spec:
   postBuild:
     substituteFrom:
       - name: cluster-secrets
+        namespace: kube-system
         kind: Secret
   prune: true
   retryInterval: 2m

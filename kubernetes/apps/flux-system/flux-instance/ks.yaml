@@ -9,10 +9,6 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
-  decryption:
-    provider: sops
-    secretRef:
-      name: sops-age
   dependsOn:
     - name: flux-operator
       namespace: *namespace
@@ -21,6 +17,7 @@ spec:
   postBuild:
     substituteFrom:
       - name: cluster-secrets
+        namespace: kube-system
         kind: Secret
   prune: true
   retryInterval: 2m
