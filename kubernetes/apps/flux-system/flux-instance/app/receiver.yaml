@@ -8,8 +8,7 @@ spec:
   type: github
   events: ["ping", "push"]
   secretRef:
-    name: flux-instance-infisical
-    key: GITHUB_WEBHOOK_TOKEN
+    name: github-webhook-token-secret
   resources:
     - apiVersion: source.toolkit.fluxcd.io/v1
       kind: GitRepository
