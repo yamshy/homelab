@@ -76,6 +76,10 @@ spec:
 
     # Grafana configuration
     grafana:
+      # Use Recreate strategy for ReadWriteOnce storage
+      deploymentStrategy:
+        type: Recreate
+
       # Admin credentials from secret
       admin:
         existingSecret: "grafana-infisical"
