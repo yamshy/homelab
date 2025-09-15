@@ -4,7 +4,7 @@ apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
   name: infisical-helm-charts
-  namespace: security # Required for Renovate lookups in this pattern
+  namespace: infisical-system
 spec:
   interval: 1h
   url: https://dl.cloudsmith.io/public/infisical/helm-charts/helm/charts/
@@ -23,7 +23,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: infisical-helm-charts
-        namespace: security
+        namespace: infisical-system
   install:
     remediation:
       retries: -1
