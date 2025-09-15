@@ -8,3 +8,4 @@ components:
 resources:
   - ./falco/ks.yaml
   - ./infisical-secrets-operator/ks.yaml
+  - ./infisical-example/ks.yaml
