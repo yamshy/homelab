@@ -9,10 +9,6 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
-  decryption:
-    provider: sops
-    secretRef:
-      name: sops-age
   interval: 1h
   path: ./kubernetes/apps/network/tailscale/app
   postBuild:
@@ -40,10 +36,6 @@ spec:
     labels:
       app.kubernetes.io/name: *app
       app.kubernetes.io/part-of: tailscale-operator
-  decryption:
-    provider: sops
-    secretRef:
-      name: sops-age
   dependsOn:
     - name: tailscale-operator
       namespace: *namespace
