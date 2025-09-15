@@ -78,9 +78,9 @@ spec:
     grafana:
       # Admin credentials from secret
       admin:
-        existingSecret: "grafana-admin-credentials"
-        userKey: "admin-user"
-        passwordKey: "admin-password"
+        existingSecret: "grafana-infisical"
+        userKey: "GRAFANA_ADMIN_USER"
+        passwordKey: "GRAFANA_ADMIN_PASSWORD"
 
       # Enable persistent storage
       persistence:

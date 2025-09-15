@@ -78,7 +78,7 @@ api:
       valueFrom:
         secretKeyRef:
           name: dify-env
-          key: SECRET_KEY
+          key: DIFY_SECRET_KEY
 
 # Dify Web configuration
 web:
