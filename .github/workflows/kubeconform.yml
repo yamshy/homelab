@@ -54,7 +54,7 @@ jobs:
       - name: Validate with kubeconform (strict)
         shell: bash
         run: |
-          SKIP_KINDS="Kustomization,HelmRelease,GitRepository,OCIRepository,HelmRepository,Bucket,HelmChart,ImageRepository,ImagePolicy,ImageUpdateAutomation"
+          SKIP_KINDS="Kustomization,HelmRelease,GitRepository,OCIRepository,HelmRepository,Bucket,HelmChart,ImageRepository,ImagePolicy,ImageUpdateAutomation,InfisicalSecret"
           while read -r overlay; do
             echo "::group::Validate ${overlay}"
             kustomize build "${overlay}" \
