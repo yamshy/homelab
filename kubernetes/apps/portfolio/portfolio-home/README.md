@@ -38,20 +38,7 @@ Deploys the public portfolio site using the bjw-s/app-template chart. Reconcilia
 - Gateway parentRef: `external` (namespace: `kube-system`, section: `https-root`).
 - TLS is terminated at the external Gateway; backend service listens on port 80.
 
-### Switch to Tailscale LoadBalancer (optional)
 
-To use a Tailscale LoadBalancer instead of Gateway API, update the service and remove the route in the HelmRelease values:
-
-```yaml
-service:
-  app:
-    type: LoadBalancer
-    loadBalancerClass: tailscale
-    annotations:
-      tailscale.com/hostname: portfolio
-```
-
-Then remove (or comment) the `values.route` section.
 
 ## Image automation
 
