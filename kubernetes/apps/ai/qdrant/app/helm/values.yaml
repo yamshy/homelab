@@ -17,11 +17,8 @@ ingress:
       paths:
         - path: /
           pathType: Prefix
-          backend:
-            service:
-              name: qdrant
-              port:
-                number: 6333
+  service:
+    port: 6333
   tls:
     - secretName: qdrant-tls
       hosts:
