@@ -1,78 +1,123 @@
-# Infisical Secrets Operator
+# Infisical Secrets Operator (Kubernetes App)
 
-This app deploys the Infisical Kubernetes Secrets Operator via a Flux HelmRelease.
+Concise documentation for deploying the Infisical Kubernetes Secrets Operator via Flux.
 
-What’s installed
+## Quick links
+
+- Namespace: `security`
+- Flux Kustomization: `kubernetes/apps/security/infisical-secrets-operator/ks.yaml`
+- HelmRelease: `kubernetes/apps/security/infisical-secrets-operator/app/helmrelease.yaml`
+- Chart values: `kubernetes/apps/security/infisical-secrets-operator/app/helm/values.yaml`
+
+## Overview
+
+Installs Infisical Secrets Operator and CRDs to sync secrets from Infisical into Kubernetes Secrets. Metrics integration is available when Prometheus Operator is present.
+
+## Workload
+
+- Chart: `secrets-operator` 0.7.5 from HelmRepository `infisical-helm-charts`
 - CRDs: InfisicalSecret, InfisicalPushSecret, InfisicalDynamicSecret
-- Controller: secrets-operator (pinned app image tag v0.7.5)
-- Metrics: ServiceMonitor enabled (if Prometheus Operator is present)
 
-Next steps to start syncing secrets
+## Networking and exposure
 
-Option A: Service Token (simple start)
-1) Create a service token in Infisical with read access to your project/environment.
-2) Create a Kubernetes Secret with the token:
-   kubectl -n security create secret generic infisical-service-token --from-literal=infisicalToken=<YOUR_SERVICE_TOKEN>
-3) Create an InfisicalSecret to sync into a namespaced Kubernetes Secret:
-   apiVersion: secrets.infisical.com/v1alpha1
-   kind: InfisicalSecret
-   metadata:
-     name: example-infisicalsecret
-     namespace: security
-   spec:
-     # For Infisical Cloud, omit hostAPI. For self-hosted, set the API endpoint, e.g.:
-     # hostAPI: "http://infisical-backend.infisical.svc.cluster.local:4000/api"
-     resyncInterval: 10
-     authentication:
-       serviceToken:
-         serviceTokenSecretReference:
-           secretName: infisical-service-token
-           secretNamespace: security
-     secretsScope:
-       envSlug: dev
-       secretsPath: "/"
-     managedSecretReference:
-       secretName: example-managed-secret
-       secretNamespace: security
+No user-facing services; operator runs in-cluster.
 
-Option B: Kubernetes Auth with Machine Identity (short‑lived tokens)
-1) In Infisical, create a Machine Identity and grant it access.
-2) Choose a ServiceAccount for the operator to authenticate:
-   - Use an existing SA in the target namespace, or create one.
-3) Create an InfisicalSecret using kubernetesAuth:
-   apiVersion: secrets.infisical.com/v1alpha1
-   kind: InfisicalSecret
-   metadata:
-     name: example-infisicalsecret-k8sauth
-     namespace: security
-   spec:
-     resyncInterval: 10
-     kubernetesAuth:
-       identityId: "<machine-identity-id>"
-       autoCreateServiceAccountToken: true
-       serviceAccountTokenAudiences:
-         - "infisical"
-       serviceAccountRef:
-         name: default
-         namespace: security
-     secretsScope:
-       envSlug: dev
-       secretsPath: "/"
-     managedSecretReference:
-       secretName: example-managed-secret
-       secretNamespace: security
+## Image automation
 
-Verifying the deployment
-- Check repo and release:
-  flux get sources helm -n security
-  flux get hr -n security
-- Confirm CRDs:
+Not applicable.
+
+## Monitoring
+
+Enable ServiceMonitor via chart values if you want Prometheus to scrape operator metrics.
+
+## Dependencies
+
+- Flux (Helm controller)
+- Access to Infisical Cloud or self-hosted API
+- Kubernetes Secrets to hold tokens/credentials when using service tokens
+- For kubernetesAuth, a ServiceAccount in the target namespace
+
+## Operations
+
+- Reconcile:
+
+  ```sh
+  flux reconcile kustomization infisical-secrets-operator -n security
+  ```
+
+- Inspect:
+
+  ```sh
+  kubectl -n security get helmrelease,deploy,svc,pod
   kubectl get crd | grep infisical
-- Inspect operator:
-  kubectl -n security get pods -l app.kubernetes.io/name=secrets-operator
+  ```
 
-Notes
-- HelmRepository is co‑located with the HelmRelease in app/helmrelease.yaml per repo convention.
-- All chart values live in app/helm/values.yaml and are wired via valuesFrom.
-- If you self‑host Infisical, set spec.hostAPI accordingly in InfisicalSecret resources.
-- For production, scope service tokens tightly and prefer Machine Identity (kubernetesAuth) for short‑lived credentials.
+- Verify operator pods:
+
+  ```sh
+  kubectl -n security get pods -l app.kubernetes.io/name=secrets-operator
+  ```
+
+## Usage examples
+
+Option A: Service Token
+
+```sh
+kubectl -n security create secret generic infisical-service-token \
+  --from-literal=infisicalToken=<YOUR_SERVICE_TOKEN>
+```
+
+```yaml
+apiVersion: secrets.infisical.com/v1alpha1
+kind: InfisicalSecret
+metadata:
+  name: example-infisicalsecret
+  namespace: security
+spec:
+  resyncInterval: 10
+  authentication:
+    serviceToken:
+      serviceTokenSecretReference:
+        secretName: infisical-service-token
+        secretNamespace: security
+  secretsScope:
+    envSlug: dev
+    secretsPath: "/"
+  managedSecretReference:
+    secretName: example-managed-secret
+    secretNamespace: security
+```
+
+Option B: Kubernetes Auth with Machine Identity
+
+```yaml
+apiVersion: secrets.infisical.com/v1alpha1
+kind: InfisicalSecret
+metadata:
+  name: example-infisicalsecret-k8sauth
+  namespace: security
+spec:
+  resyncInterval: 10
+  kubernetesAuth:
+    identityId: "<machine-identity-id>"
+    autoCreateServiceAccountToken: true
+    serviceAccountTokenAudiences:
+      - "infisical"
+    serviceAccountRef:
+      name: default
+      namespace: security
+  secretsScope:
+    envSlug: dev
+    secretsPath: "/"
+  managedSecretReference:
+    secretName: example-managed-secret
+    secretNamespace: security
+```
+
+## File map
+
+- Kustomization (Flux): `kubernetes/apps/security/infisical-secrets-operator/ks.yaml`
+- App manifests: `kubernetes/apps/security/infisical-secrets-operator/app/`
+  - HelmRelease: `helmrelease.yaml`
+  - Values: `helm/values.yaml` (+ `helm/kustomizeconfig.yaml` if present)
+  - Kustomization (kustomize): `kustomization.yaml`
