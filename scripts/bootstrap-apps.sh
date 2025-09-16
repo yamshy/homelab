@@ -53,34 +53,50 @@ function apply_namespaces() {
     done
 }
 
-# SOPS secrets to be applied before the helmfile charts are installed
-function apply_sops_secrets() {
-    log debug "Applying secrets"
+# Bootstrap secrets to be applied before the helmfile charts are installed
+function apply_bootstrap_secrets() {
+    log debug "Applying bootstrap secrets"
 
-    local -r secrets=(
-        "${ROOT_DIR}/bootstrap/github-deploy-key.sops.yaml"
-        "${ROOT_DIR}/kubernetes/components/common/sops/sops-age.sops.yaml"
-    )
+    local -r universal_auth_secret="${ROOT_DIR}/bootstrap/universal-auth-credentials.yaml"
 
-    for secret in "${secrets[@]}"; do
-        if [ ! -f "${secret}" ]; then
-            log warn "File does not exist" "file=${secret}"
-            continue
-        fi
+    # Apply Infisical Universal Auth credentials
+    if [ ! -f "${universal_auth_secret}" ]; then
+        log error "Universal auth credentials file does not exist" "file=${universal_auth_secret}"
+        log error "Please copy bootstrap/universal-auth-credentials.yaml.template to bootstrap/universal-auth-credentials.yaml and fill in your credentials"
+        exit 1
+    fi
 
-        # Check if the secret resources are up-to-date
-        if sops exec-file "${secret}" "kubectl --namespace flux-system diff --filename {}" &>/dev/null; then
-            log info "Secret resource is up-to-date" "resource=$(basename "${secret}" ".sops.yaml")"
-            continue
-        fi
-
-        # Apply secret resources
-        if sops exec-file "${secret}" "kubectl --namespace flux-system apply --server-side --filename {}" &>/dev/null; then
-            log info "Secret resource applied successfully" "resource=$(basename "${secret}" ".sops.yaml")"
+    # Check if the secret resource is up-to-date
+    if kubectl --namespace kube-system diff --filename "${universal_auth_secret}" &>/dev/null; then
+        log info "Universal auth secret is up-to-date"
+    else
+        # Apply secret resource
+        if kubectl --namespace kube-system apply --server-side --filename "${universal_auth_secret}" &>/dev/null; then
+            log info "Universal auth secret applied successfully"
         else
-            log error "Failed to apply secret resource" "resource=$(basename "${secret}" ".sops.yaml")"
+            log error "Failed to apply universal auth secret"
         fi
-    done
+    fi
+
+    # Apply GitHub app credentials for Flux GitRepository authentication
+    local -r github_app_secret="${ROOT_DIR}/bootstrap/github-app-credentials.yaml"
+    if [ ! -f "${github_app_secret}" ]; then
+        log error "GitHub app credentials file does not exist" "file=${github_app_secret}"
+        log error "Please copy bootstrap/github-app-credentials.yaml.template to bootstrap/github-app-credentials.yaml and fill in your credentials"
+        exit 1
+    fi
+
+    # Check if the GitHub app secret is up-to-date
+    if kubectl --namespace flux-system diff --filename "${github_app_secret}" &>/dev/null; then
+        log info "GitHub app secret is up-to-date"
+    else
+        # Apply GitHub app secret
+        if kubectl --namespace flux-system apply --server-side --filename "${github_app_secret}" &>/dev/null; then
+            log info "GitHub app secret applied successfully"
+        else
+            log error "Failed to apply GitHub app secret"
+        fi
+    fi
 }
 
 # CRDs to be applied before the helmfile charts are installed
@@ -128,12 +144,12 @@ function sync_helm_releases() {
 
 function main() {
     check_env KUBECONFIG TALOSCONFIG
-    check_cli helmfile kubectl kustomize sops talhelper yq
+    check_cli helmfile kubectl kustomize yq
 
     # Apply resources and Helm releases
     wait_for_nodes
     apply_namespaces
-    apply_sops_secrets
+    apply_bootstrap_secrets
     apply_crds
     sync_helm_releases
 

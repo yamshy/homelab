@@ -7,6 +7,8 @@
 /github-deploy.key
 /github-deploy.key.pub
 /github-push-token.txt
+/bootstrap/universal-auth-credentials.yaml
+/bootstrap/github-app-credentials.yaml
 # Template config files
 /cluster.yaml
 /nodes.yaml

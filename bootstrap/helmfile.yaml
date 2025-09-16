@@ -42,13 +42,21 @@ releases:
     values: ['../kubernetes/apps/cert-manager/cert-manager/app/helm/values.yaml']
     needs: ['kube-system/spegel']
 
+  - name: infisical-secrets-operator
+    namespace: infisical-system
+    atomic: true
+    chart: oci://ghcr.io/infisical/helm-charts/secrets-operator
+    version: v0.7.5
+    values: ['../kubernetes/apps/infisical-system/infisical-secrets-operator/app/helm/values.yaml']
+    needs: ['cert-manager/cert-manager']
+
   - name: flux-operator
     namespace: flux-system
     atomic: true
     chart: oci://ghcr.io/controlplaneio-fluxcd/charts/flux-operator
     version: 0.28.0
     values: ['../kubernetes/apps/flux-system/flux-operator/app/helm/values.yaml']
-    needs: ['cert-manager/cert-manager']
+    needs: ['cert-manager/cert-manager', 'infisical-system/infisical-secrets-operator']
 
   - name: flux-instance
     namespace: flux-system
