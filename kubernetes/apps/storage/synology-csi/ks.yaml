@@ -23,6 +23,7 @@ spec:
     substituteFrom:
       - name: synology-csi-infisical
         kind: Secret
+        optional: true
   prune: true
   retryInterval: 2m
   sourceRef:
