@@ -41,12 +41,17 @@
   },
   packageRules: [
     {
-      description: 'Auto-merge minor and patch updates',
+      description: 'Auto-merge minor updates',
       matchUpdateTypes: [
         'minor',
-        'patch',
       ],
       automerge: true,
+      automergeType: 'pr',
+      requiredStatusChecks: [
+        'Flux Local / Flux Local Success',
+        'kubeconform-validate / validate',
+        'trufflehog-secrets-scan / TruffleHog OSS Secret Scan',
+      ],
     },
     {
       description: 'Cert-Manager Group',
