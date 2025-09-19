@@ -11,9 +11,6 @@
   ],
   dependencyDashboard: true,
   dependencyDashboardTitle: 'Renovate Dashboard 🤖',
-  assignees: [
-    'yamshy',
-  ],
   ignorePaths: [
     '**/*.sops.*',
   ],
@@ -43,6 +40,14 @@
     ],
   },
   packageRules: [
+    {
+      description: 'Auto-merge minor and patch updates',
+      matchUpdateTypes: [
+        'minor',
+        'patch',
+      ],
+      automerge: true,
+    },
     {
       description: 'Cert-Manager Group',
       groupName: 'Cert-Manager',
