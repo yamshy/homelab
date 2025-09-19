@@ -4,7 +4,6 @@
     'config:recommended',
     'docker:enableMajor',
     'helpers:pinGitHubActionDigests',
-    ':automergeBranch',
     ':dependencyDashboard',
     ':disableRateLimiting',
     ':semanticCommits',
@@ -229,6 +228,13 @@
     {
       matchUpdateTypes: [
         'patch',
+      ],
+      automerge: true,
+      automergeType: 'pr',
+      requiredStatusChecks: [
+        'Flux Local / Flux Local Success',
+        'kubeconform-validate / validate',
+        'trufflehog-secrets-scan / TruffleHog OSS Secret Scan',
       ],
       labels: [
         'type/patch',
