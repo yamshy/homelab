@@ -12,6 +12,9 @@
   ],
   dependencyDashboard: true,
   dependencyDashboardTitle: 'Renovate Dashboard 🤖',
+  assignees: [
+    'yamshy',
+  ],
   ignorePaths: [
     '**/*.sops.*',
   ],
