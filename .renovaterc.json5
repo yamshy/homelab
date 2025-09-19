@@ -11,9 +11,6 @@
   ],
   dependencyDashboard: true,
   dependencyDashboardTitle: 'Renovate Dashboard 🤖',
-  assignees: [
-    'yamshy',
-  ],
   ignorePaths: [
     '**/*.sops.*',
   ],
@@ -43,6 +40,19 @@
     ],
   },
   packageRules: [
+    {
+      description: 'Auto-merge minor updates',
+      matchUpdateTypes: [
+        'minor',
+      ],
+      automerge: true,
+      automergeType: 'pr',
+      requiredStatusChecks: [
+        'Flux Local / Flux Local Success',
+        'kubeconform-validate / validate',
+        'trufflehog-secrets-scan / TruffleHog OSS Secret Scan',
+      ],
+    },
     {
       description: 'Cert-Manager Group',
       groupName: 'Cert-Manager',
