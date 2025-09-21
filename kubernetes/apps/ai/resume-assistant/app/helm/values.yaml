@@ -13,8 +13,9 @@ controllers:
                 name: resume-assistant-env
                 key: OPENAI_API_KEY
         ports:
-          http:
+          - name: http
             containerPort: 8000
+            protocol: HTTP
         probes:
           liveness:
             enabled: true
@@ -55,8 +56,9 @@ controllers:
 service:
   app:
     ports:
-      http:
+      - name: http
         port: 80
+        protocol: TCP
         targetPort: http
 
 ingress:
