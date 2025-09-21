@@ -29,7 +29,7 @@ if [ "${#OVERLAYS[@]}" -eq 0 ]; then
   log error "No kustomize overlays found"
 fi
 
-SKIP_KINDS="Kustomization,HelmRelease,GitRepository,OCIRepository,HelmRepository,Bucket,HelmChart,ImageRepository,ImagePolicy,ImageUpdateAutomation,InfisicalSecret"
+SKIP_KINDS="HelmRepository,Bucket,HelmChart,ImageRepository,ImagePolicy,ImageUpdateAutomation,InfisicalSecret"
 
 for overlay in "${OVERLAYS[@]}"; do
   log info "Validate ${overlay}"
