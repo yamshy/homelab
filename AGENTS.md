@@ -25,7 +25,12 @@
 - Secrets: commit only `*.sops.yaml`; never plaintext. SOPS config in `.sops.yaml`.
 
 ## Testing Guidelines
-- Local: run `bash scripts/validate.sh`; ensure zero kubeconform errors.
+- Local: run `bash scripts/validate.sh` and the Flux Local test suite before committing; ensure zero kubeconform errors and no unexpected diffs.
+  - Mirror CI locally with:
+    ```bash
+    docker run --rm -v "${PWD}:/workspace" ghcr.io/allenporter/flux-local:v7.10.0 \
+      test --enable-helm --all-namespaces --path /workspace/kubernetes/flux/cluster -v
+    ```
 - Optional sanity: `kustomize build <overlay> | yq e 'del(.sops)' -` to inspect rendered YAML.
 - CI: PRs run strict kubeconform and flux‑local diff/tests; fix all diffs/violations.
 
