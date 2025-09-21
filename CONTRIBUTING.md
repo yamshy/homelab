@@ -11,6 +11,10 @@ bash scripts/validate.sh
 ```
 
 - If validation fails, fix the issues before proceeding.
+- CI also runs targeted linters to catch regressions early. Re-run them locally when touching the corresponding areas:
+
+    - Shell scripts: install [`shellcheck`](https://www.shellcheck.net/) (e.g., `sudo apt-get install shellcheck` or `brew install shellcheck`) and execute `shellcheck $(git ls-files 'scripts/**/*.sh')`.
+    - Talos configuration: install [`talhelper`](https://github.com/budimanjojo/talhelper) (e.g., `mise install talhelper` or download the latest release tarball) and run `talhelper validate talconfig talos/talconfig.yaml --env-file talos/talenv.yaml`.
 
 ### Helm chart source placement
 - Co-locate chart sources with the app’s HelmRelease in the same file (`app/helmrelease.yaml`) as a second YAML document (`---`) when adding new apps.
