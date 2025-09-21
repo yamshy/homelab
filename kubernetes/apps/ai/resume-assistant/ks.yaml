@@ -10,6 +10,8 @@ spec:
     labels:
       app.kubernetes.io/name: *app
   dependsOn:
+    - name: secrets
+      namespace: ai
     - name: infisical-secrets-operator
       namespace: infisical-system
   interval: 1h
