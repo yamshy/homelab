@@ -20,7 +20,7 @@ behind Flux. Runtime configuration is supplied exclusively through the rendered 
 - Chart: `app-template` via the shared `app-template` OCIRepository
 - Controller: single `resume-assistant` deployment managed by the chart
 - Resources (from values): requests `100m` CPU / `256Mi`, limits `500m` CPU / `512Mi`
-- Persistence: ephemeral `emptyDir` volume mounted at `/data` for the knowledge store file
+- Persistence: 5Gi `longhorn`-backed PVC mounted at `/data` for the knowledge store file
 
 ## Networking and exposure
 

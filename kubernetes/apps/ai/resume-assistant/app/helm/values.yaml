@@ -82,6 +82,9 @@ ingress:
 persistence:
   data:
     enabled: true
-    type: emptyDir
+    type: persistentVolumeClaim
+    storageClass: longhorn
+    accessMode: ReadWriteOnce
+    size: 5Gi
     globalMounts:
       - path: /data
