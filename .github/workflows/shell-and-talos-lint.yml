@@ -1,0 +1,44 @@
+name: Shell and Talos lint
+permissions:
+  contents: read
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  shellcheck:
+    name: ShellCheck
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install ShellCheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck
+      - name: Run ShellCheck
+        run: |
+          set -euo pipefail
+          mapfile -t files < <(git ls-files 'scripts/**/*.sh')
+          if [ "${#files[@]}" -eq 0 ]; then
+              echo "No shell scripts to lint."
+              exit 0
+          fi
+          shellcheck "${files[@]}"
+
+  talhelper-validate:
+    name: Talhelper validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install talhelper
+        run: |
+          set -euo pipefail
+          curl -sSL https://github.com/budimanjojo/talhelper/releases/latest/download/talhelper_linux_amd64.tar.gz -o /tmp/talhelper.tar.gz
+          tar -xzf /tmp/talhelper.tar.gz -C /tmp talhelper
+          sudo install -m 0755 /tmp/talhelper /usr/local/bin/talhelper
+      - name: Validate Talos configuration
+        run: talhelper validate talconfig talos/talconfig.yaml --env-file talos/talenv.yaml
