@@ -38,16 +38,22 @@ controllers:
               periodSeconds: 10
               timeoutSeconds: 1
               failureThreshold: 3
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false
+          capabilities:
+            drop:
+              - "ALL"
         resources:
           requests:
             cpu: 100m
             memory: 256Mi
           limits:
+            cpu: 500m
             memory: 512Mi
 
 service:
   app:
-    controller: resume-assistant
     ports:
       http:
         port: 80
@@ -57,6 +63,7 @@ ingress:
   app:
     enabled: true
     className: tailscale
+    annotations: {}
     hosts:
       - host: resume-assistant.${SECRET_TAILNET}
         paths:

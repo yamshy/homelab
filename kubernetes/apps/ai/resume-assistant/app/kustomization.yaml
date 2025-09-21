@@ -11,5 +11,8 @@ configMapGenerator:
     files:
       - values.yaml=./helm/values.yaml
 
+generatorOptions:
+  disableNameSuffixHash: false
+
 configurations:
   - ./helm/kustomizeconfig.yaml
