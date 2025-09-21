@@ -83,8 +83,39 @@ This repo enforces schema validation in CI using Kubeconform v0.7.0 in strict mo
 
 ### Secret Management
 - **SOPS Encryption**: All secrets encrypted with AGE encryption
+- **Infisical Integration**: Centralized secret management with Kubernetes operator
+- **Namespace-Level Secrets**: App-specific secret scoping with principle of least privilege
 - **GitOps Security**: No secrets stored in plain text
 - **Certificate Automation**: Automatic TLS certificate renewal
+
+#### Namespace-Level Secrets Pattern
+
+This repository implements an enterprise-grade **namespace-level secrets architecture** that eliminates bootstrap dependency issues while enforcing the principle of least privilege:
+
+```
+kubernetes/apps/<namespace>/
+├── secrets/                    # Centralized namespace secrets
+│   ├── ks.yaml                # Secrets Kustomization (deployed first)
+│   ├── kustomization.yaml     # Manages all namespace secrets
+│   ├── app1-secrets.yaml      # App-specific InfisicalSecret
+│   └── app2-secrets.yaml      # App-specific InfisicalSecret
+├── app1/
+│   └── ks.yaml               # Depends on 'secrets' Kustomization
+└── app2/
+    └── ks.yaml               # Depends on 'secrets' Kustomization
+```
+
+**Key Benefits:**
+- 🚫 **No Bootstrap Issues**: Secrets always created before apps need them
+- 🔒 **App-Specific Scoping**: Each app only gets secrets it actually uses (87% reduction in exposure)
+- 📈 **Scalable**: Easy to add new apps without secret conflicts
+- 🧹 **Maintainable**: Single source of truth for namespace secrets
+- 🛡️ **Secure**: Principle of least privilege enforced automatically
+
+**Example Implementation (AI Namespace):**
+- Resume Assistant: Only gets `OPENAI_API_KEY` + `SECRET_TAILNET`
+- Dify: Only gets `DIFY_SECRET_KEY` + `SECRET_TAILNET`
+- Deployment Order: `secrets` → `app1` + `app2` (parallel)
 
 ### Network Security
 - **Cilium Policies**: Network policy enforcement

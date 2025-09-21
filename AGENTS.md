@@ -38,6 +38,109 @@
 - Required CLIs are managed by `mise` (`task`, `kubectl`, `kustomize`, `sops`, `yq`, `flux`, `talhelper`).
 - Prefer additive Kustomize patches over in‑place edits to ease diffs.
 
+## Namespace-Level Secrets Pattern
+
+This repository implements an **enterprise-grade namespace-level secrets architecture** that solves bootstrap dependency issues and enforces the principle of least privilege. Use this pattern for any namespace with multiple applications requiring different secrets.
+
+### Pattern Structure
+
+```
+kubernetes/apps/<namespace>/
+├── secrets/                           # 🆕 Centralized namespace secrets
+│   ├── ks.yaml                       # Secrets Kustomization (deployed first)
+│   ├── kustomization.yaml            # Manages all namespace secrets
+│   ├── <app1>-secrets.yaml           # App-specific InfisicalSecret
+│   └── <app2>-secrets.yaml           # App-specific InfisicalSecret
+├── <app1>/
+│   └── ks.yaml                      # Depends on 'secrets' Kustomization
+├── <app2>/
+│   └── ks.yaml                      # Depends on 'secrets' Kustomization
+└── kustomization.yaml               # Includes secrets first, then apps
+```
+
+### Implementation Steps
+
+1. **Create secrets directory structure:**
+   ```bash
+   mkdir kubernetes/apps/<namespace>/secrets/
+   ```
+
+2. **Create secrets Kustomization (`secrets/ks.yaml`):**
+   ```yaml
+   ---
+   apiVersion: kustomize.toolkit.fluxcd.io/v1
+   kind: Kustomization
+   metadata:
+     name: secrets
+     namespace: <namespace>
+   spec:
+     dependsOn:
+       - name: infisical-secrets-operator
+         namespace: infisical-system
+     interval: 1h
+     path: ./kubernetes/apps/<namespace>/secrets
+     wait: true  # Wait for secrets to be ready
+   ```
+
+3. **Create app-specific InfisicalSecrets with scoped templates:**
+   ```yaml
+   # secrets/<app>-secrets.yaml
+   apiVersion: secrets.infisical.com/v1alpha1
+   kind: InfisicalSecret
+   metadata:
+     name: <app>-env
+   spec:
+     managedSecretReference:
+       secretName: "<app>-env"
+       template:
+         includeAllSecrets: false  # Enable scoping
+         data:
+           # Only include secrets this app actually needs
+           APP_SPECIFIC_KEY: "{{ .APP_SPECIFIC_KEY.Value }}"
+           SECRET_TAILNET: "{{ .SECRET_TAILNET.Value }}"  # Common secrets
+   ```
+
+4. **Update app Kustomizations to depend on secrets:**
+   ```yaml
+   # <app>/ks.yaml
+   spec:
+     dependsOn:
+       - name: secrets
+         namespace: <namespace>
+   ```
+
+5. **Update namespace kustomization.yaml:**
+   ```yaml
+   resources:
+     - ./secrets/ks.yaml        # Deploy secrets first
+     - ./<app1>/ks.yaml         # Then apps
+     - ./<app2>/ks.yaml
+   ```
+
+### Key Benefits
+
+- **🚫 No Bootstrap Issues**: Eliminates chicken-and-egg dependency cycles
+- **🔒 Principle of Least Privilege**: Apps only get secrets they actually use
+- **📈 Scalable**: Easy to add new apps without modifying existing secrets
+- **🧹 Single Source of Truth**: All namespace secrets managed in one place
+- **🛡️ Security**: Dramatic reduction in secret exposure per app (87% in AI namespace)
+- **🔄 Self-Healing**: Flux handles dependency ordering automatically
+
+### Important Notes
+
+- **Orphan Policy**: If using `creationPolicy: "Orphan"`, delete existing secrets after template changes to force recreation
+- **Template Syntax**: Use `{{ .SECRET_NAME.Value }}` for Infisical Go templates
+- **Common Secrets**: Include shared secrets like `SECRET_TAILNET` in all app templates
+- **Wait Policy**: Use `wait: true` on secrets Kustomization to ensure readiness before apps deploy
+
+### Example: AI Namespace Implementation
+
+This pattern is successfully implemented in `kubernetes/apps/ai/` with:
+- **Resume Assistant**: Gets only `OPENAI_API_KEY` + `SECRET_TAILNET` (2/15 secrets)
+- **Dify**: Gets only `DIFY_SECRET_KEY` + `SECRET_TAILNET` (2/15 secrets)
+- **87% reduction** in secret exposure per app compared to `includeAllSecrets: true`
+- **Zero bootstrap issues** - secrets always ready before apps deploy
+
 ## Per‑app Helm layout standard
 
 Use this structure for every new app. Keep chart source references as they are today (do not change charts). Only move inline values into `app/helm/values.yaml` and wire them via `valuesFrom`. Place the Kustomize nameReference file under `app/helm/` and reference it from `app/kustomization.yaml`.
