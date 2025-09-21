@@ -82,9 +82,10 @@ ingress:
 persistence:
   data:
     enabled: true
-    type: pvc
+    type: persistentVolumeClaim
     storageClass: longhorn
-    accessMode: ReadWriteOnce
+    accessModes:
+      - ReadWriteOnce
     size: 5Gi
     globalMounts:
       - path: /data
