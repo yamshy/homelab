@@ -7,7 +7,7 @@ source "$(dirname "${0}")/lib/common.sh"
 : "${SECRET_DOMAIN:=example.com}"
 export SECRET_DOMAIN
 
-check_cli git kustomize kubeconform yq
+check_cli git kustomize kubeconform envsubst yq
 
 ROOT_DIR="$(git rev-parse --show-toplevel)"
 cd "${ROOT_DIR}"
