@@ -15,7 +15,7 @@ patches:
       apiVersion: v1
       kind: Namespace
       metadata:
-        name: not-used
+        name: nextflow-demo
         labels:
           pod-security.kubernetes.io/audit: restricted
           pod-security.kubernetes.io/audit-version: latest
