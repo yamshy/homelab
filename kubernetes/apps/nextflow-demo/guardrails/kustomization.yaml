@@ -1,0 +1,13 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/kustomization
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ./rbac.yaml
+  - ./resourcequota.yaml
+  - ./limitrange.yaml
+  - ./networkpolicy-default-deny-egress.yaml
+  - ./networkpolicy-allow-dns.yaml
+  - ./networkpolicy-allow-minio.yaml
+  - ./ciliumnetworkpolicy-allow-registries.yaml
+  - ./configmap-opa-allowlist.yaml
