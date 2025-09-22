@@ -11,6 +11,7 @@ resources:
   - ./kube-system
   - ./monitoring
   - ./network
+  - ./nextflow-demo
   - ./portfolio
   - ./security
   - ./storage
