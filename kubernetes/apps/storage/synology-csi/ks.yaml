@@ -12,6 +12,8 @@ spec:
   dependsOn:
     - name: infisical-secrets-operator
       namespace: infisical-system
+    - name: secrets
+      namespace: *namespace
   healthChecks:
     - apiVersion: helm.toolkit.fluxcd.io/v2
       kind: HelmRelease
@@ -20,8 +22,9 @@ spec:
   interval: 1h
   path: ./kubernetes/apps/storage/synology-csi/app
   postBuild:
-    substitute:
-      SYNOLOGY_CSI_CLIENT_INFO: "Y2xpZW50czoKICAtIGhvc3Q6ICIxOTIuMTY4LjEyMS4yMzkiCiAgICBwb3J0OiA1MDAxCiAgICBodHRwczogdHJ1ZQogICAgdXNlcm5hbWU6ICJjc2ktdXNlciIKICAgIHBhc3N3b3JkOiAiU1VeTjdNQGVjdkZFNE5edjk3Vm0iCiAgLSBob3N0OiAiMTkyLjE2OC4xMjEuMjQwIgogICAgcG9ydDogNTAwMQogICAgaHR0cHM6IHRydWUKICAgIHVzZXJuYW1lOiAiY3NpLXVzZXIiCiAgICBwYXNzd29yZDogIlNVXk43TUBlY3ZGRTROXnY5N1ZtIg=="
+    substituteFrom:
+      - kind: Secret
+        name: synology-csi-infisical
   prune: true
   retryInterval: 2m
   sourceRef:
