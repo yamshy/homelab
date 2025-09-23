@@ -1,6 +1,6 @@
 controllers:
   resume-assistant:
-    strategy: RollingUpdate
+    strategy: Recreate
     containers:
       app:
         image:
