@@ -12,13 +12,15 @@ Concise documentation for deploying the Resume Assistant service via Flux and th
 
 ## Overview
 
-This deployment exposes the [`ghcr.io/yamshy/resume-assistant`](https://github.com/yamshy/resume-assistant) container (tag `1.0.1`)
+This deployment exposes the [`ghcr.io/yamshy/resume-assistant`](https://github.com/yamshy/resume-assistant) container (tag `1.4.4`)
 behind Flux. Runtime configuration is supplied exclusively through the rendered ConfigMap that feeds the HelmRelease.
 
 ## Workload
 
 - Chart: `app-template` via the shared `app-template` OCIRepository
-- Controller: single `resume-assistant` deployment managed by the chart
+- Controller: single `resume-assistant` deployment managed by the chart using the `Recreate` rollout
+  strategy. This is required because the workload keeps a ReadWriteOnce Longhorn PVC mounted at `/data`;
+  parallel pods would otherwise hit multi-attach errors during upgrades.
 - Resources (from values): requests `100m` CPU / `256Mi`, limits `500m` CPU / `512Mi`
 - Persistence: 5Gi `longhorn`-backed PVC mounted at `/data` for the knowledge store file
 

@@ -28,8 +28,12 @@ Installs Longhorn with metrics and ServiceMonitor enabled, non-default storage c
 
 ## Networking and exposure
 
-- Longhorn UI is ClusterIP (internal)
-- No external exposure defined
+- Longhorn UI Service stays ClusterIP for in-cluster access.
+- External access is provided via the Tailscale ingress controller at `https://longhorn.${SECRET_TAILNET}`.
+  - The ingress definition lives in `app/helmrelease.yaml` and references the TLS secret `longhorn-tls`
+    (minted automatically by the Tailscale operator).
+  - Tailscale host interpolation uses `${SECRET_TAILNET}` sourced from the shared `kubernetes/apps/storage/secrets`
+    bundle; keep that secret up to date if the tailnet hostname changes.
 
 ## Image automation
 
