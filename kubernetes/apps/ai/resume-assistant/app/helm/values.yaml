@@ -5,7 +5,7 @@ controllers:
       app:
         image:
           repository: ghcr.io/yamshy/resume-assistant
-          tag: 1.4.2 # {"$imagepolicy": "ai:resume-assistant-image-policy:tag"}
+          tag: 1.4.3 # {"$imagepolicy": "ai:resume-assistant-image-policy:tag"}
         env:
           - name: OPENAI_API_KEY
             valueFrom:
@@ -52,7 +52,6 @@ controllers:
           limits:
             cpu: 500m
             memory: 512Mi
-
 service:
   app:
     ports:
@@ -60,7 +59,6 @@ service:
         port: 80
         protocol: TCP
         targetPort: http
-
 ingress:
   app:
     enabled: true
@@ -78,7 +76,6 @@ ingress:
       - secretName: resume-assistant-tls
         hosts:
           - resume-assistant.${SECRET_TAILNET}
-
 persistence:
   data:
     enabled: true
