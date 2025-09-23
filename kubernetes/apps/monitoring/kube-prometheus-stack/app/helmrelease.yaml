@@ -48,7 +48,7 @@ spec:
               accessModes: ["ReadWriteOnce"]
               resources:
                 requests:
-                  storage: 20Gi
+                  storage: 24Gi
 
         # Resource limits for homelab
         resources:
@@ -60,8 +60,8 @@ spec:
             cpu: 500m
 
         # Retention and scrape intervals
-        retention: 15d
-        retentionSize: 20GiB
+        retention: 10d
+        retentionSize: 14GiB
         scrapeInterval: "30s"
         evaluationInterval: 30s
 
