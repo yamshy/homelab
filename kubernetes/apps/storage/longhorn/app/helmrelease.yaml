@@ -75,6 +75,17 @@ spec:
       service:
         type: ClusterIP
 
+    # Tailscale ingress for Longhorn UI
+    ingress:
+      enabled: true
+      host: longhorn.${SECRET_TAILNET}
+      path: /
+      pathType: Prefix
+      ingressClassName: tailscale
+      annotations: {}
+      tls: true
+      tlsSecret: longhorn-tls
+
     # CSI settings for high availability
     csi:
       attacherReplicaCount: 3
