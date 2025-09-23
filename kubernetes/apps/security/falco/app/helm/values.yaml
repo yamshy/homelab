@@ -23,6 +23,12 @@ resources:
     cpu: 200m
     memory: 512Mi
 
+falco:
+  jsonOutput: true
+  httpOutput:
+    enabled: true
+    url: http://falco-falcosidekick.security.svc.cluster.local:2801
+
 falcosidekick:
   enabled: true
   webui:
