@@ -1,15 +1,17 @@
 # Temporal Helm values for resume-assistant namespace
-# Based on official values/values.postgresql.yaml
+# Workaround for Helm chart validation bug
 
-# Disable Cassandra - use PostgreSQL instead
+# Disable Cassandra but provide dummy port to satisfy validation
 cassandra:
   enabled: false
+  config:
+    port: 9042  # Dummy value to satisfy validation
 
 # Disable Elasticsearch - not needed for basic setup
 elasticsearch:
   enabled: false
 
-# PostgreSQL configuration
+# PostgreSQL configuration (bundled)
 postgresql:
   enabled: true
   auth:
@@ -23,6 +25,15 @@ postgresql:
       size: 10Gi
       storageClass: longhorn
 
+# SQL configuration for Temporal server
+sql:
+  driver: "sql"
+  host: "temporal-postgresql"
+  port: 5432
+  database: temporal
+  user: temporal
+  password: temporal
+
 # Temporal server configuration
 server:
   image:
@@ -35,27 +46,6 @@ server:
     limits:
       cpu: 500m
       memory: 512Mi
-  config:
-    persistence:
-      defaultStore: "default"
-      visibilityStore: "visibility"
-      datastores:
-        default:
-          sql:
-            pluginName: "postgres12"
-            databaseName: "temporal"
-            connectAddr: "temporal-postgresql:5432"
-            connectProtocol: "tcp"
-            user: "temporal"
-            password: "temporal"
-        visibility:
-          sql:
-            pluginName: "postgres12"
-            databaseName: "temporal_visibility"
-            connectAddr: "temporal-postgresql:5432"
-            connectProtocol: "tcp"
-            user: "temporal"
-            password: "temporal"
 
 # Temporal UI configuration
 ui:
