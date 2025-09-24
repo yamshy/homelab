@@ -2,7 +2,9 @@ controllers:
   resume-assistant-ui:
     pod:
       securityContext:
-        fsGroup: 101
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
     strategy: RollingUpdate
     containers:
       app:
@@ -45,6 +47,8 @@ controllers:
           capabilities:
             drop:
               - "ALL"
+            add:
+              - "NET_BIND_SERVICE"
         resources:
           requests:
             cpu: 50m
@@ -54,10 +58,14 @@ controllers:
             memory: 256Mi
 
 persistence:
-  nginx-cache:
+  caddy-config:
     type: emptyDir
     globalMounts:
-      - path: /var/cache/nginx
+      - path: /config
+  caddy-data:
+    type: emptyDir
+    globalMounts:
+      - path: /data
 
 service:
   app:
