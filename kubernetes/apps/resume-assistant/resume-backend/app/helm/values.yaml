@@ -23,7 +23,8 @@ controllers:
           - -c
           - |
             uvicorn app.api:app --host 0.0.0.0 --port 8080 &
-            python worker.py
+            python worker.py || echo "Worker failed, continuing with API server"
+            wait
         probes:
           liveness:
             enabled: true
