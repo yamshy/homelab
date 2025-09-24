@@ -31,32 +31,11 @@ spec:
       labels:
         app: temporal
     spec:
-      initContainers:
-      - name: temporal-setup
-        image: temporalio/auto-setup:latest
-        env:
-        - name: DB
-          value: postgres12
-        - name: DB_PORT
-          value: "5432"
-        - name: POSTGRES_USER
-          value: temporal
-        - name: POSTGRES_PWD
-          value: temporal
-        - name: POSTGRES_SEEDS
-          value: localhost
-        - name: DYNAMIC_CONFIG_FILE_PATH
-          value: config/dynamicconfig/development-sql.yaml
-        resources:
-          requests:
-            cpu: 100m
-            memory: 256Mi
-          limits:
-            cpu: 500m
-            memory: 512Mi
       containers:
       - name: temporal
-        image: temporalio/server:latest
+        image: temporalio/server:1.24.2
+        args:
+        - autosetup
         env:
         - name: DB
           value: postgres12
@@ -85,12 +64,12 @@ spec:
         readinessProbe:
           tcpSocket:
             port: 7233
-          initialDelaySeconds: 30
+          initialDelaySeconds: 60
           periodSeconds: 10
         livenessProbe:
           tcpSocket:
             port: 7233
-          initialDelaySeconds: 30
+          initialDelaySeconds: 60
           periodSeconds: 10
       - name: postgres
         image: postgres:13
@@ -107,7 +86,7 @@ spec:
         volumeMounts:
         - name: postgres-storage
           mountPath: /var/lib/postgresql/data
-          subPath: postgres-data
+          subPath: postgres
         resources:
           requests:
             cpu: 100m
