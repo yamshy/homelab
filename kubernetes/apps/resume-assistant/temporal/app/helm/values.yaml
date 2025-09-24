@@ -3,7 +3,39 @@ cassandra:
   enabled: false
 postgresql:
   enabled: true
-  persistence:
-    size: 10Gi
+  auth:
+    username: temporal
+    password: temporal
+    database: temporal
+  primary:
+    persistence:
+      size: 10Gi
+    initdb:
+      scripts:
+        create-visibility-db.sql: |
+          CREATE DATABASE temporal_visibility;
+          GRANT ALL PRIVILEGES ON DATABASE temporal_visibility TO temporal;
 server:
   replicaCount: 1
+  config:
+    persistence:
+      defaultStore: default
+      visibilityStore: visibility
+      default:
+        driver: sql
+        sql:
+          driver: postgres12
+          host: temporal-postgresql
+          port: 5432
+          database: temporal
+          user: temporal
+          password: temporal
+      visibility:
+        driver: sql
+        sql:
+          driver: postgres12
+          host: temporal-postgresql
+          port: 5432
+          database: temporal_visibility
+          user: temporal
+          password: temporal
