@@ -1,5 +1,5 @@
 controllers:
-  resume-assistant-ui:
+  resume-frontend:
     pod:
       securityContext:
         runAsUser: 10001
@@ -67,7 +67,7 @@ persistence:
       - path: /data
 service:
   app:
-    controller: resume-assistant-ui
+    controller: resume-frontend
     ports:
       http:
         port: 80

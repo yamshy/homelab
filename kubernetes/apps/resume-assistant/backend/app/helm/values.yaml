@@ -1,5 +1,5 @@
 controllers:
-  resume-assistant:
+  resume-backend:
     strategy: Recreate
     containers:
       app:
