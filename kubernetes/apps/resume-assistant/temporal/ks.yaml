@@ -16,6 +16,10 @@ spec:
       namespace: infisical-system
   interval: 1h
   path: ./kubernetes/apps/resume-assistant/temporal/app
+  postBuild:
+    substituteFrom:
+      - name: resume-assistant-env
+        kind: Secret
   prune: true
   retryInterval: 2m
   sourceRef:
