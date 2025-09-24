@@ -12,7 +12,7 @@ Concise documentation for deploying the Resume Assistant service via Flux and th
 
 ## Overview
 
-This deployment exposes the [`ghcr.io/yamshy/resume-assistant`](https://github.com/yamshy/resume-assistant) container (tag `1.4.4`)
+This deployment exposes the [`ghcr.io/yamshy/resume-assistant`](https://github.com/yamshy/resume-assistant) container (tag `1.9.1`)
 behind Flux. Runtime configuration is supplied exclusively through the rendered ConfigMap that feeds the HelmRelease.
 
 ## Workload
@@ -27,21 +27,22 @@ behind Flux. Runtime configuration is supplied exclusively through the rendered 
 ## Networking and exposure
 
 - Service: ClusterIP on port `80` targeting the container's `8000`
-- Ingress: Tailscale ingress class
-  - Host: `resume-assistant.${SECRET_TAILNET}`
-  - TLS: secret `resume-assistant-tls`
+- Access is cluster-internal. Reach the UI from outside the cluster with a temporary port-forward, for example:
+
+  ```sh
+  kubectl -n ai port-forward svc/resume-assistant 8080:80
+  # Then open http://localhost:8080
+  ```
 
 ## Secrets & substitutions
 
 - Application API access comes from the Infisical-managed secret `resume-assistant-env`
   (`OPENAI_API_KEY` key).
-- Flux post-build substitution pulls `${SECRET_TAILNET}` from the same Infisical-managed secret so the Tailscale hostname renders correctly.
 
 ## Dependencies
 
 - Flux (Helm & Kustomize controllers)
 - Infisical Secrets Operator (manages `resume-assistant-env`)
-- Tailscale operator for the `tailscale` IngressClass
 
 ## Operations
 
