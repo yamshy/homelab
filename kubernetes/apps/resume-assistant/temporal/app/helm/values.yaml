@@ -40,7 +40,7 @@ server:
       datastores:
         default:
           sql:
-            pluginName: "postgres"
+            pluginName: "postgres12"
             databaseName: "temporal"
             connectAddr: "temporal-postgresql:5432"
             connectProtocol: "tcp"
@@ -48,7 +48,7 @@ server:
             password: "temporal"
         visibility:
           sql:
-            pluginName: "postgres"
+            pluginName: "postgres12"
             databaseName: "temporal_visibility"
             connectAddr: "temporal-postgresql:5432"
             connectProtocol: "tcp"
