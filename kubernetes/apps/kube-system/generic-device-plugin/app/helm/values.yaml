@@ -1,5 +1,5 @@
 image:
-  repository: squat/generic-device-plugin
+  repository: ghcr.io/squat/generic-device-plugin
   tag: ""
   pullPolicy: IfNotPresent
 config:
