@@ -33,12 +33,10 @@ spec:
     spec:
       containers:
       - name: temporal
-        image: temporalio/server:1.24.2
-        args:
-        - autosetup
+        image: temporalio/auto-setup:latest
         env:
         - name: DB
-          value: postgres12
+          value: postgresql
         - name: DB_PORT
           value: "5432"
         - name: POSTGRES_USER
@@ -46,9 +44,11 @@ spec:
         - name: POSTGRES_PWD
           value: temporal
         - name: POSTGRES_SEEDS
-          value: localhost
-        - name: DYNAMIC_CONFIG_FILE_PATH
-          value: config/dynamicconfig/development-sql.yaml
+          value: postgres
+        - name: SKIP_SCHEMA_SETUP
+          value: "false"
+        - name: SERVICES
+          value: "history,matching,frontend,worker"
         ports:
         - containerPort: 7233
           name: grpc
