@@ -3,17 +3,19 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app secrets
-  namespace: &namespace ai
+  name: &app temporal
+  namespace: &namespace resume-assistant
 spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
   dependsOn:
+    - name: secrets
+      namespace: resume-assistant
     - name: infisical-secrets-operator
       namespace: infisical-system
   interval: 1h
-  path: ./kubernetes/apps/ai/secrets
+  path: ./kubernetes/apps/resume-assistant/temporal/app
   prune: true
   retryInterval: 2m
   sourceRef:
@@ -22,4 +24,4 @@ spec:
     namespace: flux-system
   targetNamespace: *namespace
   timeout: 5m
-  wait: true  # Wait for all secrets to be ready before marking as complete
+  wait: false

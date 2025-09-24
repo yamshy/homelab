@@ -4,11 +4,11 @@ Concise documentation for deploying the Resume Assistant UI via Flux using the b
 
 ## Quick links
 
-- Namespace: `ai`
-- Flux Kustomization: `kubernetes/apps/ai/resume-assistant-ui/ks.yaml`
-- HelmRelease: `kubernetes/apps/ai/resume-assistant-ui/app/helmrelease.yaml`
-- Chart values: `kubernetes/apps/ai/resume-assistant-ui/app/helm/values.yaml`
-- Image automation: `kubernetes/apps/ai/resume-assistant-ui/app/{imagerepository,imagepolicy}.yaml`
+- Namespace: `resume-assistant`
+- Flux Kustomization: `kubernetes/apps/resume-assistant/frontend/ks.yaml`
+- HelmRelease: `kubernetes/apps/resume-assistant/frontend/app/helmrelease.yaml`
+- Chart values: `kubernetes/apps/resume-assistant/frontend/app/helm/values.yaml`
+- Image automation: `kubernetes/apps/resume-assistant/frontend/app/{imagerepository,imagepolicy}.yaml`
 
 ## Overview
 
@@ -38,26 +38,26 @@ This deployment serves the [`ghcr.io/yamshy/resume-assistant-ui`](https://github
 - Trigger a reconcile:
 
   ```sh
-  flux reconcile kustomization resume-assistant-ui -n ai
+  flux reconcile kustomization resume-assistant-ui -n resume-assistant
   ```
 
 - Inspect workloads:
 
   ```sh
-  kubectl -n ai get helmrelease,deploy,svc,ing,pod
+  kubectl -n resume-assistant get helmrelease,deploy,svc,ing,pod
   ```
 
 - Edit chart values and re-run validation:
 
   ```sh
-  $EDITOR kubernetes/apps/ai/resume-assistant-ui/app/helm/values.yaml
+  $EDITOR kubernetes/apps/resume-assistant/frontend/app/helm/values.yaml
   bash scripts/validate.sh
   ```
 
 ## File map
 
-- Flux Kustomization: `kubernetes/apps/ai/resume-assistant-ui/ks.yaml`
-- App manifests: `kubernetes/apps/ai/resume-assistant-ui/app/`
+- Flux Kustomization: `kubernetes/apps/resume-assistant/frontend/ks.yaml`
+- App manifests: `kubernetes/apps/resume-assistant/frontend/app/`
   - `helmrelease.yaml` – HelmRelease definition referencing the shared `app-template` chart
   - `helm/values.yaml` – chart values rendered via ConfigMapGenerator
   - `helm/kustomizeconfig.yaml` – rewrites `valuesFrom` ConfigMap names

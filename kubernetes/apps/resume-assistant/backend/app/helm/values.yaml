@@ -5,17 +5,25 @@ controllers:
       app:
         image:
           repository: ghcr.io/yamshy/resume-assistant
-          tag: 1.11.8 # {"$imagepolicy": "ai:resume-assistant-image-policy:tag"}
+          tag: 1.11.8 # {"$imagepolicy": "resume-assistant:resume-assistant-image-policy:tag"}
         env:
           - name: OPENAI_API_KEY
             valueFrom:
               secretKeyRef:
                 name: resume-assistant-env
                 key: OPENAI_API_KEY
+          - name: TEMPORAL_HOST
+            value: temporal-frontend:7233
         ports:
           - name: http
             containerPort: 8000
             protocol: TCP
+        command:
+          - /bin/sh
+          - -c
+          - |
+            langgraph server start --config /app/langgraph.json --host 0.0.0.0 --port 8000 &
+            python -m app.temporal.worker
         probes:
           liveness:
             enabled: true
