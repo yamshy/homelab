@@ -1,5 +1,15 @@
 # Temporal Helm values for resume-assistant namespace
-# PostgreSQL is enabled with 10Gi PVC for persistence
+# Based on official values/values.postgresql.yaml
+
+# Disable Cassandra - use PostgreSQL instead
+cassandra:
+  enabled: false
+
+# Disable Elasticsearch - not needed for basic setup
+elasticsearch:
+  enabled: false
+
+# PostgreSQL configuration
 postgresql:
   enabled: true
   auth:
@@ -12,14 +22,6 @@ postgresql:
       enabled: true
       size: 10Gi
       storageClass: longhorn
-
-# Disable Cassandra - use PostgreSQL instead
-cassandra:
-  enabled: false
-
-# Disable Elasticsearch - not needed for basic setup
-elasticsearch:
-  enabled: false
 
 # Temporal server configuration
 server:
