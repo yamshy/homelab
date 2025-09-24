@@ -19,7 +19,7 @@ This deployment serves the [`ghcr.io/yamshy/resume-assistant-ui`](https://github
 - Chart: `app-template` via the shared `app-template` OCIRepository
 - Controller: single `resume-assistant-ui` deployment managed by the chart with the default rolling update strategy
 - Resources (from values): requests `50m` CPU / `64Mi`, limits `200m` CPU / `256Mi`
-- Persistence: none (static assets only)
+- Persistence: ephemeral `emptyDir` mounted at `/var/cache/nginx` for Nginx temp files
 
 ## Networking and exposure
 

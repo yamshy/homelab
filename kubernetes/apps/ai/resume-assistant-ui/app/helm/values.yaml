@@ -1,5 +1,8 @@
 controllers:
   resume-assistant-ui:
+    pod:
+      securityContext:
+        fsGroup: 101
     strategy: RollingUpdate
     containers:
       app:
@@ -49,6 +52,12 @@ controllers:
           limits:
             cpu: 200m
             memory: 256Mi
+
+persistence:
+  nginx-cache:
+    type: emptyDir
+    globalMounts:
+      - path: /var/cache/nginx
 
 service:
   app:
