@@ -1,0 +1,11 @@
+image:
+  repository: ghcr.io/squat/generic-device-plugin
+  tag: ""
+  pullPolicy: IfNotPresent
+config:
+  data:
+    - name: tun
+      groups:
+        - count: 1000
+          paths:
+            - path: /dev/net/tun

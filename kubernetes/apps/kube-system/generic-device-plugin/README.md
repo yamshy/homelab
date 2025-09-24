@@ -6,22 +6,23 @@ Concise documentation for deploying the Generic Device Plugin to expose /dev/net
 
 - Namespace: `kube-system`
 - Flux Kustomization: `kubernetes/apps/kube-system/generic-device-plugin/ks.yaml`
-- DaemonSet: `kubernetes/apps/kube-system/generic-device-plugin/daemonset.yaml`
+- HelmRelease: `kubernetes/apps/kube-system/generic-device-plugin/app/helmrelease.yaml`
+- Helm values: `kubernetes/apps/kube-system/generic-device-plugin/app/helm/values.yaml`
 
 ## Overview
 
-Deploys the `ghcr.io/squat/generic-device-plugin` as a privileged DaemonSet to advertise the `/dev/net/tun` device to the kubelet for workloads (e.g., Tailscale operator on Talos).
+Deploys the `generic-device-plugin` Helm chart from the `gabe565` repository to advertise the `/dev/net/tun` device to the kubelet for Talos + Tailscale workloads. The release pins chart version `0.1.3` and uses the upstream `squat/generic-device-plugin` image.
 
 ## Workload
 
-- Kind: DaemonSet
-- Container image: `ghcr.io/squat/generic-device-plugin:latest`
+- Kind: HelmRelease (installs DaemonSet)
+- Chart: `generic-device-plugin` (version `0.1.3`)
+- Container image: `squat/generic-device-plugin` (chart default tag)
 - Device group:
   - name: `tun`
   - count: 1000
   - path: `/dev/net/tun`
-- Priority class: `system-node-critical`
-- Tolerations: schedules onto all nodes
+- Tolerations: schedules onto all nodes (managed by chart)
 
 ## Networking and exposure
 
@@ -39,6 +40,7 @@ Not configured.
 
 - Talos Linux nodes exposing `/dev/net/tun`
 - Flux Kustomization to apply manifests
+- HelmRepository `gabe565` in the `flux-system` namespace
 
 ## Operations
 
@@ -51,10 +53,11 @@ Not configured.
 - Inspect:
 
   ```sh
-  kubectl -n kube-system get ds/generic-device-plugin pod
+  kubectl -n kube-system get daemonset generic-device-plugin
   ```
 
 ## File map
 
 - Kustomization (Flux): `kubernetes/apps/kube-system/generic-device-plugin/ks.yaml`
-- App manifests: `kubernetes/apps/kube-system/generic-device-plugin/daemonset.yaml`
+- HelmRelease: `kubernetes/apps/kube-system/generic-device-plugin/app/helmrelease.yaml`
+- Helm values: `kubernetes/apps/kube-system/generic-device-plugin/app/helm/values.yaml`
