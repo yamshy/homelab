@@ -13,6 +13,14 @@ postgresql:
       size: 10Gi
       storageClass: longhorn
 
+# Disable Cassandra - use PostgreSQL instead
+cassandra:
+  enabled: false
+
+# Disable Elasticsearch - not needed for basic setup
+elasticsearch:
+  enabled: false
+
 # Temporal server configuration
 server:
   image:
