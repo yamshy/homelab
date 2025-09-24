@@ -10,7 +10,7 @@ controllers:
       app:
         image:
           repository: ghcr.io/yamshy/resume-assistant-ui
-          tag: 1.0.3 # {"$imagepolicy": "ai:resume-assistant-ui-image-policy:tag"}
+          tag: 1.1.0 # {"$imagepolicy": "ai:resume-assistant-ui-image-policy:tag"}
         env:
           - name: PUBLIC_LANGGRAPH_URL
             value: "https://resume-assistant.${SECRET_TAILNET}"
