@@ -21,20 +21,41 @@ jobs:
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
 
       - name: Install kustomize (v5.7.0)
+        env:
+          KUSTOMIZE_VERSION: v5.7.0
+          KUSTOMIZE_SHA256: 0d98f06d6d2c2c0ff8923cc136a517af74aaa187f1b9f3e17ff370d0625ede84
         run: |
-          curl -fsSL https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv5.7.0/kustomize_v5.7.0_linux_amd64.tar.gz \
-            | tar -xz && sudo mv kustomize /usr/local/bin/kustomize
+          set -euo pipefail
+          tmpdir="$(mktemp -d)"
+          curl -fsSL "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2F${KUSTOMIZE_VERSION}/kustomize_${KUSTOMIZE_VERSION}_linux_amd64.tar.gz" -o "${tmpdir}/kustomize.tar.gz"
+          echo "${KUSTOMIZE_SHA256}  ${tmpdir}/kustomize.tar.gz" | sha256sum -c -
+          tar -xzf "${tmpdir}/kustomize.tar.gz" -C "${tmpdir}" kustomize
+          sudo install -m 0755 "${tmpdir}/kustomize" /usr/local/bin/kustomize
           kustomize version
 
       - name: Install kubeconform (v0.7.0)
+        env:
+          KUBECONFORM_VERSION: v0.7.0
+          KUBECONFORM_SHA256: c31518ddd122663b3f3aa874cfe8178cb0988de944f29c74a0b9260920d115d3
         run: |
-          curl -fsSL https://github.com/yannh/kubeconform/releases/download/v0.7.0/kubeconform-linux-amd64.tar.gz \
-            | tar -xz && sudo mv kubeconform /usr/local/bin/kubeconform
+          set -euo pipefail
+          tmpdir="$(mktemp -d)"
+          curl -fsSL "https://github.com/yannh/kubeconform/releases/download/${KUBECONFORM_VERSION}/kubeconform-linux-amd64.tar.gz" -o "${tmpdir}/kubeconform.tar.gz"
+          echo "${KUBECONFORM_SHA256}  ${tmpdir}/kubeconform.tar.gz" | sha256sum -c -
+          tar -xzf "${tmpdir}/kubeconform.tar.gz" -C "${tmpdir}" kubeconform
+          sudo install -m 0755 "${tmpdir}/kubeconform" /usr/local/bin/kubeconform
           kubeconform -v
       - name: Install yq (v4.44.1)
+        env:
+          YQ_VERSION: v4.44.1
+          YQ_SHA256: 2320004a2deaa51c9ecd8374dd3ac8f5db47dd5ce017aa203e83a41104e73eff
         run: |
-          curl -fsSL https://github.com/mikefarah/yq/releases/download/v4.44.1/yq_linux_amd64.tar.gz \
-            | tar -xz && sudo mv yq_linux_amd64 /usr/local/bin/yq
+          set -euo pipefail
+          tmpdir="$(mktemp -d)"
+          curl -fsSL "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64.tar.gz" -o "${tmpdir}/yq.tar.gz"
+          echo "${YQ_SHA256}  ${tmpdir}/yq.tar.gz" | sha256sum -c -
+          tar -xzf "${tmpdir}/yq.tar.gz" -C "${tmpdir}" yq_linux_amd64
+          sudo install -m 0755 "${tmpdir}/yq_linux_amd64" /usr/local/bin/yq
           yq --version
 
       - name: Build overlay list

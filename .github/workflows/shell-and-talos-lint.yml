@@ -35,10 +35,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
       - name: Install talhelper
+        env:
+          TALHELPER_VERSION: v3.0.35
+          TALHELPER_SHA256: 44a33a5ebe2ee63e3bdafa9ec4633bf48adc7c365d68b88d04f2bc6b0126db5b
         run: |
           set -euo pipefail
-          curl -sSL https://github.com/budimanjojo/talhelper/releases/latest/download/talhelper_linux_amd64.tar.gz -o /tmp/talhelper.tar.gz
-          tar -xzf /tmp/talhelper.tar.gz -C /tmp talhelper
-          sudo install -m 0755 /tmp/talhelper /usr/local/bin/talhelper
+          tmpdir="$(mktemp -d)"
+          curl -sSL "https://github.com/budimanjojo/talhelper/releases/download/${TALHELPER_VERSION}/talhelper_linux_amd64.tar.gz" -o "${tmpdir}/talhelper.tar.gz"
+          echo "${TALHELPER_SHA256}  ${tmpdir}/talhelper.tar.gz" | sha256sum -c -
+          tar -xzf "${tmpdir}/talhelper.tar.gz" -C "${tmpdir}" talhelper
+          sudo install -m 0755 "${tmpdir}/talhelper" /usr/local/bin/talhelper
       - name: Validate Talos configuration
         run: talhelper validate talconfig talos/talconfig.yaml --env-file talos/talenv.yaml
