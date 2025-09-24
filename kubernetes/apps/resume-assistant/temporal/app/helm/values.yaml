@@ -33,6 +33,27 @@ server:
     limits:
       cpu: 500m
       memory: 512Mi
+  config:
+    persistence:
+      defaultStore: "default"
+      visibilityStore: "visibility"
+      datastores:
+        default:
+          sql:
+            pluginName: "postgres"
+            databaseName: "temporal"
+            connectAddr: "temporal-postgresql:5432"
+            connectProtocol: "tcp"
+            user: "temporal"
+            password: "temporal"
+        visibility:
+          sql:
+            pluginName: "postgres"
+            databaseName: "temporal_visibility"
+            connectAddr: "temporal-postgresql:5432"
+            connectProtocol: "tcp"
+            user: "temporal"
+            password: "temporal"
 
 # Temporal UI configuration
 ui:
