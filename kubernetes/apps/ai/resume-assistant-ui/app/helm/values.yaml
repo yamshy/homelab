@@ -1,0 +1,76 @@
+controllers:
+  resume-assistant-ui:
+    strategy: RollingUpdate
+    containers:
+      app:
+        image:
+          repository: ghcr.io/yamshy/resume-assistant-ui
+          tag: 1.0.0 # {"$imagepolicy": "ai:resume-assistant-ui-image-policy:tag"}
+        env:
+          - name: PUBLIC_LANGGRAPH_URL
+            value: "https://resume-assistant.${SECRET_TAILNET}"
+        ports:
+          - name: http
+            containerPort: 80
+            protocol: TCP
+        probes:
+          liveness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /
+                port: http
+              initialDelaySeconds: 10
+              periodSeconds: 10
+              timeoutSeconds: 1
+              failureThreshold: 3
+          readiness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /
+                port: http
+              initialDelaySeconds: 5
+              periodSeconds: 10
+              timeoutSeconds: 1
+              failureThreshold: 3
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+              - "ALL"
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi
+
+service:
+  app:
+    controller: resume-assistant-ui
+    ports:
+      http:
+        port: 80
+        protocol: TCP
+        targetPort: http
+
+ingress:
+  app:
+    enabled: true
+    className: tailscale
+    hosts:
+      - host: resume-assistant-ui.${SECRET_TAILNET}
+        paths:
+          - path: /
+            pathType: Prefix
+            service:
+              identifier: app
+              port: http
+    tls:
+      - hosts:
+          - resume-assistant-ui.${SECRET_TAILNET}

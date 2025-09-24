@@ -8,3 +8,4 @@ components:
 resources:
   - ./secrets/ks.yaml
   - ./resume-assistant/ks.yaml
+  - ./resume-assistant-ui/ks.yaml
