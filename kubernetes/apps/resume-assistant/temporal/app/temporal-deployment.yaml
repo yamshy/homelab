@@ -132,3 +132,26 @@ spec:
     targetPort: 8080
     protocol: TCP
   type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: temporal-ui
+  namespace: resume-assistant
+  annotations: {}
+spec:
+  ingressClassName: tailscale
+  rules:
+  - host: temporal.${SECRET_TAILNET}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: temporal-frontend
+            port:
+              number: 8080
+  tls:
+  - hosts:
+    - temporal.${SECRET_TAILNET}
