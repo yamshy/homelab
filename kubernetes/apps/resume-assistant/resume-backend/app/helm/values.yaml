@@ -65,7 +65,7 @@ service:
   app:
     ports:
       http:
-        port: 80
+        port: 8124
         protocol: TCP
         targetPort: http
 persistence:

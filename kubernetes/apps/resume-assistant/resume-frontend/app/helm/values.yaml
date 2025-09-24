@@ -13,7 +13,7 @@ controllers:
           tag: 1.6.0 # {"$imagepolicy": "resume-assistant:resume-assistant-ui-image-policy:tag"}
         env:
           - name: VITE_API_URL
-            value: "http://resume-backend"
+            value: "http://resume-backend:8124"
         ports:
           - name: http
             containerPort: 80
