@@ -5,7 +5,7 @@ controllers:
       app:
         image:
           repository: ghcr.io/yamshy/resume-assistant
-          tag: 1.11.2 # {"$imagepolicy": "ai:resume-assistant-image-policy:tag"}
+          tag: 1.11.4 # {"$imagepolicy": "ai:resume-assistant-image-policy:tag"}
         env:
           - name: OPENAI_API_KEY
             valueFrom:
