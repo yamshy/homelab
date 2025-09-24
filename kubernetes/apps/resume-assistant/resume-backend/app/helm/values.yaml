@@ -16,13 +16,13 @@ controllers:
             value: temporal-frontend:7233
         ports:
           - name: http
-            containerPort: 8080
+            containerPort: 8124
             protocol: TCP
         command:
           - /bin/sh
           - -c
           - |
-            uvicorn app.api:app --host 0.0.0.0 --port 8080 &
+            uvicorn app.api:app --host 0.0.0.0 --port 8124 &
             python worker.py || echo "Worker failed, continuing with API server"
             wait
         probes:
@@ -67,7 +67,7 @@ service:
       http:
         port: 8124
         protocol: TCP
-        targetPort: http
+        targetPort: 8124
 persistence:
   data:
     enabled: true
