@@ -4,9 +4,11 @@ Thank you for contributing! Please follow these guidelines to help us keep quali
 
 ### Run validation before commit and PR
 - Always run repo validation locally before committing or opening a pull request.
-- In this repo, run from the repo root:
+- In this repo, trust the repo toolchain and install pinned versions before running validation:
 
 ```bash
+mise trust
+mise install
 bash scripts/validate.sh
 ```
 

@@ -18,7 +18,7 @@ Use the GitOps layout to keep apps isolated and reproducible.
 Follow `.editorconfig`: YAML/JSON two spaces, shells four, Markdown four, LF endings. Use lower-kebab file and directory names (`cloudflare-tunnel`, `k8s-gateway`). Keep Helm values exclusively in `app/helm/values.yaml`, reference via `valuesFrom`, and co-locate chart sources with the `HelmRelease` unless the app already uses the shared `app-template` OCI repository.
 
 ## Testing Guidelines
-Prefer additive patches and validate locally before every PR. Run `bash scripts/validate.sh` for schema compliance and `flux-local` to catch drift. Inspect rendered manifests with `kustomize build <overlay> | yq e 'del(.sops)' -`. Ensure zero kubeconform errors and clean Flux diffs; rerun after modifying secrets or chart values.
+Prefer additive patches and validate locally before every PR. Run `mise trust && mise install` to ensure the pinned toolchain is available, then execute `bash scripts/validate.sh` for schema compliance and `flux-local` to catch drift. Inspect rendered manifests with `kustomize build <overlay> | yq e 'del(.sops)' -`. Ensure zero kubeconform errors and clean Flux diffs; rerun after modifying secrets or chart values.
 
 ## Commit & Pull Request Guidelines
 Commits follow Conventional Commits (`feat(network): add k8s-gateway`). PRs must describe changes, list impacted paths (`kubernetes/apps/...`), explain rationale, link issues, and include relevant screenshots or logs. Require green CI and passing local validation before requesting review.
