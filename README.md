@@ -64,6 +64,9 @@ Welcome to my personal homelab Kubernetes infrastructure repository! This is a p
 mise trust
 mise install
 
+# Validate manifests locally (uses the mise-managed toolchain)
+bash scripts/validate.sh
+
 # Generate Talos configuration
 task talos:generate-config
 
