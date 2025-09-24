@@ -23,6 +23,8 @@ metadata:
     app: temporal
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: temporal
@@ -44,7 +46,7 @@ spec:
         - name: POSTGRES_PWD
           value: temporal
         - name: POSTGRES_SEEDS
-          value: postgres
+          value: localhost
         - name: SKIP_SCHEMA_SETUP
           value: "false"
         - name: SERVICES
