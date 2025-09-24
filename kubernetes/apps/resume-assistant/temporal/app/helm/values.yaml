@@ -1,0 +1,9 @@
+fullnameOverride: temporal
+cassandra:
+  enabled: false
+postgresql:
+  enabled: true
+  persistence:
+    size: 10Gi
+server:
+  replicaCount: 1

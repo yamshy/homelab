@@ -3,7 +3,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - ./ai
   - ./cert-manager
   - ./default
   - ./flux-system
@@ -13,6 +12,7 @@ resources:
   - ./network
   - ./nextflow-demo
   - ./portfolio
+  - ./resume-assistant
   - ./security
   - ./storage
   - ./workspaces
