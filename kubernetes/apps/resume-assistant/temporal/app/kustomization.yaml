@@ -1,17 +1,6 @@
----
 # yaml-language-server: $schema=https://json.schemastore.org/kustomization
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+namespace: resume-assistant
 resources:
-  - ./helmrelease.yaml
-
-configMapGenerator:
-  - name: temporal-values
-    files:
-      - values.yaml=./helm/values.yaml
-
-generatorOptions:
-  disableNameSuffixHash: false
-
-configurations:
-  - ./helm/kustomizeconfig.yaml
+  - temporal-deployment.yaml
