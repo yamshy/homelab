@@ -31,9 +31,32 @@ spec:
       labels:
         app: temporal
     spec:
+      initContainers:
+      - name: temporal-setup
+        image: temporalio/auto-setup:latest
+        env:
+        - name: DB
+          value: postgres12
+        - name: DB_PORT
+          value: "5432"
+        - name: POSTGRES_USER
+          value: temporal
+        - name: POSTGRES_PWD
+          value: temporal
+        - name: POSTGRES_SEEDS
+          value: localhost
+        - name: DYNAMIC_CONFIG_FILE_PATH
+          value: config/dynamicconfig/development-sql.yaml
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
       containers:
       - name: temporal
-        image: temporalio/auto-setup:latest
+        image: temporalio/server:latest
         env:
         - name: DB
           value: postgres12
