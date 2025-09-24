@@ -54,7 +54,7 @@ jobs:
           tmpdir="$(mktemp -d)"
           curl -fsSL "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64.tar.gz" -o "${tmpdir}/yq.tar.gz"
           echo "${YQ_SHA256}  ${tmpdir}/yq.tar.gz" | sha256sum -c -
-          tar -xzf "${tmpdir}/yq.tar.gz" -C "${tmpdir}" yq_linux_amd64
+          tar -xzf "${tmpdir}/yq.tar.gz" -C "${tmpdir}" ./yq_linux_amd64
           sudo install -m 0755 "${tmpdir}/yq_linux_amd64" /usr/local/bin/yq
           yq --version
 
