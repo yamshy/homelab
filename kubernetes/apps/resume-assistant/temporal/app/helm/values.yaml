@@ -1,6 +1,14 @@
 fullnameOverride: temporal
+
+# Disable Elasticsearch to avoid Java/cgroup compatibility issues
+elasticsearch:
+  enabled: false
+
+# Disable Cassandra
 cassandra:
   enabled: false
+
+# Enable PostgreSQL for persistence
 postgresql:
   enabled: true
   auth:
@@ -15,6 +23,8 @@ postgresql:
         create-visibility-db.sql: |
           CREATE DATABASE temporal_visibility;
           GRANT ALL PRIVILEGES ON DATABASE temporal_visibility TO temporal;
+
+# Configure Temporal server
 server:
   replicaCount: 1
   config:
@@ -39,3 +49,11 @@ server:
           database: temporal_visibility
           user: temporal
           password: temporal
+
+# Disable Prometheus monitoring to reduce complexity
+prometheus:
+  enabled: false
+
+# Disable Grafana
+grafana:
+  enabled: false
