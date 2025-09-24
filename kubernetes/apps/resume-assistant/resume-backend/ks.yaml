@@ -17,7 +17,7 @@ spec:
     - name: infisical-secrets-operator
       namespace: infisical-system
   interval: 1h
-  path: ./kubernetes/apps/resume-assistant/backend/app
+  path: ./kubernetes/apps/resume-assistant/resume-backend/app
   postBuild:
     substituteFrom:
       - name: resume-assistant-env
