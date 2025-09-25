@@ -12,8 +12,8 @@ controllers:
           repository: ghcr.io/yamshy/resume-assistant-ui
           tag: 1.6.0 # {"$imagepolicy": "resume-assistant:resume-assistant-ui-image-policy:tag"}
         env:
-          - name: VITE_API_URL
-            value: "http://resume-backend:8124"
+          - name: BACKEND_URL
+            value: "resume-backend:8124"
         ports:
           - name: http
             containerPort: 80
