@@ -7,6 +7,5 @@ components:
   - ../../components/common
 resources:
   - ./secrets/ks.yaml
-  - ./resume-backend/ks.yaml
-  - ./resume-frontend/ks.yaml
+  - ./resume-assistant/ks.yaml
   - ./temporal/ks.yaml

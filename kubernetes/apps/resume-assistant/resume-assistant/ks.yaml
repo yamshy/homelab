@@ -3,7 +3,7 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app resume-backend
+  name: &app resume-assistant
   namespace: &namespace resume-assistant
 spec:
   commonMetadata:
@@ -17,7 +17,7 @@ spec:
     - name: infisical-secrets-operator
       namespace: infisical-system
   interval: 1h
-  path: ./kubernetes/apps/resume-assistant/resume-backend/app
+  path: ./kubernetes/apps/resume-assistant/resume-assistant/app
   postBuild:
     substituteFrom:
       - name: resume-assistant-env

@@ -2,7 +2,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app resume-backend
+  name: &app resume-assistant
   namespace: resume-assistant
 spec:
   interval: 1h
@@ -18,5 +18,5 @@ spec:
       retries: 3
   valuesFrom:
     - kind: ConfigMap
-      name: resume-backend-values
+      name: resume-assistant-values
       valuesKey: values.yaml

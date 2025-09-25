@@ -24,3 +24,7 @@ TALOSCONFIG = "{{config_root}}/talos/clusterconfig/talosconfig"
 "aqua:mikefarah/yq" = "4.47.2"
 "aqua:siderolabs/talos" = "1.11.1"
 "aqua:yannh/kubeconform" = "0.7.0"
+
+[tasks.validate]
+description = "Render and lint Kubernetes manifests"
+run = "bash scripts/validate.sh"

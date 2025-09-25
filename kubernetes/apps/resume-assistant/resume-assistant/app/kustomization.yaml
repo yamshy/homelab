@@ -8,7 +8,7 @@ resources:
   - ./imagepolicy.yaml
 
 configMapGenerator:
-  - name: resume-frontend-values
+  - name: resume-assistant-values
     files:
       - values.yaml=./helm/values.yaml
 
