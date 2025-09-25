@@ -10,7 +10,7 @@ controllers:
       app:
         image:
           repository: ghcr.io/yamshy/resume-assistant-ui
-          tag: 1.6.0 # {"$imagepolicy": "resume-assistant:resume-assistant-ui-image-policy:tag"}
+          tag: 1.7.0 # {"$imagepolicy": "resume-assistant:resume-assistant-ui-image-policy:tag"}
         env:
           - name: BACKEND_URL
             value: "resume-backend:8124"
