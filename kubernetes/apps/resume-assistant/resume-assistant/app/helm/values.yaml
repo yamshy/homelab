@@ -69,7 +69,7 @@ ingress:
     enabled: true
     className: tailscale
     hosts:
-      - host: resume-assistant-ui.${SECRET_TAILNET}
+      - host: resume.${SECRET_TAILNET}
         paths:
           - path: /
             pathType: Prefix
@@ -78,7 +78,7 @@ ingress:
               port: http
     tls:
       - hosts:
-          - resume-assistant-ui.${SECRET_TAILNET}
+          - resume.${SECRET_TAILNET}
 persistence:
   data:
     enabled: true
