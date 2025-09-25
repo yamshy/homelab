@@ -13,7 +13,7 @@ controllers:
                 name: resume-assistant-env
                 key: OPENAI_API_KEY
           - name: TEMPORAL_HOST
-            value: temporal-frontend.temporal.svc.cluster.local:7233
+            value: temporal-frontend.resume-assistant.svc.cluster.local:7233
           - name: TEMPORAL_NAMESPACE
             value: default
         ports:
