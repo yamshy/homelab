@@ -1,0 +1,35 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nextflow-config
+  namespace: nextflow-demo
+data:
+  nextflow.config: |
+    process {
+        executor = 'k8s'
+    }
+
+    k8s {
+        namespace = 'nextflow-demo'
+        serviceAccount = 'nextflow-sa'
+        storageClaimName = 'nextflow-work-pvc'
+        storageMountPath = '/workspace'
+        computeResourceLabels = true
+        cleanup = true
+
+        pod = [
+            [volumeClaim: 'nextflow-work-pvc', mountPath: '/workspace']
+        ]
+
+        // Resource limits for task pods
+        cpuRequest = '100m'
+        cpuLimit = '500m'
+        memoryRequest = '256Mi'
+        memoryLimit = '1Gi'
+    }
+
+    executor {
+        queueSize = 3
+        submitRateLimit = '10/1min'
+    }

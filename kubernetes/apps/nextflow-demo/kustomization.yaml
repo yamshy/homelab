@@ -6,7 +6,7 @@ namespace: nextflow-demo
 components:
   - ../../components/common
 resources:
-  - ./guardrails/ks.yaml
+  - ./nextflow/ks.yaml
 patches:
   - target:
       kind: Namespace
