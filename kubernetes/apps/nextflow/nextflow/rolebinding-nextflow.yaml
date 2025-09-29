@@ -12,3 +12,6 @@ subjects:
   - kind: ServiceAccount
     name: nextflow-sa
     namespace: nextflow
+  - kind: ServiceAccount
+    name: nextflow-k8s-service
+    namespace: nextflow

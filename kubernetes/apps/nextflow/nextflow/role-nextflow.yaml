@@ -36,3 +36,15 @@ rules:
       - pods/status
     verbs:
       - get
+  - apiGroups:
+      - batch
+    resources:
+      - jobs
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - delete
+      - patch
+      - update
