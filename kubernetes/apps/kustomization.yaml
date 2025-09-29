@@ -11,7 +11,7 @@ resources:
   - ./monitoring
   - ./media
   - ./network
-  - ./nextflow-demo
+  - ./nextflow
   - ./portfolio
   - ./resume-assistant
   - ./security
