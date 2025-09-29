@@ -64,7 +64,9 @@ spec:
         runAsNonRoot: true
         runAsUser: 1001
         runAsGroup: 1001
-      serviceAccountName: nextflow-sa
+    serviceAccount:
+      default:
+        name: nextflow-sa
     service:
       app:
         controller: nextflow-k8s-service
