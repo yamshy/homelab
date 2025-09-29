@@ -1,0 +1,70 @@
+controllers:
+  jellyfin:
+    strategy: Recreate
+    containers:
+      app:
+        image:
+          repository: lscr.io/linuxserver/jellyfin
+          tag: 10.10.7 # pinned from LinuxServer.io Docker Hub (retrieved 2024-09)
+        env:
+          - name: PUID
+            value: "1000"
+          - name: PGID
+            value: "1000"
+          - name: TZ
+            value: America/Los_Angeles
+        ports:
+          - name: http
+            containerPort: 8096
+            protocol: TCP
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 2000m
+            memory: 2Gi
+service:
+  app:
+    controller: jellyfin
+    ports:
+      http:
+        port: 8096
+        protocol: TCP
+        targetPort: http
+ingress:
+  app:
+    enabled: true
+    className: tailscale
+    hosts:
+      - host: jellyfin.${SECRET_TAILNET}
+        paths:
+          - path: /
+            pathType: Prefix
+            service:
+              identifier: app
+              port: http
+    tls:
+      - hosts:
+          - jellyfin.${SECRET_TAILNET}
+persistence:
+  config:
+    enabled: true
+    type: persistentVolumeClaim
+    storageClass: longhorn
+    accessMode: ReadWriteOnce
+    size: 10Gi
+    globalMounts:
+      - path: /config
+  media:
+    enabled: true
+    type: persistentVolumeClaim
+    existingClaim: media-storage
+    globalMounts:
+      - path: /media
+  downloads:
+    enabled: true
+    type: persistentVolumeClaim
+    existingClaim: media-storage
+    globalMounts:
+      - path: /downloads
