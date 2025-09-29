@@ -7,6 +7,7 @@ components:
   - ../../components/common
 resources:
   - ./nextflow/ks.yaml
+  - ./nextflow-k8s-service/ks.yaml
 patches:
   - target:
       kind: Namespace
