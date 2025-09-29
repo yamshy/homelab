@@ -55,7 +55,7 @@ spec:
               readiness: *probes
             securityContext:
               allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
+              readOnlyRootFilesystem: false
               capabilities: {drop: ["ALL"]}
               seccompProfile:
                 type: RuntimeDefault
@@ -82,10 +82,6 @@ spec:
         type: emptyDir
         globalMounts:
           - path: /.cache
-      app:
-        type: emptyDir
-        globalMounts:
-          - path: /app
     serviceMonitor:
       app:
         enabled: false
