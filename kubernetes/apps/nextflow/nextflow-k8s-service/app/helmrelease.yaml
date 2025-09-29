@@ -82,6 +82,10 @@ spec:
         type: emptyDir
         globalMounts:
           - path: /.cache
+      app:
+        type: emptyDir
+        globalMounts:
+          - path: /app
     serviceMonitor:
       app:
         enabled: false
