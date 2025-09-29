@@ -9,6 +9,7 @@ resources:
   - ./infisical-system
   - ./kube-system
   - ./monitoring
+  - ./media
   - ./network
   - ./nextflow-demo
   - ./portfolio
