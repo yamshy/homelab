@@ -25,9 +25,13 @@ spec:
     remediation:
       retries: 3
   values:
+    serviceAccount:
+      nextflow-sa: {}
     controllers:
       nextflow-k8s-service:
         strategy: RollingUpdate
+        serviceAccount:
+          identifier: nextflow-sa
         containers:
           app:
             image:
