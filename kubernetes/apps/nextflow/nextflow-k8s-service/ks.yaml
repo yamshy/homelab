@@ -10,15 +10,8 @@ spec:
     labels:
       app.kubernetes.io/name: *app
       app.kubernetes.io/part-of: nextflow
-  dependsOn:
-    - name: infisical-secrets-operator
-      namespace: infisical-system
   interval: 1h
   path: ./kubernetes/apps/nextflow/nextflow-k8s-service/app
-  postBuild:
-    substituteFrom:
-      - name: nextflow-k8s-service-infisical
-        kind: Secret
   prune: true
   retryInterval: 2m
   sourceRef:
