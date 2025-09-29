@@ -5,6 +5,9 @@ kind: Kustomization
 resources:
   - ./configmap-nextflow-config.yaml
   - ./serviceaccount-nextflow-sa.yaml
+  - ./serviceaccount-nextflow-runner.yaml
   - ./role-nextflow.yaml
+  - ./role-nextflow-runner.yaml
   - ./rolebinding-nextflow.yaml
+  - ./rolebinding-nextflow-runner.yaml
   - ./persistentvolumeclaim-nextflow-work.yaml
