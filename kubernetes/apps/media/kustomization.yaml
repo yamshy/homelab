@@ -6,6 +6,7 @@ namespace: media
 components:
   - ../../components/common
 resources:
+  - ./secrets/ks.yaml
   - ./pvc/ks.yaml
   - ./jellyfin/ks.yaml
   - ./sonarr/ks.yaml
