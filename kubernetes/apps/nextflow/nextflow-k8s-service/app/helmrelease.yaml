@@ -77,6 +77,11 @@ spec:
           http:
             port: 80
             targetPort: *port
+    persistence:
+      cache:
+        type: emptyDir
+        globalMounts:
+          - path: /.cache
     serviceMonitor:
       app:
         enabled: false
