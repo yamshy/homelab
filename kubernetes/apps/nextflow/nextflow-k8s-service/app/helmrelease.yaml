@@ -1,5 +1,3 @@
-# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
----
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: OCIRepository
 metadata:
@@ -34,7 +32,7 @@ spec:
           app:
             image:
               repository: ghcr.io/yamshy/nextflow-k8s-service
-              tag: 1.0.0 # {"$imagepolicy": "nextflow:nextflow-k8s-service-image-policy:tag"}
+              tag: 1.0.9 # {"$imagepolicy": "nextflow:nextflow-k8s-service-image-policy:tag"}
             env:
               PORT: &port 8080
               KUBECONFIG_PATH: /var/run/secrets/kubernetes.io/serviceaccount
