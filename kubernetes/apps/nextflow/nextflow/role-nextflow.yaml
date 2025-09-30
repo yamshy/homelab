@@ -17,6 +17,12 @@ rules:
       - delete
       - patch
   - apiGroups:
+      - batch
+    resources:
+      - jobs/status
+    verbs:
+      - get
+  - apiGroups:
       - ""
     resources:
       - pods
