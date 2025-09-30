@@ -10,7 +10,7 @@ spec:
     labels:
       app.kubernetes.io/name: *app
       app.kubernetes.io/part-of: nextflow
-  interval: 1h
+  interval: 5m
   path: ./kubernetes/apps/nextflow/nextflow-k8s-service/app
   prune: true
   retryInterval: 2m
