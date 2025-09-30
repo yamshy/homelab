@@ -5,7 +5,7 @@ controllers:
       app:
         image:
           repository: lscr.io/linuxserver/jellyfin
-          tag: 10.10.7 # pinned from LinuxServer.io Docker Hub (retrieved 2024-09)
+          tag: 2021.12.16 # pinned from LinuxServer.io Docker Hub (retrieved 2024-09)
         env:
           - name: PUID
             value: "1000"
