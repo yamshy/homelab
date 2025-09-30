@@ -10,5 +10,5 @@ roleRef:
   name: nextflow-k8s-service
 subjects:
 - kind: ServiceAccount
-  name: nextflow-sa
+  name: nextflow-k8s-service
   namespace: nextflow
