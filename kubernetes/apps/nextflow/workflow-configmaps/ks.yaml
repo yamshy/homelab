@@ -1,0 +1,23 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/kustomization-kustomize-v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app nextflow-workflow-configmaps
+  namespace: &namespace nextflow
+spec:
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
+      app.kubernetes.io/part-of: nextflow
+  interval: 5m
+  path: ./nextflow_k8s_service/k8s-manifests
+  prune: true
+  retryInterval: 2m
+  sourceRef:
+    kind: GitRepository
+    name: nextflow-k8s-service
+    namespace: nextflow
+  targetNamespace: *namespace
+  timeout: 5m
+  wait: false

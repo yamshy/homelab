@@ -6,4 +6,4 @@ resources:
   - ./helmrelease.yaml
   - ./imagerepository.yaml
   - ./imagepolicy.yaml
-  - ./demo-workflow-configmap.yaml
+  - ./gitrepository.yaml
