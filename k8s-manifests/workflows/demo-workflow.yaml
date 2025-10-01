@@ -1,0 +1,11 @@
+---
+# Placeholder for CI validation
+# At runtime, this will be replaced by content from:
+# https://github.com/yamshy/nextflow-k8s-service/tree/main/k8s-manifests/workflows
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: demo-workflow
+  namespace: nextflow
+data:
+  placeholder: "This will be replaced by Flux sync from upstream"
