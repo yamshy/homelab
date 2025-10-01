@@ -36,7 +36,7 @@ spec:
           app:
             image:
               repository: ghcr.io/yamshy/nextflow-k8s-service
-              tag: 1.12.2 # {"$imagepolicy": "nextflow:nextflow-k8s-service-image-policy:tag"}
+              tag: 1.12.3 # {"$imagepolicy": "nextflow:nextflow-k8s-service-image-policy:tag"}
             env:
               PORT: &port 8000
               KUBECONFIG_PATH: /var/run/secrets/kubernetes.io/serviceaccount
