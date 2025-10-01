@@ -1,0 +1,6 @@
+# This directory is a placeholder for flux-local CI validation.
+# At runtime, Flux will sync the actual content from the GitRepository source:
+# https://github.com/yamshy/nextflow-k8s-service (main branch)
+#
+# The content is managed in the upstream repository and automatically
+# synced to the nextflow namespace by the Flux Kustomization.
