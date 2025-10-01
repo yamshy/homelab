@@ -6,7 +6,7 @@ metadata:
   namespace: nextflow
 spec:
   hard:
-    requests.cpu: "12"
-    requests.memory: 40Gi
-    limits.cpu: "12"
-    limits.memory: 40Gi
+    requests.cpu: "14"
+    requests.memory: 50Gi
+    limits.cpu: "14"
+    limits.memory: 50Gi
