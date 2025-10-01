@@ -8,7 +8,7 @@ components:
 resources:
   - ./nextflow/ks.yaml
   - ./nextflow-k8s-service/ks.yaml
-  - ./workflow-configmaps/ks.yaml
+  - ./workflow-configmaps-sync-ks.yaml
 patches:
   - target:
       kind: Namespace
