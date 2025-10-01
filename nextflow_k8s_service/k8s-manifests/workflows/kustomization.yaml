@@ -3,6 +3,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 # Placeholder for flux-local CI validation.
-# At runtime, Flux syncs from: https://github.com/yamshy/nextflow-k8s-service/tree/main/k8s-manifests/workflows
+# At runtime, Flux syncs from: https://github.com/yamshy/nextflow-k8s-service/tree/main/nextflow_k8s_service/k8s-manifests/workflows
 resources:
   - demo-workflow.yaml
