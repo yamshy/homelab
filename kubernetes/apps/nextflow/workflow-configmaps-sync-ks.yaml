@@ -11,7 +11,7 @@ spec:
       app.kubernetes.io/name: *app
       app.kubernetes.io/part-of: nextflow
   interval: 5m
-  path: ./k8s-manifests/workflows
+  path: ./nextflow_k8s_service/k8s-manifests/workflows
   prune: true
   retryInterval: 2m
   sourceRef:
