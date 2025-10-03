@@ -44,3 +44,25 @@ spec:
         certificateRefs:
           - kind: Secret
             name: ${SECRET_DOMAIN/./-}-production-tls
+    - name: https-portfolio
+      protocol: HTTPS
+      port: 443
+      hostname: "${PORTFOLIO_DOMAIN}"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        certificateRefs:
+          - kind: Secret
+            name: ${PORTFOLIO_DOMAIN/./-}-production-tls
+    - name: https-portfolio-wildcard
+      protocol: HTTPS
+      port: 443
+      hostname: "*.${PORTFOLIO_DOMAIN}"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        certificateRefs:
+          - kind: Secret
+            name: ${PORTFOLIO_DOMAIN/./-}-production-tls

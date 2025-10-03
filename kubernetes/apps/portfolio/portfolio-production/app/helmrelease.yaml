@@ -74,7 +74,7 @@ spec:
         parentRefs:
           - name: external
             namespace: kube-system
-            sectionName: https-root
+            sectionName: https-portfolio
         rules:
           - backendRefs:
               - identifier: app
