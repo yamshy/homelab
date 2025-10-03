@@ -12,3 +12,9 @@ spec:
     - dnsName: "${SECRET_DOMAIN}"
       recordType: CNAME
       targets: ["d7b0d693-234a-49c6-a626-b64f67fbbe18.cfargotunnel.com"]
+    - dnsName: "external.${PORTFOLIO_DOMAIN}"
+      recordType: CNAME
+      targets: ["d7b0d693-234a-49c6-a626-b64f67fbbe18.cfargotunnel.com"]
+    - dnsName: "${PORTFOLIO_DOMAIN}"
+      recordType: CNAME
+      targets: ["d7b0d693-234a-49c6-a626-b64f67fbbe18.cfargotunnel.com"]
