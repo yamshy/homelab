@@ -3,7 +3,7 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app portfolio
+  name: &app portfolio-staging
   namespace: &namespace portfolio
 spec:
   commonMetadata:
@@ -13,10 +13,10 @@ spec:
     - name: infisical-secrets-operator
       namespace: infisical-system
   interval: 1h
-  path: ./kubernetes/apps/portfolio/portfolio-home/app
+  path: ./kubernetes/apps/portfolio/portfolio-staging/app
   postBuild:
     substituteFrom:
-      - name: portfolio-home-infisical
+      - name: portfolio-staging-infisical
         kind: Secret
   prune: true
   retryInterval: 2m
