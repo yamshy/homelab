@@ -13,7 +13,6 @@ resources:
   - ./network
   - ./nextflow
   - ./portfolio
-  - ./resume-assistant
   - ./security
   - ./storage
   - ./workspaces
