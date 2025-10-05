@@ -29,4 +29,4 @@ Commit only SOPS-encrypted secrets (`*.sops.yaml`); keep AGE keys, kubeconfigs, 
 ## Operational Notes
 - **Storage secrets bundle:** The storage namespace now mirrors the shared-secret pattern (`kubernetes/apps/storage/secrets`). When adding storage apps, depend on that kustomization and reference the rendered secrets via `postBuild.substituteFrom` rather than embedding values directly.
 - **Longhorn UI exposure:** Longhorn’s Helm values create a Tailscale ingress (`https://longhorn.${SECRET_TAILNET}`) backed by the shared storage secrets. If the tailnet hostname changes, rotate the value in Infisical so Flux re-renders the ingress and TLS secret reference.
-- **Recreate for RWO workloads:** Apps that mount ReadWriteOnce PVCs (e.g., `resume-assistant`) must use the `Recreate` rollout strategy to avoid multi-attach failures during upgrades.
+- **Recreate for RWO workloads:** Apps that mount ReadWriteOnce PVCs must use the `Recreate` rollout strategy to avoid multi-attach failures during upgrades.
