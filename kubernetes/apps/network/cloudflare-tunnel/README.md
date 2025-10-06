@@ -8,7 +8,7 @@ Concise documentation for exposing cluster services via Cloudflare Tunnel, manag
 - Flux Kustomization: `kubernetes/apps/network/cloudflare-tunnel/ks.yaml`
 - HelmRelease: `kubernetes/apps/network/cloudflare-tunnel/app/helmrelease.yaml`
 - DNSEndpoint: `kubernetes/apps/network/cloudflare-tunnel/app/dnsendpoint.yaml`
-- Secret (SOPS): `kubernetes/apps/network/cloudflare-tunnel/app/secret.sops.yaml`
+- Secret (Infisical): `kubernetes/apps/network/cloudflare-tunnel/app/secrets.infisical.yaml`
 
 ## Overview
 
@@ -70,6 +70,6 @@ Substitutions:
 - App manifests: `kubernetes/apps/network/cloudflare-tunnel/app/`
   - HelmRelease: `helmrelease.yaml`
   - DNSEndpoint: `dnsendpoint.yaml`
-  - Secret (SOPS): `secret.sops.yaml`
+  - Secret (Infisical): `secrets.infisical.yaml`
   - Additional resources: `resources/`
   - Kustomization (kustomize): `kustomization.yaml`

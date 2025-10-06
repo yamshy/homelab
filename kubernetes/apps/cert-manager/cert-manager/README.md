@@ -9,7 +9,7 @@ Concise documentation for deploying cert-manager via Flux and Helm.
 - HelmRelease: `kubernetes/apps/cert-manager/cert-manager/app/helmrelease.yaml`
 - Chart values: `kubernetes/apps/cert-manager/cert-manager/app/helm/values.yaml`
 - ClusterIssuer: `kubernetes/apps/cert-manager/cert-manager/app/clusterissuer.yaml`
-- Secret (SOPS for Cloudflare token): `kubernetes/apps/cert-manager/cert-manager/app/secret.sops.yaml`
+- Secret (Infisical for Cloudflare token): `kubernetes/apps/cert-manager/cert-manager/app/secrets.infisical.yaml`
 
 ## Overview
 
@@ -86,5 +86,5 @@ Substitutions:
   - HelmRelease: `helmrelease.yaml`
   - Values: `helm/values.yaml` (+ `helm/kustomizeconfig.yaml`)
   - ClusterIssuer: `clusterissuer.yaml`
-  - Secret (SOPS): `secret.sops.yaml`
+  - Secret (Infisical): `secrets.infisical.yaml`
   - Kustomization (kustomize): `kustomization.yaml`

@@ -5,10 +5,10 @@ Concise documentation for the portfolio website deployment managed by Flux and t
 ## Quick links
 
 - Namespace: `portfolio`
-- Flux Kustomization: `kubernetes/apps/portfolio/portfolio-home/ks.yaml`
-- HelmRelease: `kubernetes/apps/portfolio/portfolio-home/app/helmrelease.yaml`
-- ImageRepository: `kubernetes/apps/portfolio/portfolio-home/app/imagerepository.yaml`
-- ImagePolicy: `kubernetes/apps/portfolio/portfolio-home/app/imagepolicy.yaml`
+- Flux Kustomization: `kubernetes/apps/portfolio/portfolio-staging/ks.yaml`
+- HelmRelease: `kubernetes/apps/portfolio/portfolio-staging/app/helmrelease.yaml`
+- ImageRepository: `kubernetes/apps/portfolio/portfolio-staging/app/imagerepository.yaml`
+- ImagePolicy: `kubernetes/apps/portfolio/portfolio-staging/app/imagepolicy.yaml`
 
 ## Overview
 
@@ -95,8 +95,8 @@ The hostname `${SECRET_DOMAIN}` is injected via Flux postBuild substitution from
 
 ## File map
 
-- Kustomization (Flux): `kubernetes/apps/portfolio/portfolio-home/ks.yaml`
-- App manifests: `kubernetes/apps/portfolio/portfolio-home/app/`
+- Kustomization (Flux): `kubernetes/apps/portfolio/portfolio-staging/ks.yaml`
+- App manifests: `kubernetes/apps/portfolio/portfolio-staging/app/`
   - HelmRelease: `helmrelease.yaml`
   - ImageRepository: `imagerepository.yaml`
   - ImagePolicy: `imagepolicy.yaml`

@@ -10,7 +10,7 @@ Concise documentation for deploying the Flux Instance via Helm, including a GitH
 - Values: `kubernetes/apps/flux-system/flux-instance/app/helm/values.yaml`
 - Receiver: `kubernetes/apps/flux-system/flux-instance/app/receiver.yaml`
 - HTTPRoute: `kubernetes/apps/flux-system/flux-instance/app/httproute.yaml`
-- Webhook secret (SOPS): `kubernetes/apps/flux-system/flux-instance/app/secret.sops.yaml`
+- Webhook secret (Infisical): `kubernetes/apps/flux-system/flux-instance/app/secrets.infisical.yaml`
 
 ## Overview
 
@@ -73,5 +73,5 @@ Substitutions:
   - Values: `helm/values.yaml` (+ `helm/kustomizeconfig.yaml` if present)
   - Receiver: `receiver.yaml`
   - HTTPRoute: `httproute.yaml`
-  - Secret (SOPS): `secret.sops.yaml`
+  - Secret (Infisical): `secrets.infisical.yaml`
   - Kustomization (kustomize): `kustomization.yaml`

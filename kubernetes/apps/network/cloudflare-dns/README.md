@@ -7,7 +7,7 @@ Concise documentation for managing DNS via ExternalDNS with Cloudflare.
 - Namespace: `network`
 - Flux Kustomization: `kubernetes/apps/network/cloudflare-dns/ks.yaml`
 - HelmRelease: `kubernetes/apps/network/cloudflare-dns/app/helmrelease.yaml`
-- Secret (SOPS): `kubernetes/apps/network/cloudflare-dns/app/secret.sops.yaml`
+- Secret (Infisical): `kubernetes/apps/network/cloudflare-dns/app/secrets.infisical.yaml`
 
 ## Overview
 
@@ -55,5 +55,5 @@ Substitutions:
 - Kustomization (Flux): `kubernetes/apps/network/cloudflare-dns/ks.yaml`
 - App manifests: `kubernetes/apps/network/cloudflare-dns/app/`
   - HelmRelease: `helmrelease.yaml`
-  - Secret (SOPS): `secret.sops.yaml`
+  - Secret (Infisical): `secrets.infisical.yaml`
   - Kustomization (kustomize): `kustomization.yaml`

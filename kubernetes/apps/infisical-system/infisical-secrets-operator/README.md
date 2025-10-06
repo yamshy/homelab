@@ -4,10 +4,10 @@ Concise documentation for deploying the Infisical Kubernetes Secrets Operator vi
 
 ## Quick links
 
-- Namespace: `security`
-- Flux Kustomization: `kubernetes/apps/security/infisical-secrets-operator/ks.yaml`
-- HelmRelease: `kubernetes/apps/security/infisical-secrets-operator/app/helmrelease.yaml`
-- Chart values: `kubernetes/apps/security/infisical-secrets-operator/app/helm/values.yaml`
+- Namespace: `infisical-system`
+- Flux Kustomization: `kubernetes/apps/infisical-system/infisical-secrets-operator/ks.yaml`
+- HelmRelease: `kubernetes/apps/infisical-system/infisical-secrets-operator/app/helmrelease.yaml`
+- Chart values: `kubernetes/apps/infisical-system/infisical-secrets-operator/app/helm/values.yaml`
 
 ## Overview
 
@@ -116,8 +116,8 @@ spec:
 
 ## File map
 
-- Kustomization (Flux): `kubernetes/apps/security/infisical-secrets-operator/ks.yaml`
-- App manifests: `kubernetes/apps/security/infisical-secrets-operator/app/`
+- Kustomization (Flux): `kubernetes/apps/infisical-system/infisical-secrets-operator/ks.yaml`
+- App manifests: `kubernetes/apps/infisical-system/infisical-secrets-operator/app/`
   - HelmRelease: `helmrelease.yaml`
   - Values: `helm/values.yaml` (+ `helm/kustomizeconfig.yaml` if present)
   - Kustomization (kustomize): `kustomization.yaml`
