@@ -44,7 +44,7 @@ Not applicable; chart and version are pinned via OCI tag in the OCIRepository. R
 - SOPS/Age for secret encryption
 
 Substitutions:
-- `${SECRET_DOMAIN}` is injected via Flux postBuild for the dnsZones selector.
+- `${SECRET_DOMAIN}` and `${PORTFOLIO_DOMAIN}` are injected via Flux postBuild using the shared `cluster-secrets` Secret.
 
 ## Operations
 

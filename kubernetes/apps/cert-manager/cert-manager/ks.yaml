@@ -29,6 +29,8 @@ spec:
       namespace: infisical-system
   postBuild:
     substituteFrom:
+      - name: cluster-secrets
+        kind: Secret
       - name: cert-manager-secret
         kind: Secret
   prune: true
