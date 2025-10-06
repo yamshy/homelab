@@ -40,7 +40,7 @@ provisioner: csi.san.synology.com
 parameters:
   protocol: "nfs"
   dsm: "192.168.121.240"
-  location: "/volume1/media"
+  location: "/volume1"
 reclaimPolicy: Delete
 allowVolumeExpansion: true
 volumeBindingMode: Immediate
