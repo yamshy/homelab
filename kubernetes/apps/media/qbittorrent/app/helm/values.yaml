@@ -62,9 +62,11 @@ persistence:
     existingClaim: media-storage
     globalMounts:
       - path: /media
+        subPath: media
   downloads:
     enabled: true
     type: persistentVolumeClaim
     existingClaim: media-storage
     globalMounts:
       - path: /downloads
+        subPath: downloads
