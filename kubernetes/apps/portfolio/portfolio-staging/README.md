@@ -1,18 +1,18 @@
-# Portfolio Home (Kubernetes App)
+# Portfolio Staging (Kubernetes App)
 
-Concise documentation for the portfolio website deployment managed by Flux and the bjw-s/app-template Helm chart.
+Concise documentation for the Portfolio Staging deployment managed by Flux and the bjw-s/app-template Helm chart.
 
 ## Quick links
 
 - Namespace: `portfolio`
-- Flux Kustomization: `kubernetes/apps/portfolio/portfolio-home/ks.yaml`
-- HelmRelease: `kubernetes/apps/portfolio/portfolio-home/app/helmrelease.yaml`
-- ImageRepository: `kubernetes/apps/portfolio/portfolio-home/app/imagerepository.yaml`
-- ImagePolicy: `kubernetes/apps/portfolio/portfolio-home/app/imagepolicy.yaml`
+- Flux Kustomization: `kubernetes/apps/portfolio/portfolio-staging/ks.yaml`
+- HelmRelease: `kubernetes/apps/portfolio/portfolio-staging/app/helmrelease.yaml`
+- ImageRepository: `kubernetes/apps/portfolio/portfolio-staging/app/imagerepository.yaml`
+- ImagePolicy: `kubernetes/apps/portfolio/portfolio-staging/app/imagepolicy.yaml`
 
 ## Overview
 
-Deploys the public portfolio site using the bjw-s/app-template chart. Reconciliation and image automation are handled by Flux.
+Deploys the staging portfolio site using the bjw-s/app-template chart. Reconciliation and image automation are handled by Flux.
 
 ## Workload
 
@@ -95,8 +95,8 @@ The hostname `${SECRET_DOMAIN}` is injected via Flux postBuild substitution from
 
 ## File map
 
-- Kustomization (Flux): `kubernetes/apps/portfolio/portfolio-home/ks.yaml`
-- App manifests: `kubernetes/apps/portfolio/portfolio-home/app/`
+- Kustomization (Flux): `kubernetes/apps/portfolio/portfolio-staging/ks.yaml`
+- App manifests: `kubernetes/apps/portfolio/portfolio-staging/app/`
   - HelmRelease: `helmrelease.yaml`
   - ImageRepository: `imagerepository.yaml`
   - ImagePolicy: `imagepolicy.yaml`
