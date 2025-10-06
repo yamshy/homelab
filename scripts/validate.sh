@@ -5,7 +5,8 @@ source "$(dirname "${0}")/lib/common.sh"
 
 : "${KUBE_VERSION:=1.33.4}"
 : "${SECRET_DOMAIN:=example.com}"
-export SECRET_DOMAIN
+: "${PORTFOLIO_DOMAIN:=portfolio.example.com}"
+export SECRET_DOMAIN PORTFOLIO_DOMAIN
 
 check_cli git kustomize kubeconform envsubst yq
 
