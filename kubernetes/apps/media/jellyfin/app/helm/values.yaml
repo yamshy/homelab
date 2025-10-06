@@ -56,17 +56,12 @@ persistence:
     size: 10Gi
     globalMounts:
       - path: /config
-  media:
+  media-storage:
     enabled: true
     type: persistentVolumeClaim
     existingClaim: media-storage
     globalMounts:
       - path: /media
         subPath: media
-  downloads:
-    enabled: true
-    type: persistentVolumeClaim
-    existingClaim: media-storage
-    globalMounts:
       - path: /downloads
         subPath: downloads
