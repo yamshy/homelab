@@ -54,7 +54,7 @@ spec:
       tls:
         certificateRefs:
           - kind: Secret
-            name: ${PORTFOLIO_DOMAIN/./-}-production-tls
+            name: ${PORTFOLIO_DOMAIN_SLUG}-production-tls
     - name: https-portfolio-wildcard
       protocol: HTTPS
       port: 443
@@ -65,4 +65,4 @@ spec:
       tls:
         certificateRefs:
           - kind: Secret
-            name: ${PORTFOLIO_DOMAIN/./-}-production-tls
+            name: ${PORTFOLIO_DOMAIN_SLUG}-production-tls

@@ -6,8 +6,10 @@ source "$(dirname "${0}")/lib/common.sh"
 : "${KUBE_VERSION:=1.33.4}"
 : "${SECRET_DOMAIN:=example.com}"
 : "${PORTFOLIO_DOMAIN:=portfolio.example.com}"
+PORTFOLIO_DOMAIN_SLUG="${PORTFOLIO_DOMAIN//./-}"
 export SECRET_DOMAIN
 export PORTFOLIO_DOMAIN
+export PORTFOLIO_DOMAIN_SLUG
 
 check_cli git kustomize kubeconform envsubst yq
 
