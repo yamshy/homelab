@@ -5,7 +5,7 @@ kind: Gateway
 metadata:
   name: external
   annotations:
-    external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
+    external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN:-example.com}"
 spec:
   gatewayClassName: cilium
   addresses:
@@ -13,56 +13,56 @@ spec:
       value: "192.168.121.13"
   infrastructure:
     annotations:
-      external-dns.alpha.kubernetes.io/hostname: "external.${SECRET_DOMAIN}"
+      external-dns.alpha.kubernetes.io/hostname: "external.${SECRET_DOMAIN:-example.com}"
   listeners:
     - name: http
       protocol: HTTP
       port: 80
-      hostname: "*.${SECRET_DOMAIN}"
+      hostname: "*.${SECRET_DOMAIN:-example.com}"
       allowedRoutes:
         namespaces:
           from: Same
     - name: https
       protocol: HTTPS
       port: 443
-      hostname: "*.${SECRET_DOMAIN}"
+      hostname: "*.${SECRET_DOMAIN:-example.com}"
       allowedRoutes:
         namespaces:
           from: All
       tls:
         certificateRefs:
           - kind: Secret
-            name: "${SECRET_DOMAIN_SLUG}-production-tls"
+            name: "${SECRET_DOMAIN_SLUG:-example-com}-production-tls"
     - name: https-root
       protocol: HTTPS
       port: 443
-      hostname: "${SECRET_DOMAIN}"
+      hostname: "${SECRET_DOMAIN:-example.com}"
       allowedRoutes:
         namespaces:
           from: All
       tls:
         certificateRefs:
           - kind: Secret
-            name: "${SECRET_DOMAIN_SLUG}-production-tls"
+            name: "${SECRET_DOMAIN_SLUG:-example-com}-production-tls"
     - name: https-portfolio
       protocol: HTTPS
       port: 443
-      hostname: "${PORTFOLIO_DOMAIN}"
+      hostname: "${PORTFOLIO_DOMAIN:-portfolio.example.com}"
       allowedRoutes:
         namespaces:
           from: All
       tls:
         certificateRefs:
           - kind: Secret
-            name: "${PORTFOLIO_DOMAIN_SLUG}-production-tls"
+            name: "${PORTFOLIO_DOMAIN_SLUG:-portfolio-example-com}-production-tls"
     - name: https-portfolio-wildcard
       protocol: HTTPS
       port: 443
-      hostname: "*.${PORTFOLIO_DOMAIN}"
+      hostname: "*.${PORTFOLIO_DOMAIN:-portfolio.example.com}"
       allowedRoutes:
         namespaces:
           from: All
       tls:
         certificateRefs:
           - kind: Secret
-            name: "${PORTFOLIO_DOMAIN_SLUG}-production-tls"
+            name: "${PORTFOLIO_DOMAIN_SLUG:-portfolio-example-com}-production-tls"
