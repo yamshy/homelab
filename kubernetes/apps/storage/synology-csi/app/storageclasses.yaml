@@ -31,3 +31,16 @@ parameters:
 reclaimPolicy: Retain
 allowVolumeExpansion: true
 volumeBindingMode: Immediate
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: synology-nfs-delete
+provisioner: csi.san.synology.com
+parameters:
+  protocol: "nfs"
+  dsm: "192.168.121.240"
+  location: "/volume1/media"
+reclaimPolicy: Delete
+allowVolumeExpansion: true
+volumeBindingMode: Immediate
