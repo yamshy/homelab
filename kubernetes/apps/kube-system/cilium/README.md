@@ -30,7 +30,7 @@ Installs Cilium with kube-proxy replacement, Gateway API support, ServiceMonitor
 - Gateways:
   - external: IP 192.168.121.13
   - internal: IP 192.168.121.12
-- TLS certificates referenced via Secret `${SECRET_DOMAIN/./-}-production-tls` for HTTPS listeners.
+- TLS certificates referenced via Secret `${SECRET_DOMAIN_SLUG}-production-tls` for HTTPS listeners.
 - Routes from namespaces are controlled via allowedRoutes in the Gateway listeners.
 - ExternalDNS annotations set hostnames for external and internal gateway addresses.
 

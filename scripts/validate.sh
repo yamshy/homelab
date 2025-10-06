@@ -6,8 +6,10 @@ source "$(dirname "${0}")/lib/common.sh"
 : "${KUBE_VERSION:=1.33.4}"
 : "${SECRET_DOMAIN:=example.com}"
 : "${PORTFOLIO_DOMAIN:=portfolio.example.com}"
+SECRET_DOMAIN_SLUG="${SECRET_DOMAIN//./-}"
 PORTFOLIO_DOMAIN_SLUG="${PORTFOLIO_DOMAIN//./-}"
 export SECRET_DOMAIN
+export SECRET_DOMAIN_SLUG
 export PORTFOLIO_DOMAIN
 export PORTFOLIO_DOMAIN_SLUG
 
