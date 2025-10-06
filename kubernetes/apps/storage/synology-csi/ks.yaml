@@ -21,10 +21,6 @@ spec:
       namespace: *namespace
   interval: 1h
   path: ./kubernetes/apps/storage/synology-csi/app
-  postBuild:
-    substituteFrom:
-      - kind: Secret
-        name: synology-csi-infisical
   prune: true
   retryInterval: 2m
   sourceRef:
