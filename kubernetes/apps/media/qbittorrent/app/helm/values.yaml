@@ -5,7 +5,7 @@ controllers:
       app:
         image:
           repository: lscr.io/linuxserver/qbittorrent
-          tag: 5.1.2 # pinned from LinuxServer.io Docker Hub (retrieved 2024-09)
+          tag: 20.04.1 # pinned from LinuxServer.io Docker Hub (retrieved 2024-09)
         env:
           - name: PUID
             value: "1000"
