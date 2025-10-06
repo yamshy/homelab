@@ -7,7 +7,7 @@ Concise documentation for managing DNS via ExternalDNS with Cloudflare.
 - Namespace: `network`
 - Flux Kustomization: `kubernetes/apps/network/cloudflare-dns/ks.yaml`
 - HelmRelease: `kubernetes/apps/network/cloudflare-dns/app/helmrelease.yaml`
-- Secret (Infisical): `kubernetes/apps/network/cloudflare-dns/app/secrets.infisical.yaml`
+- Infisical Secrets definition: `kubernetes/apps/network/cloudflare-dns/app/secrets.infisical.yaml`
 
 ## Overview
 
@@ -28,9 +28,9 @@ Not applicable.
 ## Dependencies
 
 - Flux (Helm controller)
-- Cloudflare API token Secret:
+- Cloudflare API token Secret rendered from Infisical:
   - name: `cloudflare-dns-secret`
-  - key: `api-token`
+  - key: `CLOUDFLARE_API_TOKEN`
 - ExternalDNS CRDs and Gateway API (for HTTPRoute sources)
 
 Substitutions:
@@ -55,5 +55,5 @@ Substitutions:
 - Kustomization (Flux): `kubernetes/apps/network/cloudflare-dns/ks.yaml`
 - App manifests: `kubernetes/apps/network/cloudflare-dns/app/`
   - HelmRelease: `helmrelease.yaml`
-  - Secret (Infisical): `secrets.infisical.yaml`
+  - Infisical Secrets definition: `secrets.infisical.yaml`
   - Kustomization (kustomize): `kustomization.yaml`

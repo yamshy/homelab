@@ -1,6 +1,6 @@
-# Portfolio Home (Kubernetes App)
+# Portfolio Staging (Kubernetes App)
 
-Concise documentation for the portfolio website deployment managed by Flux and the bjw-s/app-template Helm chart.
+Concise documentation for the Portfolio Staging deployment managed by Flux and the bjw-s/app-template Helm chart.
 
 ## Quick links
 
@@ -12,7 +12,7 @@ Concise documentation for the portfolio website deployment managed by Flux and t
 
 ## Overview
 
-Deploys the public portfolio site using the bjw-s/app-template chart. Reconciliation and image automation are handled by Flux.
+Deploys the staging portfolio site using the bjw-s/app-template chart. Reconciliation and image automation are handled by Flux.
 
 ## Workload
 
