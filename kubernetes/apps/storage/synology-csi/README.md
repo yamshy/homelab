@@ -8,7 +8,7 @@ Concise documentation for deploying the Synology CSI driver via Helm.
 - Flux Kustomization: `kubernetes/apps/storage/synology-csi/ks.yaml`
 - HelmRelease: `kubernetes/apps/storage/synology-csi/app/helmrelease.yaml`
 - StorageClasses: `kubernetes/apps/storage/synology-csi/app/storageclasses.yaml`
-- Secret (SOPS client info): `kubernetes/apps/storage/synology-csi/app/secret.sops.yaml`
+- InfisicalSecret (client info): `kubernetes/apps/storage/secrets/synology-csi-infisical.yaml`
 
 ## Overview
 
@@ -61,5 +61,6 @@ Enable metrics via chart values if supported.
 - App manifests: `kubernetes/apps/storage/synology-csi/app/`
   - HelmRelease: `helmrelease.yaml`
   - StorageClasses: `storageclasses.yaml`
-  - Secret (SOPS): `secret.sops.yaml`
   - Kustomization (kustomize): `kustomization.yaml`
+- Secrets bundle: `kubernetes/apps/storage/secrets/`
+  - Synology CSI InfisicalSecret: `synology-csi-infisical.yaml`

@@ -8,7 +8,7 @@ Concise documentation for deploying the Tailscale Operator via Helm. Enables Tai
 - Flux Kustomization: `kubernetes/apps/network/tailscale/ks.yaml`
 - HelmRelease: `kubernetes/apps/network/tailscale/app/helmrelease.yaml`
 - ProxyClass (CR): `kubernetes/apps/network/tailscale/app/proxyclass.yaml`
-- Secret (SOPS OAuth creds): `kubernetes/apps/network/tailscale/app/secret.sops.yaml`
+- Secret (Infisical OAuth creds): `kubernetes/apps/network/tailscale/app/secrets.infisical.yaml`
 
 ## Overview
 
@@ -62,5 +62,5 @@ If the chart exposes metrics, enable via values and ensure your Prometheus stack
 - App manifests: `kubernetes/apps/network/tailscale/app/`
   - HelmRelease: `helmrelease.yaml`
   - ProxyClass: `proxyclass.yaml`
-  - Secret (SOPS): `secret.sops.yaml`
+  - Secret (Infisical): `secrets.infisical.yaml`
   - Kustomization (kustomize): `kustomization.yaml`

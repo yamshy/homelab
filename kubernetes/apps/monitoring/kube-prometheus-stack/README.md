@@ -7,7 +7,7 @@ Concise documentation for deploying the Prometheus and Grafana monitoring stack 
 - Namespace: `monitoring`
 - Flux Kustomization: `kubernetes/apps/monitoring/kube-prometheus-stack/ks.yaml`
 - HelmRelease: `kubernetes/apps/monitoring/kube-prometheus-stack/app/helmrelease.yaml`
-- Secret (Grafana admin creds, SOPS): `kubernetes/apps/monitoring/kube-prometheus-stack/app/secret.sops.yaml`
+- Secret (Grafana admin creds, Infisical): `kubernetes/apps/monitoring/kube-prometheus-stack/app/secrets.infisical.yaml`
 
 ## Overview
 
@@ -71,5 +71,5 @@ Not applicable; chart version is pinned via OCI tag.
 - Kustomization (Flux): `kubernetes/apps/monitoring/kube-prometheus-stack/ks.yaml`
 - App manifests: `kubernetes/apps/monitoring/kube-prometheus-stack/app/`
   - HelmRelease: `helmrelease.yaml`
-  - Grafana admin secret (SOPS): `secret.sops.yaml`
+  - Grafana admin secret (Infisical): `secrets.infisical.yaml`
   - Kustomization (kustomize): `kustomization.yaml`
