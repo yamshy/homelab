@@ -232,8 +232,11 @@ spec:
 ## Storage Architecture
 
 - **Default Storage**: Longhorn distributed block storage with multi-node replication
-- **Additional Storage**: Synology CSI for NFS/iSCSI from NAS
+- **Synology CSI**: NFS/iSCSI storage from Synology NAS
+  - iSCSI: Block storage with RWO access mode (default storage class)
+  - NFS: Shared storage with RWX access mode (used by media apps)
 - **Dynamic Provisioning**: Automatic volume creation via storage classes
+- **Media Storage**: Synology NFS (synology-nfs-delete) provides shared RWX storage for media apps
 
 ## Key Patterns & Best Practices
 
@@ -251,6 +254,24 @@ spec:
 - Set appropriate resource requests and limits
 - Include readiness and liveness probes
 - Use proper health checks in Flux Kustomizations
+
+### Persistence and Volume Mounts
+- **Never mount the same PVC multiple times as separate volumes** - this causes pods to get stuck in ContainerCreating
+- **Use subPath for multiple mounts of the same PVC** - define volume once, mount with different subPaths
+- For bjw-s app-template, use a single persistence item with multiple `globalMounts` entries:
+  ```yaml
+  persistence:
+    shared-storage:
+      enabled: true
+      type: persistentVolumeClaim
+      existingClaim: storage-pvc
+      globalMounts:
+        - path: /data
+          subPath: data
+        - path: /config
+          subPath: config
+  ```
+- Reference: [Kubernetes Issue #127004](https://github.com/kubernetes/kubernetes/issues/127004)
 
 ### Security
 - **Use Infisical for all secrets** - do not create new SOPS secrets
