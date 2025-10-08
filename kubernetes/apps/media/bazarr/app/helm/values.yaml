@@ -5,7 +5,7 @@ controllers:
       app:
         image:
           repository: lscr.io/linuxserver/bazarr
-          tag: latest
+          tag: v1.5.3-ls321 # Bazarr 1.5.3 (2025-10-07)
         env:
           - name: PUID
             value: "1000"

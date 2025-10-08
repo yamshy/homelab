@@ -5,7 +5,7 @@ controllers:
       app:
         image:
           repository: lscr.io/linuxserver/sonarr
-          tag: 4.0.15 # pinned from LinuxServer.io Docker Hub (retrieved 2024-09)
+          tag: 4.0.15.2941-ls293 # Sonarr 4.0.15 (2025-09-26)
         env:
           - name: PUID
             value: "1000"

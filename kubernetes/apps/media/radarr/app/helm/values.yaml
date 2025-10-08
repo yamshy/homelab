@@ -5,7 +5,7 @@ controllers:
       app:
         image:
           repository: lscr.io/linuxserver/radarr
-          tag: latest
+          tag: 5.27.5.10198-ls284 # Radarr 5.27.5 (2025-10-05)
         env:
           - name: PUID
             value: "1000"

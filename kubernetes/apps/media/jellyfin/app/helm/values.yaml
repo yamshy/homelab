@@ -5,7 +5,7 @@ controllers:
       app:
         image:
           repository: lscr.io/linuxserver/jellyfin
-          tag: latest
+          tag: 10.10.7ubu2404-ls79 # Jellyfin 10.10.7 (2025-09-30)
         env:
           - name: PUID
             value: "1000"
