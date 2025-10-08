@@ -9,6 +9,7 @@ resources:
   - ./secrets/ks.yaml
   - ./pvc/ks.yaml
   - ./jellyfin/ks.yaml
+  - ./jellyseerr/ks.yaml
   - ./sonarr/ks.yaml
   - ./radarr/ks.yaml
   - ./prowlarr/ks.yaml
