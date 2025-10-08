@@ -22,7 +22,7 @@ spec:
     spec:
       chart: *app
       # Use latest Community Edition version
-      version: "2.25.0"
+      version: "2.26.1"
       sourceRef:
         kind: HelmRepository
         name: coder
