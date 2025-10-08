@@ -12,6 +12,7 @@ permissions:
 env:
   KUBE_VERSION: "1.33.4"
   SECRET_DOMAIN: "example.com"
+  PORTFOLIO_DOMAIN: "portfolio.example.com"
 
 jobs:
   validate:
