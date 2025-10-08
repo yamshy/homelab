@@ -39,6 +39,8 @@ controllers:
             value: protonvpn
           - name: SERVER_COUNTRIES
             value: Canada
+          - name: FIREWALL_OUTBOUND_SUBNETS
+            value: "10.42.0.0/16,10.43.0.0/16"
           - name: WIREGUARD_PRIVATE_KEY
             valueFrom:
               secretKeyRef:
