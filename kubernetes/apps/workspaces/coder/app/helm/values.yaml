@@ -3,7 +3,7 @@
 # - Ingress uses className: tailscale (managed by Tailscale operator)
 #
 # Notes:
-# - Ccoder defaults to brokered SSH; no extra ports/services required.
+# - Coder defaults to brokered SSH; no extra ports/services required.
 # - The chart provides in-cluster dependencies (e.g., Postgres) by default;
 #   no explicit configuration is needed here for evaluation/small clusters.
 
@@ -11,23 +11,16 @@ coder:
   env:
     - name: CODER_ACCESS_URL
       value: "https://coder.${SECRET_TAILNET}"
-
-service:
-  type: ClusterIP
-
-ingress:
-  enabled: true
-  className: tailscale
-  annotations: {}
-  hosts:
-    - host: coder.${SECRET_TAILNET}
-      paths:
-        - path: /
-          pathType: Prefix
-  tls:
-    - secretName: coder-tls
-      hosts:
-        - coder.${SECRET_TAILNET}
+  service:
+    type: ClusterIP
+  ingress:
+    enable: true
+    className: tailscale
+    host: "coder.${SECRET_TAILNET}"
+    annotations: {}
+    tls:
+      enable: true
+      secretName: coder-tls
 
 # Explicitly use Synology CSI delete StorageClass for bundled Postgres PVCs
 postgres:
